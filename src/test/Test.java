@@ -1,6 +1,7 @@
 package test;
 
 import javax.swing.JFrame;
+import javax.swing.JScrollPane;
 import org.terifan.ui.listview.EntityListViewItem;
 import org.terifan.ui.listview.ListView;
 import org.terifan.ui.listview.ListViewItem;
@@ -23,7 +24,7 @@ public class Test
 			ListView<ListViewItem> listView = new ListView<>(model);
 
 			JFrame frame = new JFrame();
-			frame.add(listView);
+			frame.add(new JScrollPane(listView));
 			frame.setSize(1024, 768);
 			frame.setLocationRelativeTo(null);
 			frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
