@@ -6,17 +6,16 @@ import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.Rectangle;
+import java.util.HashMap;
+import javax.swing.Icon;
 import javax.swing.JComponent;
-import org.terifan.ui.Icon;
-import org.terifan.ui.StyleSheet;
-import org.terifan.util.cache.Cache;
-import org.terifan.ui.Utilities;
 import org.terifan.ui.listview.ListView;
 import org.terifan.ui.listview.ListViewCellRenderer;
 import org.terifan.ui.listview.ListViewColumn;
 import org.terifan.ui.listview.ListViewItem;
 import org.terifan.ui.listview.SelectionMode;
-import org.terifan.util.log.Log;
+import org.terifan.ui.listview.util.StyleSheet;
+import org.terifan.ui.listview.util.Utilities;
 
 
 public class CellRenderer extends JComponent implements ListViewCellRenderer
@@ -30,7 +29,7 @@ public class CellRenderer extends JComponent implements ListViewCellRenderer
 	protected boolean mIsRollover;
 	protected boolean mIsSorted;
 	protected int mColumnIndex;
-	protected Cache<Icon,Image> mCachedHighlightedIcons = new Cache<Icon,Image>(100);
+	protected HashMap<Icon,Image> mCachedHighlightedIcons = new HashMap<Icon,Image>();
 	protected FontMetrics mFontMetrics;
 	protected int mIconTextSpacing;
 
@@ -154,7 +153,7 @@ public class CellRenderer extends JComponent implements ListViewCellRenderer
 			}
 			else*/
 			{
-				icon.paintIcon(null, aGraphics, ix, iy, iw, ih);
+				icon.paintIcon(null, aGraphics, ix, iy); //, iw, ih);
 			}
 		}
 

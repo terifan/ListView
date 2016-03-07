@@ -2,11 +2,8 @@ package org.terifan.ui.listview.layout;
 
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Graphics;
 import java.awt.Graphics2D;
 import javax.swing.JComponent;
-import org.terifan.ui.StyleSheet;
-import org.terifan.ui.Utilities;
 import org.terifan.ui.listview.ListView;
 import org.terifan.ui.listview.ListViewCellRenderer;
 import org.terifan.ui.listview.ListViewColumn;
@@ -16,6 +13,8 @@ import org.terifan.ui.listview.ListViewLayout;
 import org.terifan.ui.listview.ListViewLayoutVertical;
 import org.terifan.ui.listview.ListViewModel;
 import org.terifan.ui.listview.SelectionMode;
+import org.terifan.ui.listview.util.StyleSheet;
+import org.terifan.ui.listview.util.Utilities;
 
 
 public class DetailItemRenderer implements ListViewItemRenderer

@@ -1,6 +1,5 @@
 package org.terifan.ui.listview;
 
-import org.terifan.util.SortedMap;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
@@ -8,9 +7,10 @@ import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
-import org.terifan.ui.Orientation;
-import org.terifan.ui.StyleSheet;
-import org.terifan.ui.Utilities;
+import org.terifan.ui.listview.util.Orientation;
+import org.terifan.ui.listview.util.SortedMap;
+import org.terifan.ui.listview.util.StyleSheet;
+import org.terifan.ui.listview.util.Utilities;
 
 
 public class ListViewLayoutHorizontal<T extends ListViewItem> extends AbstractListViewLayout<T>
@@ -212,7 +212,7 @@ public class ListViewLayoutHorizontal<T extends ListViewItem> extends AbstractLi
 //				{
 //					items.get(itemIndex).loadState(false);
 //				}
-			
+
 				break;
 			}
 			else if (clip.x <= x+colWidth)
@@ -223,7 +223,7 @@ public class ListViewLayoutHorizontal<T extends ListViewItem> extends AbstractLi
 				{
 					T item = items.get(itemIndex);
 
-					mListView.fireLoadState(item);
+					mListView.loadState(item);
 
 					int itemHeight = renderer.getItemHeight(mListView, item);
 

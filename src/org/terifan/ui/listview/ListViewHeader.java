@@ -12,7 +12,6 @@ import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.SortOrder;
 import javax.swing.SwingUtilities;
-import org.terifan.util.log.Log;
 
 
 public class ListViewHeader extends JComponent
@@ -129,7 +128,7 @@ public class ListViewHeader extends JComponent
 		}
 		catch (Exception e)
 		{
-			e.printStackTrace(Log.out);
+			e.printStackTrace(System.err);
 		}
 	}
 
@@ -167,7 +166,7 @@ public class ListViewHeader extends JComponent
 		}
 		catch (Exception e)
 		{
-			e.printStackTrace(Log.out);
+			e.printStackTrace(System.err);
 			return new Dimension(16, 16);
 		}
 	}

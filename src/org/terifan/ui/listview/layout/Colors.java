@@ -1,9 +1,8 @@
 package org.terifan.ui.listview.layout;
 
 import java.awt.Color;
-import org.terifan.ui.StyleSheet;
 import org.terifan.ui.listview.SelectionMode;
-import org.terifan.util.log.Log;
+import org.terifan.ui.listview.util.StyleSheet;
 
 
 class Colors

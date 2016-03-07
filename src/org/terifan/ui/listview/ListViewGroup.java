@@ -1,8 +1,7 @@
 package org.terifan.ui.listview;
 
-import org.terifan.util.SortedMap;
 import java.util.ArrayList;
-import org.terifan.util.log.Log;
+import org.terifan.ui.listview.util.SortedMap;
 
 
 public class ListViewGroup<T extends ListViewItem>

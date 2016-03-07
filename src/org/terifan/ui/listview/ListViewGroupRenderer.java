@@ -1,8 +1,8 @@
 package org.terifan.ui.listview;
 
 import java.awt.Graphics2D;
-import org.terifan.ui.StyleSheet;
-import org.terifan.ui.Utilities;
+import org.terifan.ui.listview.util.StyleSheet;
+import org.terifan.ui.listview.util.Utilities;
 
 
 public class ListViewGroupRenderer<T extends ListViewItem>

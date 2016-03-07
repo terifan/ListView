@@ -3,13 +3,13 @@ package org.terifan.ui.listview.layout;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
+import javax.swing.Icon;
 import javax.swing.SortOrder;
-import org.terifan.ui.Icon;
-import org.terifan.ui.StyleSheet;
-import org.terifan.ui.Utilities;
 import org.terifan.ui.listview.ListView;
 import org.terifan.ui.listview.ListViewColumn;
 import org.terifan.ui.listview.ListViewHeaderRenderer;
+import org.terifan.ui.listview.util.StyleSheet;
+import org.terifan.ui.listview.util.Utilities;
 
 
 public class ColumnHeaderRenderer implements ListViewHeaderRenderer

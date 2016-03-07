@@ -2,10 +2,9 @@ package org.terifan.ui.listview;
 
 import java.awt.Dimension;
 import java.awt.Graphics2D;
-import java.awt.Point;
 import java.awt.Rectangle;
 import java.util.ArrayList;
-import org.terifan.ui.Orientation;
+import org.terifan.ui.listview.util.Orientation;
 
 
 public interface ListViewLayout<T extends ListViewItem>

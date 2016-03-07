@@ -10,11 +10,11 @@ import java.awt.font.FontRenderContext;
 import java.awt.font.LineMetrics;
 import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
-import java.util.Random;
-import org.terifan.ui.Anchor;
+import org.terifan.ui.listview.util.Anchor;
 
 
 /**
+ * 
  * @deprecated use org.terifan.ui.TextBox instead
  */
 @Deprecated

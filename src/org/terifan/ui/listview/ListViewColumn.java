@@ -1,11 +1,11 @@
 package org.terifan.ui.listview;
 
-import org.terifan.ui.listview.util.Formatter;
 import java.awt.Font;
 import java.util.Comparator;
 import java.util.HashMap;
 import javax.swing.SortOrder;
-import org.terifan.ui.Alignment;
+import org.terifan.ui.listview.util.Alignment;
+import org.terifan.ui.listview.util.Formatter;
 
 
 public class ListViewColumn
@@ -28,7 +28,7 @@ public class ListViewColumn
 	protected Formatter mFormatter;
 	protected Formatter mGroupFormatter;
 	protected HashMap<Object,Object> mUserObject;
-	
+
 
 	public ListViewColumn(ListViewModel aModel, String aKey, String aLabel, int aWidth)
 	{
@@ -249,13 +249,13 @@ public class ListViewColumn
 	{
 		return mLabel;
 	}
-	
-	
+
+
 	public Object getUserObject(Object aOwner)
 	{
 		return mUserObject.get(aOwner);
 	}
-	
+
 
 	public void setUserObject(Object aOwner, Object aValue)
 	{

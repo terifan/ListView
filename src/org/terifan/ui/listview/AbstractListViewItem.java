@@ -1,6 +1,6 @@
 package org.terifan.ui.listview;
 
-import org.terifan.ui.Icon;
+import javax.swing.Icon;
 
 
 public abstract class AbstractListViewItem implements ListViewItem
@@ -10,8 +10,8 @@ public abstract class AbstractListViewItem implements ListViewItem
 	{
 		return null;
 	}
-	
-	
+
+
 	@Override
 	public Object getRenderingHint(Object aKey)
 	{

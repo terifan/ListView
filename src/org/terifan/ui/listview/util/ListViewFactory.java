@@ -1,9 +1,8 @@
 package org.terifan.ui.listview.util;
 
-import org.terifan.ui.listview.*;
 import java.awt.Color;
 import java.awt.Dimension;
-import org.terifan.ui.Orientation;
+import org.terifan.ui.listview.ListView;
 import org.terifan.ui.listview.layout.CardItemRenderer;
 import org.terifan.ui.listview.layout.ColumnHeaderRenderer;
 import org.terifan.ui.listview.layout.DetailItemRenderer;

@@ -29,11 +29,11 @@ import javax.swing.ScrollPaneConstants;
 import javax.swing.Scrollable;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
-import org.terifan.ui.Orientation;
-import org.terifan.ui.PopupFactory;
-import org.terifan.ui.StyleSheet;
-import org.terifan.ui.Utilities;
-import org.terifan.util.log.Log;
+import org.terifan.ui.listview.util.Orientation;
+import org.terifan.ui.listview.util.PopupFactory;
+import org.terifan.ui.listview.util.StyleSheet;
+import org.terifan.ui.listview.util.Utilities;
+import sun.rmi.runtime.Log;
 
 
 public class ListView<T extends ListViewItem> extends JComponent implements Scrollable
@@ -57,7 +57,6 @@ public class ListView<T extends ListViewItem> extends JComponent implements Scro
 	private String mPlaceholder;
 	private ListViewMouseListener mMouseListener;
 	private PopupFactory<ListView> mPopupFactory;
-	private ItemStateLoader<T> mItemStateLoader;
 
 	private final Rectangle mSelectionRectangle = new Rectangle();
 	private final HashSet<T> mSelectedItems;
@@ -74,7 +73,6 @@ public class ListView<T extends ListViewItem> extends JComponent implements Scro
 		mSelectedItems = new HashSet<>();
 //		mSelectedItemsClone = new HashSet<>();
 		mEventListeners = new ArrayList<>();
-		mItemStateLoader = new ItemStateLoader<>(this);
 
 		if (aModel != null)
 		{
@@ -356,7 +354,7 @@ public class ListView<T extends ListViewItem> extends JComponent implements Scro
 		}
 		catch (Exception e)
 		{
-			e.printStackTrace(Log.out);
+			e.printStackTrace(System.err);
 		}
 	}
 
@@ -921,8 +919,7 @@ public class ListView<T extends ListViewItem> extends JComponent implements Scro
 	}
 
 
-	protected void fireLoadState(T aItem)
+	protected void loadState(T aItem)
 	{
-		mItemStateLoader.fireLoadState(aItem);
 	}
 }

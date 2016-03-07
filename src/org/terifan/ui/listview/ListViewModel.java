@@ -2,14 +2,13 @@ package org.terifan.ui.listview;
 
 import java.util.Iterator;
 import org.terifan.ui.listview.util.Formatter;
-import org.terifan.util.SortedMap;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import javax.swing.Icon;
 import javax.swing.SortOrder;
-import org.terifan.util.log.Log;
+import org.terifan.ui.listview.util.SortedMap;
 
 
 public class ListViewModel<T extends ListViewItem> implements Iterable<T>

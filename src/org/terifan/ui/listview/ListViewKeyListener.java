@@ -2,7 +2,6 @@ package org.terifan.ui.listview;
 
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import org.terifan.util.log.Log;
 
 
 class ListViewKeyListener<T extends ListViewItem> extends KeyAdapter
@@ -84,7 +83,7 @@ class ListViewKeyListener<T extends ListViewItem> extends KeyAdapter
 				default:
 					return;
 			}
-			
+
 			if (newFocusItem != null && !aEvent.isShiftDown() && !aEvent.isControlDown())
 			{
 				mListView.setAnchorItem(newFocusItem);

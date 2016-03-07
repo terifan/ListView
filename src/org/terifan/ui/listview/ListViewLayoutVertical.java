@@ -1,15 +1,13 @@
 package org.terifan.ui.listview;
 
-import java.awt.Color;
-import org.terifan.util.SortedMap;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
-import org.terifan.ui.Orientation;
-import org.terifan.ui.StyleSheet;
-import org.terifan.util.log.Log;
+import org.terifan.ui.listview.util.Orientation;
+import org.terifan.ui.listview.util.SortedMap;
+import org.terifan.ui.listview.util.StyleSheet;
 
 
 public class ListViewLayoutVertical<T extends ListViewItem> extends AbstractListViewLayout<T>
@@ -152,7 +150,7 @@ public class ListViewLayoutVertical<T extends ListViewItem> extends AbstractList
 				for (int itemRowIndex = 0; itemIndex < itemCount && itemRowIndex < itemsPerRow; itemIndex++, itemRowIndex++)
 				{
 					T item = items.get(itemIndex);
-					mListView.fireLoadState(item);
+					mListView.loadState(item);
 				}
 
 				break;
@@ -165,7 +163,7 @@ public class ListViewLayoutVertical<T extends ListViewItem> extends AbstractList
 				for (int itemRowIndex = 0; itemIndex < itemCount && itemRowIndex < itemsPerRow; itemIndex++, itemRowIndex++)
 				{
 					T item = items.get(itemIndex);
-					mListView.fireLoadState(item);
+					mListView.loadState(item);
 
 					int tmpWidth = (int)(itemWidth + error);
 
@@ -180,7 +178,7 @@ public class ListViewLayoutVertical<T extends ListViewItem> extends AbstractList
 				for (int itemRowIndex = 0; itemIndex < itemCount && itemRowIndex < itemsPerRow; itemIndex++, itemRowIndex++)
 				{
 					T item = items.get(itemIndex);
-					mListView.fireLoadState(item);
+					mListView.loadState(item);
 				}
 			}
 			else

@@ -1,6 +1,6 @@
 package org.terifan.ui.listview;
 
-import org.terifan.ui.Icon;
+import javax.swing.Icon;
 
 
 public interface ListViewItem
@@ -13,7 +13,7 @@ public interface ListViewItem
 
 	/**
 	 * Implementations should load item state necessary to display the item and ensure the method isStateLoaded return true if the state don't need to be loaded again.
-	 * 
+	 *
 	 * @param aBackground
 	 *   true if the state is loaded as a background task. The ListView implementation only calls this method with a 'false' value.
 	 * @return
