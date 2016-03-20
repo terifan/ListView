@@ -370,27 +370,10 @@ public class ListViewModel<T extends ListViewItem> implements Iterable<T>
 	}
 
 
-//	public void setSortedColumn(String aSortedColumn)
-//	{
-//		ListViewColumn column = getColumn(aSortedColumn);
-//		if (column == null)
-//		{
-//			throw new IllegalArgumentException("Column not found: " + aSortedColumn);
-//		}
-//		setSortedColumn(column);
-//	}
-
-
 	public ListViewColumn getSortedColumn()
 	{
 		return mSortedColumn;
 	}
-
-
-//	public int getSortedColumnIndex()
-//	{
-//		return mColumns.indexOf(mSortedColumn);
-//	}
 
 	// -- Tree -----------------
 
@@ -451,11 +434,10 @@ public class ListViewModel<T extends ListViewItem> implements Iterable<T>
 
 			column = mColumns.get(mGroups.get(aLevel));
 			list = aParent.getChildren().getKeys();
-			comparator = column.getGroupComparator() == null ? column.getComparator() : column.getGroupComparator();
+			comparator = column.getGroupComparator() != null ? column.getGroupComparator() : column.getComparator();
 		}
 
-		ComparatorProxy c = new ComparatorProxy(comparator, getColumnIndex(column), column.getSortOrder() == SortOrder.DESCENDING);
-		Collections.sort(list, c);
+		Collections.sort(list, new ComparatorProxy(comparator, getColumnIndex(column), column.getSortOrder() == SortOrder.ASCENDING));
 	}
 
 
@@ -642,20 +624,20 @@ public class ListViewModel<T extends ListViewItem> implements Iterable<T>
 	protected class ComparatorProxy<E> implements Comparator<E>
 	{
 		private int mColumnIndex;
-		private boolean mDescending;
+		private boolean mAscending;
 		private Comparator mComparator;
 
-		public ComparatorProxy(Comparator aComparator, int aColumnIndex, boolean aDescending)
+		public ComparatorProxy(Comparator aComparator, int aColumnIndex, boolean aAscending)
 		{
 			mComparator = aComparator;
 			mColumnIndex = aColumnIndex;
-			mDescending = aDescending;
+			mAscending = aAscending;
 		}
 
 		@Override
 		public int compare(E t1, E t2)
 		{
-			if (mDescending)
+			if (!mAscending)
 			{
 				E t = t1;
 				t1 = t2;

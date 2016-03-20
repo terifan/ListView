@@ -8,8 +8,8 @@ import java.util.HashMap;
 
 public class SortedMap<K,V>
 {
-	protected ArrayList<K> mKeys = new ArrayList<K>();
-	protected HashMap<K,V> mValues = new HashMap<K,V>();
+	protected ArrayList<K> mKeys = new ArrayList<>();
+	protected HashMap<K,V> mValues = new HashMap<>();
 	protected Comparator<? super K> mComparator;
 
 
