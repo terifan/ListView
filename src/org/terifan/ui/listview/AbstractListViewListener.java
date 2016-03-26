@@ -1,28 +1,28 @@
 package org.terifan.ui.listview;
 
 
-public abstract class AbstractListViewListener implements ListViewListener
+public abstract class AbstractListViewListener<T extends ListViewItem> implements ListViewListener<T>
 {
 	@Override
-	public void selectionAction(ListViewEvent aEvent)
+	public void selectionAction(ListViewEvent<T> aEvent)
 	{
 	}
 
 
 	@Override
-	public void selectionChanged(ListViewEvent aEvent)
+	public void selectionChanged(ListViewEvent<T> aEvent)
 	{
 	}
 
 
 	@Override
-	public void sortedColumnChanged(ListViewEvent aEvent)
+	public void sortedColumnChanged(ListViewEvent<T> aEvent)
 	{
 	}
 
 
 	@Override
-	public void sortedColumnWillChange(ListViewEvent aEvent)
+	public void sortedColumnWillChange(ListViewEvent<T> aEvent)
 	{
 	}
 }

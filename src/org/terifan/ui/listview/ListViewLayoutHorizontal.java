@@ -122,19 +122,20 @@ public class ListViewLayoutHorizontal<T extends ListViewItem> extends AbstractLi
 	{
 		StyleSheet style = mListView.getStylesheet();
 
-		if (aGroup.isSelected() && mListView.getRolloverGroup() == aGroup)
-		{
-			aGraphics.setColor(style.getColor("groupSelectedRolloverBackground"));
-			aGraphics.fillRect(aOriginX, aOriginY, aWidth, aHeight);
-			aGraphics.setColor(style.getColor("groupSelectedRolloverForeground"));
-		}
-		else if (aGroup.isSelected())
-		{
-			aGraphics.setColor(style.getColor("groupSelectedBackground"));
-			aGraphics.fillRect(aOriginX, aOriginY, aWidth, aHeight);
-			aGraphics.setColor(style.getColor("groupSelectedForeground"));
-		}
-		else if (mListView.getRolloverGroup() == aGroup)
+//		if (aGroup.isSelected() && mListView.getRolloverGroup() == aGroup)
+//		{
+//			aGraphics.setColor(style.getColor("groupSelectedRolloverBackground"));
+//			aGraphics.fillRect(aOriginX, aOriginY, aWidth, aHeight);
+//			aGraphics.setColor(style.getColor("groupSelectedRolloverForeground"));
+//		}
+//		else if (aGroup.isSelected())
+//		{
+//			aGraphics.setColor(style.getColor("groupSelectedBackground"));
+//			aGraphics.fillRect(aOriginX, aOriginY, aWidth, aHeight);
+//			aGraphics.setColor(style.getColor("groupSelectedForeground"));
+//		}
+//		else 
+		if (mListView.getRolloverGroup() == aGroup)
 		{
 			aGraphics.setColor(style.getColor("groupRolloverBackground"));
 			aGraphics.fillRect(aOriginX, aOriginY, aWidth, aHeight);

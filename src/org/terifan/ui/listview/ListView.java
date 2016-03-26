@@ -33,7 +33,6 @@ import org.terifan.ui.listview.util.Orientation;
 import org.terifan.ui.listview.util.PopupFactory;
 import org.terifan.ui.listview.util.StyleSheet;
 import org.terifan.ui.listview.util.Utilities;
-import sun.rmi.runtime.Log;
 
 
 public class ListView<T extends ListViewItem> extends JComponent implements Scrollable
@@ -488,7 +487,7 @@ public class ListView<T extends ListViewItem> extends JComponent implements Scro
 	@Override
 	public int getScrollableUnitIncrement(Rectangle visibleRect, int orientation, int direction)
 	{
-		int v = orientation == SwingConstants.VERTICAL ? mItemRenderer.getItemPreferredHeight(this) : mItemRenderer.getItemPreferredWidth(this);
+		int v = orientation == SwingConstants.VERTICAL ? mItemRenderer.getItemPreferredHeight(this) : mItemRenderer.getItemPreferredWidth(this) + mItemRenderer.getItemSpacing(this).x;
 		return (int)Math.ceil(v / 3.0);
 	}
 
@@ -503,7 +502,7 @@ public class ListView<T extends ListViewItem> extends JComponent implements Scro
 		}
 		else
 		{
-			int v = orientation == SwingConstants.VERTICAL ? mItemRenderer.getItemPreferredHeight(this) : mItemRenderer.getItemPreferredWidth(this);
+			int v = orientation == SwingConstants.VERTICAL ? mItemRenderer.getItemPreferredHeight(this) : mItemRenderer.getItemPreferredWidth(this) + mItemRenderer.getItemSpacing(this).x;
 			return (int)Math.ceil(v / 3.0);
 		}
 	}

@@ -1,27 +1,33 @@
 package org.terifan.ui.listview;
 
 import java.awt.Graphics2D;
+import java.awt.Point;
 
 
 public interface ListViewItemRenderer<E extends ListViewItem>
 {
-	public int getItemMinimumWidth(ListView aListView);
+	int getItemMinimumHeight(ListView aListView);
 
-	public int getItemMaximumWidth(ListView aListView);
+	int getItemMaximumHeight(ListView aListView);
 
-	public int getItemPreferredWidth(ListView aListView);
+	int getItemMinimumWidth(ListView aListView);
 
-	public int getItemMinimumHeight(ListView aListView);
+	int getItemMaximumWidth(ListView aListView);
 
-	public int getItemMaximumHeight(ListView aListView);
+	int getItemPreferredWidth(ListView aListView);
 
-	public int getItemPreferredHeight(ListView aListView);
+	int getItemPreferredHeight(ListView aListView);
 
-	public int getItemWidth(ListView aListView, E aItem);
+	int getItemWidth(ListView aListView, E aItem);
 
-	public int getItemHeight(ListView aListView, E aItem);
+	int getItemHeight(ListView aListView, E aItem);
 
-	public void paintItem(Graphics2D aGraphics, int aOriginX, int aOriginY, int aWidth, int aHeight, ListView aListView, E aItem);
+	default Point getItemSpacing(ListView aListView)
+	{
+		return new Point(0,0);
+	}
 
-	public ListViewLayout createListViewLayout(ListView aListView);
+	void paintItem(Graphics2D aGraphics, int aOriginX, int aOriginY, int aWidth, int aHeight, ListView aListView, E aItem);
+
+	ListViewLayout createListViewLayout(ListView aListView);
 }

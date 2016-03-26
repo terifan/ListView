@@ -141,9 +141,9 @@ public class ListViewLayoutVertical<T extends ListViewItem> extends AbstractList
 			for (int itemRowIndex = 0, _itemIndex = itemIndex; _itemIndex < itemCount && itemRowIndex < itemsPerRow; _itemIndex++, itemRowIndex++)
 			{
 				ListViewItem item = items.get(_itemIndex);
-				int itemHeight = renderer.getItemHeight(mListView, item);
-				rowHeight = Math.max(rowHeight, itemHeight);
+				rowHeight = Math.max(rowHeight, renderer.getItemHeight(mListView, item));
 			}
+			rowHeight += renderer.getItemSpacing(mListView).y;
 
 			if (y >= clip.y + clip.height)
 			{
@@ -167,7 +167,7 @@ public class ListViewLayoutVertical<T extends ListViewItem> extends AbstractList
 
 					int tmpWidth = (int)(itemWidth + error);
 
-					renderer.paintItem(aGraphics, (int)x, y, tmpWidth, rowHeight, mListView, item);
+					renderer.paintItem(aGraphics, (int)x, y, tmpWidth, rowHeight - renderer.getItemSpacing(mListView).y, mListView, item);
 
 					x += tmpWidth;
 					error += itemWidth - tmpWidth;
@@ -419,7 +419,7 @@ public class ListViewLayoutVertical<T extends ListViewItem> extends AbstractList
 		int verticalBarWidth = mListView.getStylesheet().getInt("verticalBarWidth");
 		int verticalIndent = verticalBarWidth * Math.max(0, mListView.getModel().getGroupCount() - 1);
 		int windowWidth = mListView.getWidth() - verticalIndent;
-		int prefItemWidth = Math.max(mListView.getItemRenderer().getItemPreferredWidth(mListView), 1);
+		int prefItemWidth = Math.max(mListView.getItemRenderer().getItemPreferredWidth(mListView) + mListView.getItemRenderer().getItemSpacing(mListView).x, 1);
 
 		return Math.min(Math.max(1, windowWidth / prefItemWidth), mMaxItemsPerRow <= 0 ? 1 << 30 : mMaxItemsPerRow);
 	}
@@ -574,7 +574,7 @@ public class ListViewLayoutVertical<T extends ListViewItem> extends AbstractList
 	{
 		if (aList == null)
 		{
-			aList = new ArrayList<T>();
+			aList = new ArrayList<>();
 		}
 
 		if (y2 < y1)

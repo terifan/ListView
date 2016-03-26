@@ -4,9 +4,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.Iterator;
 
 
-public class SortedMap<K,V>
+public class SortedMap<K,V> implements Iterable<V>
 {
 	protected ArrayList<K> mKeys = new ArrayList<>();
 	protected HashMap<K,V> mValues = new HashMap<>();
@@ -79,5 +80,27 @@ public class SortedMap<K,V>
 			if (mValues.get(mKeys.get(i)).equals(aValue)) return i;
 		}
 		return -1;
+	}
+
+
+	@Override
+	public Iterator<V> iterator()
+	{
+		return new Iterator<V>()
+		{
+			int i;
+			
+			@Override
+			public boolean hasNext()
+			{
+				return i < mKeys.size();
+			}
+
+			@Override
+			public V next()
+			{
+				return mValues.get(mKeys.get(i));
+			}
+		};
 	}
 }

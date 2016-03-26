@@ -18,6 +18,9 @@ class ListViewMouseListener<T extends ListViewItem> extends MouseAdapter impleme
 	private boolean mIsControlDown;
 	private boolean mIsShiftDown;
 	private boolean mPopupTriggered;
+	private boolean mIsDragDrop;
+	private boolean mDragStarted;
+	private boolean mDragRectStarted;
 
 
 	public ListViewMouseListener(ListView<T> aListView)
@@ -39,10 +42,22 @@ class ListViewMouseListener<T extends ListViewItem> extends MouseAdapter impleme
 			mIsShiftDown = aEvent.isShiftDown();
 			mDragStart.setLocation(aEvent.getX(), aEvent.getY());
 
-			mSelectedItemsClone.clear();
-			if (mIsControlDown)
+			mDragStarted = false;
+			mDragRectStarted = false;
+			mIsDragDrop = false;
+			
+			ListViewLayout<T> layout = mListView.getListViewLayout();
+			LocationInfo<T> info = layout.getLocationInfo(aEvent.getX(), aEvent.getY());
+			if (info != null && info.getItem() != null && mListView.isItemSelected(info.getItem()))
 			{
-				mSelectedItemsClone.addAll(mListView.getSelectedItems());
+			}
+			else
+			{
+				mSelectedItemsClone.clear();
+				if (mIsControlDown)
+				{
+					mSelectedItemsClone.addAll(mListView.getSelectedItems());
+				}
 			}
 
 			process(aEvent, false);
@@ -107,52 +122,83 @@ class ListViewMouseListener<T extends ListViewItem> extends MouseAdapter impleme
 	@Override
 	public void mouseDragged(MouseEvent aEvent)
 	{
-		if (!mIsShiftDown && mListView.getSelectionMode() != SelectionMode.SINGLE_ROW && mListView.getSelectionMode() != SelectionMode.NONE && SwingUtilities.isLeftMouseButton(aEvent))
+		if (!mIsDragDrop && !mIsShiftDown && mListView.getSelectionMode() != SelectionMode.SINGLE_ROW && mListView.getSelectionMode() != SelectionMode.NONE && SwingUtilities.isLeftMouseButton(aEvent))
 		{
 			process(aEvent, true);
 		}
 	}
 
 
-	private void process(MouseEvent aEvent, boolean aDragged)
+	private void process(MouseEvent aEvent, boolean aMouseDragged)
 	{
 		int x = aEvent.getX();
 		int y = aEvent.getY();
 
-		if (aDragged)
+		ListViewLayout<T> layout = mListView.getListViewLayout();
+		LocationInfo<T> info = layout.getLocationInfo(aEvent.getX(), aEvent.getY());
+
+		if (aMouseDragged)
 		{
 			int width = Math.abs(mDragStart.x - x);
 			int height = Math.abs(mDragStart.y - y);
 
-			if (Math.abs(width) > 3 || Math.abs(height) > 3)
+			if (Math.abs(width) < 4 || Math.abs(height) < 4)
 			{
-				mListView.getSelectionRectangle().setLocation(Math.min(mDragStart.x, x), Math.min(mDragStart.y, y));
-				mListView.getSelectionRectangle().setSize(width, height);
+				return;
 			}
+
+			if (!mDragStarted && !mDragRectStarted)
+			{
+				if (info != null && info.getItem() != null && mListView.isItemSelected(info.getItem()))
+				{
+					mIsDragDrop = true;
+					return;
+				}
+
+				mSelectedItemsClone.clear();
+				if (mIsControlDown)
+				{
+					mSelectedItemsClone.addAll(mListView.getSelectedItems());
+				}
+
+				mDragStarted = true;
+			}
+
+			mListView.getSelectionRectangle().setLocation(Math.min(mDragStart.x, x), Math.min(mDragStart.y, y));
+			mListView.getSelectionRectangle().setSize(width, height);
+		}
+		else if (!mDragRectStarted)
+		{
+			if (mIsControlDown)
+			{
+				mSelectedItemsClone.clear();
+				mSelectedItemsClone.addAll(mListView.getSelectedItems());
+			}
+			else if (info.getItem() != null && mListView.isItemSelected(info.getItem()))
+			{
+				return;
+			}
+			mDragRectStarted = true;
 		}
 
-		ListViewLayout<T> layout = mListView.getListViewLayout();
-
-		LocationInfo<T> info = layout.getLocationInfo(x, y);
 		boolean isItem = info != null && info.isItem();
 		T selectedItem = info == null ? null : info.getItem();
 
 		// click on expand/collapse button
-		if (!aDragged && info != null && info.isGroup() && info.isGroupButton())
+		if (!aMouseDragged && info != null && info.isGroup() && info.isGroupButton())
 		{
-			info.getGroup().setCollapsed(info.getGroup().isCollapsed());
+			info.getGroup().setCollapsed(!info.getGroup().isCollapsed());
 			mListView.revalidate();
 			mListView.repaint();
 			return;
 		}
 
 		// click on group
-		if (!aDragged && info != null && info.isGroup())
+		if (!aMouseDragged && info != null && info.isGroup())
 		{
-			info.getGroup().setSelected(!info.getGroup().isSelected());
 			mListView.revalidate();
 			mListView.repaint();
-			mListView.fireSelectionChanged(new ListViewEvent(mListView, aEvent));
+			mListView.fireSelectionChanged(new ListViewEvent(mListView, aEvent, info.getGroup()));
 			return;
 		}
 
@@ -160,7 +206,7 @@ class ListViewMouseListener<T extends ListViewItem> extends MouseAdapter impleme
 
 		if (mIsShiftDown)
 		{
-			if (!aDragged)
+			if (!aMouseDragged)
 			{
 				mListView.setItemsSelected(false);
 				changed = true;
@@ -201,7 +247,7 @@ class ListViewMouseListener<T extends ListViewItem> extends MouseAdapter impleme
 			mListView.fireSelectionChanged(new ListViewEvent(mListView, aEvent));
 		}
 
-		if (aDragged)
+		if (aMouseDragged)
 		{
 			mTempScrollRect.setBounds(x - 25, y - 25, 50, 50);
 			mListView.scrollRectToVisible(mTempScrollRect);

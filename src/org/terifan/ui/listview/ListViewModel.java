@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashSet;
 import javax.swing.Icon;
 import javax.swing.SortOrder;
 import org.terifan.ui.listview.util.SortedMap;
@@ -18,6 +19,7 @@ public class ListViewModel<T extends ListViewItem> implements Iterable<T>
 	protected ArrayList<T> mItems;
 	protected ListViewGroup mTree;
 	protected ListViewColumn mSortedColumn;
+	protected HashSet<Object> mCollapsedGroups;
 
 
 	public ListViewModel()
@@ -25,6 +27,7 @@ public class ListViewModel<T extends ListViewItem> implements Iterable<T>
 		mColumns = new ArrayList<>();
 		mGroups = new ArrayList<>();
 		mItems = new ArrayList<>();
+		mCollapsedGroups = new HashSet<>();
 	}
 
 
@@ -142,7 +145,7 @@ public class ListViewModel<T extends ListViewItem> implements Iterable<T>
 
 		if (index == -1)
 		{
-			throw new IllegalArgumentException();
+			throw new IllegalArgumentException("Column not part of this model: " + aColumn);
 		}
 
 		if (mGroups.contains(index))
@@ -210,7 +213,7 @@ public class ListViewModel<T extends ListViewItem> implements Iterable<T>
 			return false;
 		}
 
-		group.setCollapsed(true);
+		setGroupCollapsed(group, true);
 
 		return true;
 	}
@@ -239,7 +242,7 @@ public class ListViewModel<T extends ListViewItem> implements Iterable<T>
 			{
 				ListViewGroup child = aGroup.getChild(key);
 
-				child.setCollapsed(true);
+				setGroupCollapsed(child, true);
 				collapseChildrenImpl(child);
 			}
 		}
@@ -255,7 +258,7 @@ public class ListViewModel<T extends ListViewItem> implements Iterable<T>
 			return false;
 		}
 
-		group.setCollapsed(false);
+		setGroupCollapsed(group, false);
 
 		return true;
 	}
@@ -284,7 +287,7 @@ public class ListViewModel<T extends ListViewItem> implements Iterable<T>
 			{
 				ListViewGroup child = aGroup.getChild(key);
 
-				child.setCollapsed(false);
+				setGroupCollapsed(child, false);
 				expandChildrenImpl(child);
 			}
 		}
@@ -447,7 +450,7 @@ public class ListViewModel<T extends ListViewItem> implements Iterable<T>
 
 		if (groupCount == 0)
 		{
-			ListViewGroup root = new ListViewGroup(null,0,null);
+			ListViewGroup root = new ListViewGroup(this,null,0,null);
 			ArrayList<T> items = new ArrayList<>();
 			root.setItems(items);
 
@@ -462,7 +465,7 @@ public class ListViewModel<T extends ListViewItem> implements Iterable<T>
 		}
 		else
 		{
-			ListViewGroup<T> root = new ListViewGroup<>(null,0,null);
+			ListViewGroup<T> root = new ListViewGroup<>(this,null,0,null);
 			root.setChildren(new SortedMap<>());
 
 			for (T item : mItems)
@@ -487,7 +490,7 @@ public class ListViewModel<T extends ListViewItem> implements Iterable<T>
 
 					if (next == null)
 					{
-						next = new ListViewGroup(group, groupIndex, groupKey);
+						next = new ListViewGroup(this, group, groupIndex, groupKey);
 
 						if (groupIndex == groupCount-1)
 						{
@@ -574,7 +577,7 @@ public class ListViewModel<T extends ListViewItem> implements Iterable<T>
 			for (Object key : children.getKeys())
 			{
 				ListViewGroup group = children.get(key);
-				if (aVisitCollapsedGroups || !group.isCollapsed())
+				if (aVisitCollapsedGroups || !isGroupCollapsed(group))
 				{
 					Object o = visitGroups(aVisitCollapsedGroups, aOnlyVisitLeafGroups, aVisitor, group);
 					if (o != null) return o;
@@ -595,7 +598,7 @@ public class ListViewModel<T extends ListViewItem> implements Iterable<T>
 			for (Object key : children.getKeys())
 			{
 				ListViewGroup group = children.get(key);
-				if (aVisitCollapsedGroups || !group.isCollapsed())
+				if (aVisitCollapsedGroups || !isGroupCollapsed(group))
 				{
 					Object o = visitItems(aVisitCollapsedGroups, aVisitor, group);
 					if (o != null)
@@ -681,6 +684,25 @@ public class ListViewModel<T extends ListViewItem> implements Iterable<T>
 					return v1.toString().compareTo(v2.toString());
 				}
 			}
+		}
+	}
+	
+	
+	public boolean isGroupCollapsed(ListViewGroup<T> aGroup)
+	{
+		return mCollapsedGroups.contains(aGroup.getGroupValue());
+	}
+	
+	
+	public void setGroupCollapsed(ListViewGroup<T> aGroup, boolean aCollapse)
+	{
+		if (aCollapse)
+		{
+			mCollapsedGroups.add(aGroup.getGroupValue());
+		}
+		else
+		{
+			mCollapsedGroups.remove(aGroup.getGroupValue());
 		}
 	}
 }
