@@ -2,9 +2,24 @@ package org.terifan.ui.listview;
 
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.Transferable;
+import java.awt.datatransfer.UnsupportedFlavorException;
+import java.awt.dnd.DnDConstants;
+import java.awt.dnd.DragGestureEvent;
+import java.awt.dnd.DragGestureListener;
+import java.awt.dnd.DragGestureRecognizer;
+import java.awt.dnd.DragSource;
+import java.awt.dnd.DragSourceAdapter;
+import java.awt.dnd.DragSourceDropEvent;
+import java.awt.dnd.MouseDragGestureRecognizer;
+import java.awt.event.InputEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
+import java.io.IOException;
+import java.io.Serializable;
+import java.util.Arrays;
 import java.util.HashSet;
 import javax.swing.SwingUtilities;
 
@@ -48,10 +63,9 @@ class ListViewMouseListener<T extends ListViewItem> extends MouseAdapter impleme
 			
 			ListViewLayout<T> layout = mListView.getListViewLayout();
 			LocationInfo<T> info = layout.getLocationInfo(aEvent.getX(), aEvent.getY());
-			if (info != null && info.getItem() != null && mListView.isItemSelected(info.getItem()))
-			{
-			}
-			else
+			boolean itemSelected = info != null && info.getItem() != null && mListView.isItemSelected(info.getItem());
+
+			if (!itemSelected)
 			{
 				mSelectedItemsClone.clear();
 				if (mIsControlDown)
@@ -59,11 +73,11 @@ class ListViewMouseListener<T extends ListViewItem> extends MouseAdapter impleme
 					mSelectedItemsClone.addAll(mListView.getSelectedItems());
 				}
 			}
-
+			
 			process(aEvent, false);
 
 			// use modulo to avoid tripple clicks to be regarded as two double clicks etc.
-			if (SwingUtilities.isLeftMouseButton(aEvent) && (aEvent.getClickCount() % 2) == 0)
+			if (itemSelected && SwingUtilities.isLeftMouseButton(aEvent) && (aEvent.getClickCount() % 2) == 0)
 			{
 				mListView.fireSelectionAction(new ListViewEvent(mListView, aEvent));
 			}
@@ -95,6 +109,18 @@ class ListViewMouseListener<T extends ListViewItem> extends MouseAdapter impleme
 		if (aEvent.isPopupTrigger())
 		{
 			mPopupTriggered = mListView.firePopupMenu(aEvent.getPoint());
+		}
+		
+		if (!mDragRectStarted && !mDragStarted && !mIsControlDown && !mIsShiftDown && !mIsDragDrop)
+		{
+			mListView.setItemsSelected(false);
+			LocationInfo<T> info = mListView.getListViewLayout().getLocationInfo(aEvent.getX(), aEvent.getY());
+			if (info != null && info.getItem() != null)
+			{
+				mListView.setFocusItem(info.getItem());
+				mListView.setItemSelected(info.getItem(), true);
+			}
+			mListView.repaint();
 		}
 	}
 
@@ -152,6 +178,11 @@ class ListViewMouseListener<T extends ListViewItem> extends MouseAdapter impleme
 				if (info != null && info.getItem() != null && mListView.isItemSelected(info.getItem()))
 				{
 					mIsDragDrop = true;
+
+//					mListView.getDragListeners();
+					
+					new ListViewDragListener(mListView).startDrag(aEvent);
+					
 					return;
 				}
 
@@ -174,7 +205,7 @@ class ListViewMouseListener<T extends ListViewItem> extends MouseAdapter impleme
 				mSelectedItemsClone.clear();
 				mSelectedItemsClone.addAll(mListView.getSelectedItems());
 			}
-			else if (info.getItem() != null && mListView.isItemSelected(info.getItem()))
+			else if (info != null && info.getItem() != null && mListView.isItemSelected(info.getItem()))
 			{
 				return;
 			}
@@ -213,10 +244,7 @@ class ListViewMouseListener<T extends ListViewItem> extends MouseAdapter impleme
 			}
 			if (isItem)
 			{
-				for (T item : layout.getItemsIntersecting(mListView.getAnchorItem(), selectedItem))
-				{
-					mListView.setItemSelected(item, true);
-				}
+				mListView.setItemsSelected(layout.getItemsIntersecting(mListView.getAnchorItem(), selectedItem), true);
 				changed = true;
 			}
 		}
@@ -232,10 +260,7 @@ class ListViewMouseListener<T extends ListViewItem> extends MouseAdapter impleme
 			mListView.setFocusItem(selectedItem);
 		}
 
-		for (T item : mSelectedItemsClone)
-		{
-			mListView.setItemSelected(item, true);
-		}
+		mListView.setItemsSelected(mSelectedItemsClone, true);
 
 		for (T item : layout.getItemsIntersecting(mDragStart.x, mDragStart.y, x, y, null))
 		{

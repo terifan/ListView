@@ -13,7 +13,7 @@ public interface ListViewLayout<T extends ListViewItem>
 
 	public void paint(Graphics2D aGraphics);
 
-	public LocationInfo getLocationInfo(int aLocationX, int aLocationY);
+	public LocationInfo<T> getLocationInfo(int aLocationX, int aLocationY);
 
 	public int getMarginLeft();
 

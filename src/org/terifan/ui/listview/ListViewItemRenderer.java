@@ -4,30 +4,30 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 
 
-public interface ListViewItemRenderer<E extends ListViewItem>
+public interface ListViewItemRenderer<T extends ListViewItem>
 {
-	int getItemMinimumHeight(ListView aListView);
+	int getItemMinimumHeight(ListView<T> aListView);
 
-	int getItemMaximumHeight(ListView aListView);
+	int getItemMaximumHeight(ListView<T> aListView);
 
-	int getItemMinimumWidth(ListView aListView);
+	int getItemMinimumWidth(ListView<T> aListView);
 
-	int getItemMaximumWidth(ListView aListView);
+	int getItemMaximumWidth(ListView<T> aListView);
 
-	int getItemPreferredWidth(ListView aListView);
+	int getItemPreferredWidth(ListView<T> aListView);
 
-	int getItemPreferredHeight(ListView aListView);
+	int getItemPreferredHeight(ListView<T> aListView);
 
-	int getItemWidth(ListView aListView, E aItem);
+	int getItemWidth(ListView<T> aListView, T aItem);
 
-	int getItemHeight(ListView aListView, E aItem);
+	int getItemHeight(ListView<T> aListView, T aItem);
 
-	default Point getItemSpacing(ListView aListView)
+	default Point getItemSpacing(ListView<T> aListView)
 	{
 		return new Point(0,0);
 	}
 
-	void paintItem(Graphics2D aGraphics, int aOriginX, int aOriginY, int aWidth, int aHeight, ListView aListView, E aItem);
+	void paintItem(Graphics2D aGraphics, int aOriginX, int aOriginY, int aWidth, int aHeight, ListView<T> aListView, T aItem);
 
-	ListViewLayout createListViewLayout(ListView aListView);
+	ListViewLayout<T> createListViewLayout(ListView<T> aListView);
 }

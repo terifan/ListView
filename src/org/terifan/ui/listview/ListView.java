@@ -12,6 +12,12 @@ import java.awt.Graphics2D;
 import java.awt.MouseInfo;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.dnd.DropTarget;
+import java.awt.dnd.DropTargetAdapter;
+import java.awt.dnd.DropTargetDragEvent;
+import java.awt.dnd.DropTargetDropEvent;
+import java.awt.dnd.DropTargetEvent;
+import java.awt.dnd.DropTargetListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyAdapter;
@@ -44,7 +50,7 @@ public class ListView<T extends ListViewItem> extends JComponent implements Scro
 	private ListViewHeaderRenderer mHeaderRenderer;
 	private ListViewBarRenderer mBarRenderer;
 	private ListViewItemRenderer mItemRenderer;
-	private ListViewLayout mLayout;
+	private ListViewLayout<T> mLayout;
 	private SelectionMode mSelectionMode;
 	private boolean mRolloverEnabled;
 	private boolean mIsConfigured;
@@ -56,6 +62,7 @@ public class ListView<T extends ListViewItem> extends JComponent implements Scro
 	private String mPlaceholder;
 	private ListViewMouseListener mMouseListener;
 	private PopupFactory<ListView> mPopupFactory;
+	private ArrayList<ListViewDropListener<T>> mDropListeners;
 
 	private final Rectangle mSelectionRectangle = new Rectangle();
 	private final HashSet<T> mSelectedItems;
@@ -67,11 +74,11 @@ public class ListView<T extends ListViewItem> extends JComponent implements Scro
 	}
 
 
-	public ListView(ListViewModel aModel)
+	public ListView(ListViewModel<T> aModel)
 	{
 		mSelectedItems = new HashSet<>();
-//		mSelectedItemsClone = new HashSet<>();
 		mEventListeners = new ArrayList<>();
+		mDropListeners = new ArrayList<>();
 
 		if (aModel != null)
 		{
@@ -107,9 +114,11 @@ public class ListView<T extends ListViewItem> extends JComponent implements Scro
 		registerKeyboardAction(action, KeyStroke.getKeyStroke(KeyEvent.VK_END, 0), JComponent.WHEN_FOCUSED);
 		registerKeyboardAction(action, KeyStroke.getKeyStroke(KeyEvent.VK_HOME, InputEvent.CTRL_MASK), JComponent.WHEN_FOCUSED);
 		registerKeyboardAction(action, KeyStroke.getKeyStroke(KeyEvent.VK_END, InputEvent.CTRL_MASK), JComponent.WHEN_FOCUSED);
+
+		new DropTarget(this, new ListViewDropTargetListener(this));
 	}
-
-
+	
+	
 	public void setStyleSheet(StyleSheet aStylesheet)
 	{
 		mStylesheet = aStylesheet.getStyleSheet("org.terifan.ui.listview.ListView");
@@ -145,7 +154,7 @@ public class ListView<T extends ListViewItem> extends JComponent implements Scro
 	}
 
 
-	public void setItemRenderer(ListViewItemRenderer aItemRenderer)
+	public void setItemRenderer(ListViewItemRenderer<T> aItemRenderer)
 	{
 		mItemRenderer = aItemRenderer;
 
@@ -153,7 +162,7 @@ public class ListView<T extends ListViewItem> extends JComponent implements Scro
 	}
 
 
-	public void setListViewLayout(ListViewLayout aLayout)
+	public void setListViewLayout(ListViewLayout<T> aLayout)
 	{
 		mLayout = aLayout;
 	}
@@ -183,7 +192,7 @@ public class ListView<T extends ListViewItem> extends JComponent implements Scro
 	}
 
 
-	public void setModel(ListViewModel aModel)
+	public void setModel(ListViewModel<T> aModel)
 	{
 		mModel = aModel;
 
@@ -298,7 +307,7 @@ public class ListView<T extends ListViewItem> extends JComponent implements Scro
 	{
 		if (mRolloverEnabled)
 		{
-			LocationInfo info = mLayout.getLocationInfo(aPoint.x, aPoint.y);
+			LocationInfo<T> info = mLayout.getLocationInfo(aPoint.x, aPoint.y);
 
 			if (info == null && mRolloverInfo != null || info != null && !info.equals(mRolloverInfo))
 			{
@@ -526,7 +535,6 @@ public class ListView<T extends ListViewItem> extends JComponent implements Scro
 	public boolean isItemSelected(T aItem)
 	{
 		return mSelectedItems.contains(aItem);
-//		return mSelectedItems.contains(aItem) ^ mSelectedItemsClone.contains(aItem);
 	}
 
 
@@ -542,6 +550,25 @@ public class ListView<T extends ListViewItem> extends JComponent implements Scro
 		else
 		{
 			return mSelectedItems.remove(aItem);
+		}
+	}
+
+
+	public void setItemsSelected(Iterable<T> aItems, boolean aSelected)
+	{
+		if (aSelected)
+		{
+			for (T item : aItems)
+			{
+				mSelectedItems.add(item);
+			}
+		}
+		else
+		{
+			for (T item : aItems)
+			{
+				mSelectedItems.remove(item);
+			}
 		}
 	}
 
@@ -920,5 +947,30 @@ public class ListView<T extends ListViewItem> extends JComponent implements Scro
 
 	protected void loadState(T aItem)
 	{
+	}
+
+
+	public void addDropListener(ListViewDropListener aListViewDropListener)
+	{
+		mDropListeners.add(aListViewDropListener);
+	}
+
+
+	ArrayList<ListViewDropListener<T>> getDropListeners()
+	{
+		return mDropListeners;
+	}
+
+
+	public T getItemAt(Point aPoint)
+	{
+		LocationInfo<T> info = mLayout.getLocationInfo(aPoint.x, aPoint.y);
+
+		if (info != null && info.isItem())
+		{
+			return info.getItem();
+		}
+
+		return null;
 	}
 }
