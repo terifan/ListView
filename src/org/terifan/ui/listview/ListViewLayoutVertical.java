@@ -77,7 +77,7 @@ public class ListViewLayoutVertical<T extends ListViewItem> extends AbstractList
 
 		Rectangle clip = aGraphics.getClipBounds();
 
-		int height = aGroup.isCollapsed() ? 0 : getGroupHeight(aGroup);
+		int height = aGroup.isCollapsed() ? 0 : getGroupHeight(aGroup, getItemsPerRun());
 
 		if (clip.y <= aOriginY + height + groupHeight && clip.y + clip.height >= aOriginY)
 		{
@@ -134,6 +134,7 @@ public class ListViewLayoutVertical<T extends ListViewItem> extends AbstractList
 
 		Rectangle clip = aGraphics.getClipBounds();
 		ListViewItemRenderer renderer = mListView.getItemRenderer();
+		int itemSpacingY = renderer.getItemSpacing(mListView).y;
 
 		for (int itemIndex = 0, itemCount = items.size(); itemIndex < itemCount;)
 		{
@@ -141,9 +142,8 @@ public class ListViewLayoutVertical<T extends ListViewItem> extends AbstractList
 			for (int itemRowIndex = 0, _itemIndex = itemIndex; _itemIndex < itemCount && itemRowIndex < itemsPerRow; _itemIndex++, itemRowIndex++)
 			{
 				ListViewItem item = items.get(_itemIndex);
-				rowHeight = Math.max(rowHeight, renderer.getItemHeight(mListView, item));
+				rowHeight = Math.max(rowHeight, renderer.getItemHeight(mListView, item) + itemSpacingY);
 			}
-			rowHeight += renderer.getItemSpacing(mListView).y;
 
 			if (y >= clip.y + clip.height)
 			{
@@ -230,7 +230,7 @@ public class ListViewLayoutVertical<T extends ListViewItem> extends AbstractList
 	{
 		int groupHeight = mListView.getStylesheet().getInt("groupHeight");
 		int verticalBarWidth = mListView.getStylesheet().getInt("verticalBarWidth");
-		int height = aGroup.isCollapsed() ? 0 : getGroupHeight(aGroup);
+		int height = aGroup.isCollapsed() ? 0 : getGroupHeight(aGroup, getItemsPerRun());
 
 		if (aLocationX > aGroup.getLevel() * verticalBarWidth && aLocationX < mListView.getWidth())
 		{
@@ -303,6 +303,7 @@ public class ListViewLayoutVertical<T extends ListViewItem> extends AbstractList
 		}
 
 		ListViewItemRenderer renderer = mListView.getItemRenderer();
+		int itemSpacingY = renderer.getItemSpacing(mListView).y;
 		ArrayList<T> items = aGroup.getItems();
 		double itemWidth = getItemWidth();
 		int itemsPerRow = getItemsPerRun();
@@ -313,7 +314,7 @@ public class ListViewLayoutVertical<T extends ListViewItem> extends AbstractList
 
 		for (int i = 0, sz = items.size(); i < sz; i++)
 		{
-			tempHeight = Math.max(tempHeight, renderer.getItemHeight(mListView, items.get(i)));
+			tempHeight = Math.max(tempHeight, renderer.getItemHeight(mListView, items.get(i)) + itemSpacingY);
 
 			if (++itemX == itemsPerRow || i + 1 == sz)
 			{
@@ -327,7 +328,7 @@ public class ListViewLayoutVertical<T extends ListViewItem> extends AbstractList
 						x -= itemWidth;
 						if (x < 0)
 						{
-							if (renderer.getItemHeight(mListView, items.get(i)) >= y + tempHeight)
+							if (renderer.getItemHeight(mListView, items.get(i)) + itemSpacingY >= y + tempHeight)
 							{
 								col = j;
 							}
@@ -357,19 +358,13 @@ public class ListViewLayoutVertical<T extends ListViewItem> extends AbstractList
 	}
 
 
-	private int getGroupHeight(ListViewGroup aGroup)
-	{
-		return getGroupHeight(aGroup, getItemsPerRun());
-	}
-
-
 	private int getGroupHeight(ListViewGroup aGroup, int aItemsPerRow)
 	{
 		SortedMap<Object, ListViewGroup> children = aGroup.getChildren();
 
 		if (children != null)
 		{
-			int groupHeight = mListView.getStylesheet().getInt("groupHeight");
+			int groupBarHeight = mListView.getStylesheet().getInt("groupHeight");
 			int height = 0;
 
 			for (Object key : children.getKeys())
@@ -378,11 +373,11 @@ public class ListViewLayoutVertical<T extends ListViewItem> extends AbstractList
 
 				if (group.isCollapsed())
 				{
-					height += groupHeight;
+					height += groupBarHeight;
 				}
 				else
 				{
-					height += groupHeight + getGroupHeight(group, aItemsPerRow);
+					height += groupBarHeight + getGroupHeight(group, aItemsPerRow);
 				}
 			}
 
@@ -395,10 +390,12 @@ public class ListViewLayoutVertical<T extends ListViewItem> extends AbstractList
 			int height = 0;
 			int tempHeight = 0;
 			int itemX = 0;
+			int itemSpacingY = renderer.getItemSpacing(mListView).y;
 
 			for (ListViewItem item : items)
 			{
-				tempHeight = Math.max(tempHeight, renderer.getItemHeight(mListView, item));
+				tempHeight = Math.max(tempHeight, renderer.getItemHeight(mListView, item) + itemSpacingY);
+
 				if (++itemX == aItemsPerRow)
 				{
 					height += tempHeight;
@@ -452,7 +449,7 @@ public class ListViewLayoutVertical<T extends ListViewItem> extends AbstractList
 	{
 		ListViewGroup root = mListView.getModel().getRoot();
 
-		int height = getGroupHeight(root);
+		int height = getGroupHeight(root, getItemsPerRun());
 
 		mPreferredSize = new Dimension(mListView.getItemRenderer().getItemMinimumWidth(mListView), height + 10);
 
@@ -602,7 +599,7 @@ public class ListViewLayoutVertical<T extends ListViewItem> extends AbstractList
 			{
 				ListViewGroup group = children.get(key);
 
-				int height = getGroupHeight(group);
+				int height = getGroupHeight(group, getItemsPerRun());
 
 				aOffsetY += groupHeight;
 
@@ -634,10 +631,11 @@ public class ListViewLayoutVertical<T extends ListViewItem> extends AbstractList
 			int rowHeight = 0;
 			int itemX = 0;
 			int itemY = 0;
+			int itemSpacingY = renderer.getItemSpacing(mListView).y;
 
 			for (int i = 0; i < items.size(); i++)
 			{
-				rowHeight = Math.max(rowHeight, renderer.getItemHeight(mListView, items.get(i)));
+				rowHeight = Math.max(rowHeight, renderer.getItemHeight(mListView, items.get(i)) + itemSpacingY);
 
 				if (++itemX == itemsPerRun || i == items.size() - 1)
 				{
@@ -689,8 +687,6 @@ public class ListViewLayoutVertical<T extends ListViewItem> extends AbstractList
 			{
 				ListViewGroup group = children.get(key);
 
-				int height = getGroupHeight(group);
-
 				aOffsetY += groupHeight;
 
 				if (!group.isCollapsed())
@@ -700,7 +696,7 @@ public class ListViewLayoutVertical<T extends ListViewItem> extends AbstractList
 						return true;
 					}
 
-					aOffsetY += height;
+					aOffsetY += getGroupHeight(group, getItemsPerRun());
 				}
 			}
 
@@ -744,14 +740,15 @@ public class ListViewLayoutVertical<T extends ListViewItem> extends AbstractList
 
 	private int getRowHeight(ListViewGroup aGroup, int aItemIndex)
 	{
+		ListViewItemRenderer renderer = mListView.getItemRenderer();
+		int itemSpacingY = renderer.getItemSpacing(mListView).y;
 		int itemsPerRun = getItemsPerRun();
 		ArrayList<T> items = aGroup.getItems();
-		ListViewItemRenderer renderer = mListView.getItemRenderer();
 		int height = 0;
 
 		for (int i = aItemIndex - (aItemIndex % itemsPerRun), j = i; j < i + itemsPerRun; j++)
 		{
-			height = Math.max(height, renderer.getItemHeight(mListView, items.get(i)));
+			height = Math.max(height, renderer.getItemHeight(mListView, items.get(i)) + itemSpacingY);
 		}
 
 		return height;

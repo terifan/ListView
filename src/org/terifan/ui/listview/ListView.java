@@ -527,7 +527,6 @@ public class ListView<T extends ListViewItem> extends JComponent implements Scro
 //		}
 
 		revalidate();
-		requestFocus();
 		repaint();
 	}
 
