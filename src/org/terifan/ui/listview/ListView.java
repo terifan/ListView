@@ -13,11 +13,6 @@ import java.awt.MouseInfo;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.dnd.DropTarget;
-import java.awt.dnd.DropTargetAdapter;
-import java.awt.dnd.DropTargetDragEvent;
-import java.awt.dnd.DropTargetDropEvent;
-import java.awt.dnd.DropTargetEvent;
-import java.awt.dnd.DropTargetListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyAdapter;
@@ -697,7 +692,7 @@ public class ListView<T extends ListViewItem> extends JComponent implements Scro
 			return false;
 		}
 
-		JPopupMenu menu = factory.createPopup(this);
+		JPopupMenu menu = factory.createPopup(this, aPoint);
 
 		if (menu == null)
 		{
@@ -779,13 +774,10 @@ public class ListView<T extends ListViewItem> extends JComponent implements Scro
 	{
 		final ArrayList<T> list = new ArrayList<>(mModel.getItemCount());
 
-		ItemVisitor<T> visitor = new ItemVisitor<T>() {
-			@Override
-			public Object visit(T aItem)
-			{
-				list.add(aItem);
-				return null;
-			}
+		ItemVisitor<T> visitor = aItem ->
+		{
+			list.add(aItem);
+			return null;
 		};
 
 		mModel.visitItems(true, visitor);
