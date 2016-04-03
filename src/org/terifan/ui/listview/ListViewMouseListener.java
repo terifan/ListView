@@ -7,6 +7,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
 import java.util.HashSet;
 import javax.swing.SwingUtilities;
+import sun.rmi.runtime.Log;
 
 
 class ListViewMouseListener<T extends ListViewItem> extends MouseAdapter implements MouseMotionListener
@@ -164,10 +165,8 @@ class ListViewMouseListener<T extends ListViewItem> extends MouseAdapter impleme
 				{
 					mIsDragDrop = true;
 
-//					mListView.getDragListeners();
-					
 					new ListViewDragListener(mListView).startDrag(aEvent);
-					
+
 					return;
 				}
 
