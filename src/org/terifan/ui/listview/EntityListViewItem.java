@@ -2,6 +2,7 @@ package org.terifan.ui.listview;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import sun.rmi.runtime.Log;
 
 
 public class EntityListViewItem extends AbstractListViewItem
@@ -53,6 +54,7 @@ public class EntityListViewItem extends AbstractListViewItem
 		}
 		catch (IllegalAccessException | InvocationTargetException e)
 		{
+			System.err.println(aColumn);
 			e.printStackTrace(System.err);
 
 			return "#error";
