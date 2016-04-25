@@ -12,13 +12,17 @@ import java.awt.Graphics2D;
 import java.awt.MouseInfo;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.FlavorMap;
 import java.awt.dnd.DropTarget;
+import java.awt.dnd.DropTargetListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Map;
 import javax.swing.AbstractAction;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
@@ -57,7 +61,6 @@ public class ListView<T extends ListViewItem> extends JComponent implements Scro
 	private String mPlaceholder;
 	private ListViewMouseListener mMouseListener;
 	private PopupFactory<ListView> mPopupFactory;
-	private ArrayList<ListViewDropListener<T>> mDropListeners;
 
 	private final Rectangle mSelectionRectangle = new Rectangle();
 	private final HashSet<T> mSelectedItems;
@@ -73,7 +76,6 @@ public class ListView<T extends ListViewItem> extends JComponent implements Scro
 	{
 		mSelectedItems = new HashSet<>();
 		mEventListeners = new ArrayList<>();
-		mDropListeners = new ArrayList<>();
 
 		if (aModel != null)
 		{
@@ -109,8 +111,6 @@ public class ListView<T extends ListViewItem> extends JComponent implements Scro
 		registerKeyboardAction(action, KeyStroke.getKeyStroke(KeyEvent.VK_END, 0), JComponent.WHEN_FOCUSED);
 		registerKeyboardAction(action, KeyStroke.getKeyStroke(KeyEvent.VK_HOME, InputEvent.CTRL_MASK), JComponent.WHEN_FOCUSED);
 		registerKeyboardAction(action, KeyStroke.getKeyStroke(KeyEvent.VK_END, InputEvent.CTRL_MASK), JComponent.WHEN_FOCUSED);
-
-		new DropTarget(this, new ListViewDropTargetListener(this));
 	}
 	
 	
@@ -941,18 +941,6 @@ public class ListView<T extends ListViewItem> extends JComponent implements Scro
 	}
 
 
-	public void addDropListener(ListViewDropListener aListViewDropListener)
-	{
-		mDropListeners.add(aListViewDropListener);
-	}
-
-
-	ArrayList<ListViewDropListener<T>> getDropListeners()
-	{
-		return mDropListeners;
-	}
-
-
 	public T getItemAt(Point aPoint)
 	{
 		LocationInfo<T> info = mLayout.getLocationInfo(aPoint.x, aPoint.y);
@@ -963,5 +951,11 @@ public class ListView<T extends ListViewItem> extends JComponent implements Scro
 		}
 
 		return null;
+	}
+
+
+	public void addDropTargetListener(DropTargetListener aDropTargetListener)
+	{
+		new DropTarget(this, aDropTargetListener).setActive(true);
 	}
 }
