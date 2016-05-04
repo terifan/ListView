@@ -51,9 +51,9 @@ public class ListViewModel<T extends ListViewItem> implements Iterable<T>
 	}
 
 
-	public void removeItem(T aItem)
+	public boolean removeItem(T aItem)
 	{
-		mItems.remove(aItem);
+		return mItems.remove(aItem);
 	}
 
 
