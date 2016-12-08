@@ -45,7 +45,8 @@ public class DefaultListViewItem extends AbstractListViewItem
 	@Override
 	public Icon getIcon(ListViewColumn aColumn)
 	{
-		return mIcons[aColumn.getModel().getColumnIndex(aColumn)];
+		int index = aColumn.getModel().getColumnIndex(aColumn);
+		return index >= mIcons.length ? null : mIcons[index];
 	}
 
 
