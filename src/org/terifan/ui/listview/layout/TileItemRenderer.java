@@ -132,7 +132,15 @@ public class TileItemRenderer implements ListViewItemRenderer
 			int w = mIconWidth + 10;
 			int h = aHeight-10;
 
-			Icon icon = aItem.getIcon(aListView.getModel().getColumn(0));
+			Icon icon;
+			if (aListView.getModel().getItemIconProducer() != null)
+			{
+				icon = aListView.getModel().getItemIconProducer().format(aItem);
+			}
+			else
+			{
+				icon = null;
+			}
 			boolean drawBorder = icon != null;
 
 			int tw = mIconWidth;

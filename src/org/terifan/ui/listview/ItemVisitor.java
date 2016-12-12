@@ -1,5 +1,6 @@
 package org.terifan.ui.listview;
 
+
 public interface ItemVisitor<T extends ListViewItem>
 {
 	/**

@@ -42,11 +42,11 @@ public class ListViewGroupRenderer<T extends ListViewItem>
 
 		int cnt = aGroup.getItemCount();
 		int textX = aOriginX + 20;
-		int textY = aOriginY + aHeight - 15;
+		int textY = aOriginY + aHeight - 12;
 
 		ListViewColumn column = aListView.getModel().getColumn(aListView.getModel().getGroup(aGroup.getLevel()));
 		Object value = aGroup.getGroupValue();
-		String count = "("+cnt+" item"+(cnt!=1?"s":"")+")";
+		String count = "(" + cnt + " item" + (cnt != 1 ? "s" : "") + ")";
 
 		if (column.getGroupFormatter() == null && column.getFormatter() != null)
 		{
@@ -57,7 +57,7 @@ public class ListViewGroupRenderer<T extends ListViewItem>
 		{
 			aGraphics.setFont(style.getFont("group"));
 			aGraphics.drawString(value.toString(), textX, textY);
-			
+
 			textX += aGraphics.getFontMetrics().stringWidth(value + " ");
 		}
 
@@ -66,9 +66,9 @@ public class ListViewGroupRenderer<T extends ListViewItem>
 		aGraphics.drawString(count, textX, textY);
 
 		aGraphics.setColor(style.getColor("groupHorizontalLine"));
-		for (int i = 1, thickness=style.getInt("groupLineThickness"); i <= thickness; i++)
+		for (int i = 1, thickness = style.getInt("groupLineThickness"); i <= thickness; i++)
 		{
-			aGraphics.drawLine(aOriginX, aOriginY+aHeight-5-i, aOriginX+aWidth, aOriginY+aHeight-5-i);
+			aGraphics.drawLine(aOriginX, aOriginY + aHeight - i, aOriginX + aWidth, aOriginY + aHeight - i);
 		}
 
 		BufferedImage icon;
@@ -80,6 +80,6 @@ public class ListViewGroupRenderer<T extends ListViewItem>
 		{
 			icon = style.getImage("collapseButton");
 		}
-		aGraphics.drawImage(icon, aOriginX+3, aOriginY+aHeight-icon.getHeight()-18, null);
+		aGraphics.drawImage(icon, aOriginX + 3, aOriginY + aHeight - icon.getHeight() - 18, null);
 	}
 }

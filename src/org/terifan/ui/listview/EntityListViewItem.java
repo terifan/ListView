@@ -2,7 +2,7 @@ package org.terifan.ui.listview;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import sun.rmi.runtime.Log;
+import javax.swing.Icon;
 
 
 public class EntityListViewItem extends AbstractListViewItem
@@ -33,7 +33,9 @@ public class EntityListViewItem extends AbstractListViewItem
 			{
 				for (Method tmp : mType.getDeclaredMethods())
 				{
-					if (tmp.getName().startsWith("get") && tmp.getParameterCount() == 0 && tmp.getName().substring(3).equalsIgnoreCase(aColumn.getKey()))
+					String name = tmp.getName();
+					if (tmp.getParameterCount() == 0 && (name.startsWith("get") && name.substring(3).equalsIgnoreCase(aColumn.getKey())
+						|| name.startsWith("is") && name.substring(2).equalsIgnoreCase(aColumn.getKey())))
 					{
 						tmp.setAccessible(true);
 						method = tmp;
@@ -59,5 +61,12 @@ public class EntityListViewItem extends AbstractListViewItem
 
 			return "#error";
 		}
+	}
+
+
+	@Override
+	public Icon getIcon(ListViewColumn aColumn)
+	{
+		return null;
 	}
 }
