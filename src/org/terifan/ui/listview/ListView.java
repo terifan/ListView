@@ -112,8 +112,8 @@ public class ListView<T extends ListViewItem> extends JComponent implements Scro
 		registerKeyboardAction(action, KeyStroke.getKeyStroke(KeyEvent.VK_HOME, InputEvent.CTRL_MASK), JComponent.WHEN_FOCUSED);
 		registerKeyboardAction(action, KeyStroke.getKeyStroke(KeyEvent.VK_END, InputEvent.CTRL_MASK), JComponent.WHEN_FOCUSED);
 	}
-	
-	
+
+
 	public void setStyleSheet(StyleSheet aStylesheet)
 	{
 		mStylesheet = aStylesheet.getStyleSheet("org.terifan.ui.listview.ListView");
