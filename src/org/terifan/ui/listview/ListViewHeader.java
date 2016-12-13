@@ -99,6 +99,11 @@ public class ListViewHeader extends JComponent
 				{
 					ListViewColumn column = model.getColumn(i);
 
+					if (!column.isVisible())
+					{
+						continue;
+					}
+
 					int w = column.getWidth();
 
 					if (renderer.getExtendLastItem() && i+1 == model.getColumnCount())
@@ -114,7 +119,17 @@ public class ListViewHeader extends JComponent
 
 					if (w > 0)
 					{
-						renderer.paintColumnHeader(mListView, column, aGraphics, x, 0, w, getHeight(), isSelected, isArmed, isRollover, sorting, i==0, i==model.getColumnCount()-1);
+						boolean last = true;
+						for (int j = i + 1; j < model.getColumnCount(); j++)
+						{
+							if (model.getColumn(j).isVisible())
+							{
+								last = false;
+								break;
+							}
+						}
+
+						renderer.paintColumnHeader(mListView, column, aGraphics, x, 0, w, getHeight(), isSelected, isArmed, isRollover, sorting, i==0, last);
 
 						x += w;
 					}
@@ -305,6 +320,11 @@ public class ListViewHeader extends JComponent
 			{
 				ListViewColumn column = model.getColumn(i);
 
+				if (!column.isVisible())
+				{
+					continue;
+				}
+
 				int w = column.getWidth();
 				x += w;
 
@@ -390,6 +410,11 @@ public class ListViewHeader extends JComponent
 		for (int i = 0; i < model.getColumnCount(); i++)
 		{
 			ListViewColumn column = model.getColumn(i);
+
+			if (!column.isVisible())
+			{
+				continue;
+			}
 
 			int w = column.getWidth();
 

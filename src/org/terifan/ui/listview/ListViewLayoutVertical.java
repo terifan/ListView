@@ -427,10 +427,6 @@ public class ListViewLayoutVertical<T extends ListViewItem> extends AbstractList
 		int verticalBarWidth = mListView.getStylesheet().getInt("verticalBarWidth");
 		int verticalIndent = verticalBarWidth * Math.max(0, mListView.getModel().getGroupCount() - 1);
 		int windowWidth = mListView.getWidth() - verticalIndent;
-
-//		int itemMinWidth = mListView.getItemRenderer().getItemMinimumWidth();
-//		int itemMaxWidth = mListView.getItemRenderer().getItemMaximumWidth();
-//		return Math.max(Math.min(windowWidth / (double)getItemsPerRun(), itemMaxWidth), itemMinWidth);
 		return windowWidth / (double)getItemsPerRun();
 	}
 

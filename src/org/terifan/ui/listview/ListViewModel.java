@@ -299,6 +299,12 @@ public class ListViewModel<T extends ListViewItem> implements Iterable<T>
 
 	// -- Columns -----------------
 
+	public ListViewColumn addColumn(String aKey)
+	{
+		return addColumn(aKey, aKey, 50);
+	}
+
+
 	public ListViewColumn addColumn(String aKey, int aWidth)
 	{
 		return addColumn(aKey, aKey, aWidth);
@@ -690,14 +696,14 @@ public class ListViewModel<T extends ListViewItem> implements Iterable<T>
 			}
 		}
 	}
-	
-	
+
+
 	public boolean isGroupCollapsed(ListViewGroup<T> aGroup)
 	{
 		return mCollapsedGroups.contains(aGroup.getGroupValue());
 	}
-	
-	
+
+
 	public void setGroupCollapsed(ListViewGroup<T> aGroup, boolean aCollapse)
 	{
 		if (aCollapse)
@@ -716,7 +722,7 @@ public class ListViewModel<T extends ListViewItem> implements Iterable<T>
 		return mTitleProducer;
 	}
 
-	
+
 	public void setItemTitleProducer(TitleProducer<T> aFormatter)
 	{
 		mTitleProducer = aFormatter;
@@ -727,8 +733,8 @@ public class ListViewModel<T extends ListViewItem> implements Iterable<T>
 	{
 		return mIconProducer;
 	}
-	
-	
+
+
 	public void setItemIconProducer(IconProducer<T> aFormatter)
 	{
 		mIconProducer = aFormatter;

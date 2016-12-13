@@ -19,10 +19,8 @@ import javax.swing.JToolBar;
 import org.terifan.ui.listview.EntityListViewItem;
 import org.terifan.ui.listview.ListView;
 import org.terifan.ui.listview.ListViewModel;
-import org.terifan.ui.listview.layout.CardItemRenderer;
 import org.terifan.ui.listview.layout.ColumnHeaderRenderer;
 import org.terifan.ui.listview.layout.DetailItemRenderer;
-import org.terifan.ui.listview.layout.TableItemRenderer;
 import org.terifan.ui.listview.layout.ThumbnailItemRenderer;
 import org.terifan.ui.listview.layout.TileItemRenderer;
 import org.terifan.ui.listview.util.Orientation;
@@ -35,11 +33,11 @@ public class Test
 		try
 		{
 			ListViewModel<Item> model = new ListViewModel<>();
-			model.addColumn("Letter", 0).setVisible(false);
-			model.addColumn("Id", 100);
+			model.addColumn("Letter").setVisible(false);
 			model.addColumn("Name", 200);
 			model.addColumn("Length", 200);
 			model.addColumn("Modified", 200).setFormatter(e->new SimpleDateFormat("yyyy-MM-dd HH:mm").format(e));
+			model.addColumn("Id", 50);
 			model.addGroup(model.getColumn("Letter"));
 			model.setItemTitleProducer(e->e.getName());
 			model.setItemIconProducer(e->e.getThumb());
@@ -59,12 +57,11 @@ public class Test
 				{
 					thumb = null;
 				}
-				model.addItem(new Item(model.getItemCount(), file.getName(), file.length(), file.lastModified(), file.getName().substring(0, 1).toUpperCase(), thumb));
+				model.addItem(new Item(model.getItemCount(), file.getName(), file.length(), file.lastModified(), thumb));
 			}
-			
 
 			ListView<Item> listView = new ListView<>(model);
-			
+
 			JToolBar toolBar = new JToolBar();
 			toolBar.add(new AbstractAction("Details")
 			{
@@ -167,14 +164,19 @@ public class Test
 		Image thumb;
 
 
-		public Item(int aId, String aName, long aLength, long aModified, String aLetter, Image aThumb)
+		public Item(int aId, String aName, long aLength, long aModified, Image aThumb)
 		{
 			this.id = aId;
 			this.name = aName;
 			this.length = aLength;
 			this.modified = aModified;
-			this.letter = aLetter;
 			this.thumb = aThumb;
+
+			char c = aName.toUpperCase().charAt(0);
+			this.letter =
+				c < 'A' ? "0-9" :
+				c < 'I' ? "A-H" :
+				c < 'Q' ? "I-P" : "Q-Z";
 		}
 
 

@@ -146,6 +146,11 @@ public class DetailItemRenderer implements ListViewItemRenderer
 		{
 			ListViewColumn column = model.getColumn(col);
 
+			if (!column.isVisible())
+			{
+				continue;
+			}
+
 			int w = column.getWidth();
 
 			if (mExtendLastItem && col + 1 == model.getColumnCount())

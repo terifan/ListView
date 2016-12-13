@@ -1,5 +1,6 @@
 package org.terifan.ui.listview;
 
+import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import org.terifan.ui.listview.util.StyleSheet;
@@ -11,6 +12,8 @@ public class ListViewGroupRenderer<T extends ListViewItem>
 	public void paintGroup(ListView aListView, Graphics2D aGraphics, int aOriginX, int aOriginY, int aWidth, int aHeight, ListViewGroup<T> aGroup)
 	{
 		Utilities.enableTextAntialiasing(aGraphics);
+
+		Font oldFont = aGraphics.getFont();
 
 		StyleSheet style = aListView.getStylesheet();
 
@@ -81,5 +84,7 @@ public class ListViewGroupRenderer<T extends ListViewItem>
 			icon = style.getImage("collapseButton");
 		}
 		aGraphics.drawImage(icon, aOriginX + 3, aOriginY + aHeight - icon.getHeight() - 18, null);
+
+		aGraphics.setFont(oldFont);
 	}
 }

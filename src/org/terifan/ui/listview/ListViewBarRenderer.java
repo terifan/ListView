@@ -1,5 +1,6 @@
 package org.terifan.ui.listview;
 
+import java.awt.Font;
 import java.awt.Graphics2D;
 import javax.swing.Icon;
 import org.terifan.ui.listview.util.StyleSheet;
@@ -28,8 +29,12 @@ public class ListViewBarRenderer
 
 		mIcon.paintIcon(aListView, aGraphics, x+15-mIcon.getIconWidth()/2, y+13-mIcon.getIconHeight()/2);
 
+		Font oldFont = aGraphics.getFont();
+
 		aGraphics.setFont(style.getFont("bar"));
 		aGraphics.setColor(style.getColor("bar"));
 		aGraphics.drawString(mTitle, x+31, y+18);
+
+		aGraphics.setFont(oldFont);
 	}
 }

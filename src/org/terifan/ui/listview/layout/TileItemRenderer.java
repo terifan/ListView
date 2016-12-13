@@ -179,6 +179,11 @@ public class TileItemRenderer implements ListViewItemRenderer
 		{
 			ListViewColumn column = model.getColumn(col);
 
+			if (!column.isVisible())
+			{
+				continue;
+			}
+
 			Object label = aItem.getValue(column);
 			if (column.getFormatter() != null)
 			{
@@ -187,7 +192,7 @@ public class TileItemRenderer implements ListViewItemRenderer
 
 			if (label != null && y+lineHeight < itemHeight && label.toString().length() > 0)
 			{
-				Rectangle dim = aListView.getTextRenderer().drawString(aGraphics, label.toString(), x, aOriginY+y, aWidth-5-16-mIconWidth, itemHeight-y, Anchor.NORTH_WEST, col != 0 ? Color.GRAY : style.getColor("itemForeground"), style.getColor("itemBackground"), false);
+				Rectangle dim = aListView.getTextRenderer().drawString(aGraphics, label.toString(), x, aOriginY+y, aWidth-5-16-mIconWidth, itemHeight-y, Anchor.NORTH_WEST, col != 0 ? Color.GRAY : style.getColor("itemForeground"), null, false);
 
 				y += 1 + dim.height;
 

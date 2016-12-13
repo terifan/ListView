@@ -60,6 +60,9 @@ public class CellRenderer extends JComponent implements ListViewCellRenderer
 	protected void paintComponent(Graphics aGraphics)
 	{
 		StyleSheet style = mListView.getStylesheet();
+
+		Font oldFont = aGraphics.getFont();
+
 		Font font = style.getFont("item");
 		SelectionMode selectionMode = mListView.getSelectionMode();
 
@@ -168,6 +171,8 @@ public class CellRenderer extends JComponent implements ListViewCellRenderer
 				paintFocusRectangle(aGraphics, rect.x, rect.y, rect.width, rect.height-1);
 			}
 		}
+
+		aGraphics.setFont(oldFont);
 	}
 
 

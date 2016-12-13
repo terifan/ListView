@@ -1,5 +1,6 @@
 package org.terifan.ui.listview.layout;
 
+import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
@@ -46,6 +47,7 @@ public class ColumnHeaderRenderer implements ListViewHeaderRenderer
 	{
 		Utilities.enableTextAntialiasing(aGraphics);
 		StyleSheet style = aListView.getStylesheet();
+		Font oldFont = aGraphics.getFont();
 
 		aGraphics.setFont(style.getFont("header"));
 
@@ -138,6 +140,8 @@ public class ColumnHeaderRenderer implements ListViewHeaderRenderer
 				aGraphics.drawImage(background, x+w-1, y, null);
 			}
 		}
+
+		aGraphics.setFont(oldFont);
 	}
 
 
