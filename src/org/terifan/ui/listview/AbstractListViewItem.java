@@ -1,12 +1,12 @@
 package org.terifan.ui.listview;
 
-import javax.swing.Icon;
+import java.awt.image.BufferedImage;
 
 
 public abstract class AbstractListViewItem implements ListViewItem
 {
 	@Override
-	public Icon getIcon(ListViewColumn aColumn)
+	public BufferedImage getIcon()
 	{
 		return null;
 	}
@@ -16,19 +16,5 @@ public abstract class AbstractListViewItem implements ListViewItem
 	public Object getRenderingHint(Object aKey)
 	{
 		return null;
-	}
-
-
-	@Override
-	public boolean isStateLoaded()
-	{
-		return true;
-	}
-
-
-	@Override
-	public boolean loadState(boolean aBackground) throws Exception
-	{
-		return true;
 	}
 }

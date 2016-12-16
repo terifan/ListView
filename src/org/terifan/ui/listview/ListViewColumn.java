@@ -28,6 +28,7 @@ public class ListViewColumn
 	protected Formatter mFormatter;
 	protected Formatter mGroupFormatter;
 	protected HashMap<Object,Object> mUserObject;
+	protected boolean mTitle;
 
 
 	public ListViewColumn(ListViewModel aModel, String aKey, String aLabel, int aWidth)
@@ -260,5 +261,18 @@ public class ListViewColumn
 	public void setUserObject(Object aOwner, Object aValue)
 	{
 		mUserObject.put(aOwner, aValue);
+	}
+
+
+	public boolean isTitle()
+	{
+		return mTitle;
+	}
+
+
+	public ListViewColumn setTitle(boolean aTitle)
+	{
+		this.mTitle = aTitle;
+		return this;
 	}
 }

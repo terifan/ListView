@@ -6,8 +6,10 @@ import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
+import java.util.Objects;
 import javax.swing.Icon;
 import org.terifan.ui.listview.ListView;
+import org.terifan.ui.listview.ListViewColumn;
 import org.terifan.ui.listview.ListViewItem;
 import org.terifan.ui.listview.ListViewItemRenderer;
 import org.terifan.ui.listview.ListViewLayout;
@@ -117,26 +119,18 @@ public class ThumbnailItemRenderer implements ListViewItemRenderer
 		int sx = x+(w-sw)/2;
 		int sy = y+h-sh;
 
-		Icon icon;
-		if (aListView.getModel().getItemIconProducer() != null)
-		{
-			icon = aListView.getModel().getItemIconProducer().format(aItem);
-		}
-		else
-		{
-			icon = null;
-		}
+		BufferedImage icon = aItem.getIcon();
 
 		boolean drawBorder = icon != null && aItem.getRenderingHint(ListViewRenderingHints.KEY_DRAW_BORDER) != ListViewRenderingHints.VALUE_DRAW_BORDER_OFF;
 
 		if (icon == null)
 		{
-			icon = style.getScaledIcon("thumbPlaceholder", mItemSize.width, mItemSize.height, true);
+			icon = style.getScaledImage("thumbPlaceholder", mItemSize.width, mItemSize.height, true);
 		}
 
-		double f = Math.min(mItemSize.width / (double)icon.getIconWidth(), mItemSize.height / (double)icon.getIconHeight());
-		int tw = (int)(f * icon.getIconWidth());
-		int th = (int)(f * icon.getIconHeight());
+		double f = Math.min(mItemSize.width / (double)icon.getWidth(), mItemSize.height / (double)icon.getHeight());
+		int tw = (int)(f * icon.getWidth());
+		int th = (int)(f * icon.getHeight());
 		int tx = x + (w - tw) / 2;
 		int ty = y + h - 8 - th - mLabelHeight;
 
@@ -160,16 +154,18 @@ public class ThumbnailItemRenderer implements ListViewItemRenderer
 		}
 
 		aGraphics.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-		icon.paintIcon(null, aGraphics, tx, ty); //, tw, th);
+		aGraphics.drawImage(icon, tx, ty, tw, th, null);
 
-		String label;
-		if (aListView.getModel().getTitleProducer() == null)
+		String label = null;
+
+		for (int i = 0; i < aListView.getModel().getColumnCount(); i++)
 		{
-			label = aItem.toString();
-		}
-		else
-		{
-			label = aListView.getModel().getTitleProducer().format(aItem);
+			ListViewColumn column = aListView.getModel().getColumn(i);
+			if (column.isTitle())
+			{
+				label = column.getFormatter() == null ? Objects.toString(aItem.getValue(column)) : column.getFormatter().format(aItem.getValue(column));
+				break;
+			}
 		}
 
 		if (label != null && mLabelHeight > 0)

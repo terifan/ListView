@@ -6,6 +6,7 @@ import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.Rectangle;
+import java.awt.image.BufferedImage;
 import java.util.HashMap;
 import javax.swing.Icon;
 import javax.swing.JComponent;
@@ -16,6 +17,7 @@ import org.terifan.ui.listview.ListViewItem;
 import org.terifan.ui.listview.SelectionMode;
 import org.terifan.ui.listview.util.StyleSheet;
 import org.terifan.ui.listview.util.Utilities;
+import sun.rmi.runtime.Log;
 
 
 public class CellRenderer extends JComponent implements ListViewCellRenderer
@@ -127,36 +129,36 @@ public class CellRenderer extends JComponent implements ListViewCellRenderer
 //			aGraphics.drawLine(rect.x, rect.y+rect.height-2, rect.x+rect.width, rect.y+rect.height-2);
 //		}
 
-		Icon icon = mItem.getIcon(column);
+		BufferedImage icon = mItem.getIcon();
 
 		if (icon != null && column.getIconWidth() > 0)
 		{
-			double f = Math.min(column.getIconWidth()/(double)icon.getIconWidth(), rh/(double)icon.getIconHeight());
-			int iw = (int)(f*icon.getIconWidth());
-			int ih = (int)(f*icon.getIconHeight());
+			double f = Math.min(column.getIconWidth() / (double)icon.getWidth(), rh / (double)icon.getHeight());
+			int iw = (int)(f * icon.getWidth());
+			int ih = (int)(f * icon.getHeight());
 
-			int ix = tr.x+2+(column.getIconWidth()-iw) / 2;
+			int ix = tr.x + 2 + (column.getIconWidth() - iw) / 2;
 			int iy = rect.y + (rect.height - ih) / 2;
 
-			/*if (mIsSelected)
+//			if (mIsSelected)
+//			{
+//				Image image;
+//
+//				if (mCachedHighlightedIcons.containsKey(icon))
+//				{
+//					image = mCachedHighlightedIcons.get(icon);
+//				}
+//				else
+//				{
+//					image = Utilities.filterHighlight(((ImageIcon)icon).getImage(), style.getColor("itemSelectedBackground"));
+//					mCachedHighlightedIcons.put(icon, image, 1);
+//				}
+//
+//				aGraphics.drawImage(image, ix, iy, null);
+//			}
+//			else
 			{
-				Image image;
-
-				if (mCachedHighlightedIcons.containsKey(icon))
-				{
-					image = mCachedHighlightedIcons.get(icon);
-				}
-				else
-				{
-					image = Utilities.filterHighlight(((ImageIcon)icon).getImage(), style.getColor("itemSelectedBackground"));
-					mCachedHighlightedIcons.put(icon, image, 1);
-				}
-
-				aGraphics.drawImage(image, ix, iy, null);
-			}
-			else*/
-			{
-				icon.paintIcon(null, aGraphics, ix, iy); //, iw, ih);
+				aGraphics.drawImage(icon, ix, iy, iw, ih, null);
 			}
 		}
 

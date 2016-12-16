@@ -22,8 +22,6 @@ public class ListViewModel<T extends ListViewItem> implements Iterable<T>
 	protected ListViewGroup mTree;
 	protected ListViewColumn mSortedColumn;
 	protected HashSet<Object> mCollapsedGroups;
-	private TitleProducer<T> mTitleProducer;
-	private IconProducer<T> mIconProducer;
 
 
 	public ListViewModel()
@@ -714,29 +712,5 @@ public class ListViewModel<T extends ListViewItem> implements Iterable<T>
 		{
 			mCollapsedGroups.remove(aGroup.getGroupValue());
 		}
-	}
-
-
-	public TitleProducer<T> getTitleProducer()
-	{
-		return mTitleProducer;
-	}
-
-
-	public void setItemTitleProducer(TitleProducer<T> aFormatter)
-	{
-		mTitleProducer = aFormatter;
-	}
-
-
-	public IconProducer<T> getItemIconProducer()
-	{
-		return mIconProducer;
-	}
-
-
-	public void setItemIconProducer(IconProducer<T> aFormatter)
-	{
-		mIconProducer = aFormatter;
 	}
 }

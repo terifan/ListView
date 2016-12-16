@@ -1,24 +1,22 @@
 package test;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
-import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.text.SimpleDateFormat;
 import javax.imageio.ImageIO;
 import javax.swing.AbstractAction;
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 import javax.swing.JToolBar;
 import org.terifan.ui.listview.EntityListViewItem;
 import org.terifan.ui.listview.ListView;
+import org.terifan.ui.listview.ListViewItemIcon;
 import org.terifan.ui.listview.ListViewModel;
+import org.terifan.ui.listview.layout.CardItemRenderer;
 import org.terifan.ui.listview.layout.ColumnHeaderRenderer;
 import org.terifan.ui.listview.layout.DetailItemRenderer;
 import org.terifan.ui.listview.layout.ThumbnailItemRenderer;
@@ -34,13 +32,11 @@ public class Test
 		{
 			ListViewModel<Item> model = new ListViewModel<>();
 			model.addColumn("Letter").setVisible(false);
-			model.addColumn("Name", 200);
+			model.addColumn("Name", 200).setIconWidth(16).setTitle(true);
 			model.addColumn("Length", 200);
 			model.addColumn("Modified", 200).setFormatter(e->new SimpleDateFormat("yyyy-MM-dd HH:mm").format(e));
 			model.addColumn("Id", 50);
 			model.addGroup(model.getColumn("Letter"));
-			model.setItemTitleProducer(e->e.getName());
-			model.setItemIconProducer(e->e.getThumb());
 
 			for (File file : new File("D:\\Pictures\\Wallpapers").listFiles())
 			{
@@ -68,11 +64,8 @@ public class Test
 				@Override
 				public void actionPerformed(ActionEvent aE)
 				{
-					DetailItemRenderer renderer = new DetailItemRenderer();
-					listView.setBackground(Color.WHITE);
 					listView.setHeaderRenderer(new ColumnHeaderRenderer());
-					listView.setItemRenderer(renderer);
-					renderer.setExtendLastItem(true);
+					listView.setItemRenderer(new DetailItemRenderer());
 				}
 			});
 			toolBar.add(new AbstractAction("V-Thumbnails")
@@ -90,27 +83,27 @@ public class Test
 				public void actionPerformed(ActionEvent aE)
 				{
 					listView.setHeaderRenderer(null);
-					listView.setItemRenderer(new ThumbnailItemRenderer(new Dimension(128, 128), Orientation.HORIZONTAL));
+					listView.setItemRenderer(new ThumbnailItemRenderer(new Dimension(128, 128), Orientation.HORIZONTAL, 16));
 				}
 			});
-//			toolBar.add(new AbstractAction("V-Cards")
-//			{
-//				@Override
-//				public void actionPerformed(ActionEvent aE)
-//				{
-//					listView.setHeaderRenderer(null);
-//					listView.setItemRenderer(new CardItemRenderer(new Dimension(200, 50), 128, Orientation.VERTICAL));
-//				}
-//			});
-//			toolBar.add(new AbstractAction("H-Cards")
-//			{
-//				@Override
-//				public void actionPerformed(ActionEvent aE)
-//				{
-//					listView.setHeaderRenderer(null);
-//					listView.setItemRenderer(new CardItemRenderer(new Dimension(200, 50), 128, Orientation.HORIZONTAL));
-//				}
-//			});
+			toolBar.add(new AbstractAction("V-Cards")
+			{
+				@Override
+				public void actionPerformed(ActionEvent aE)
+				{
+					listView.setHeaderRenderer(null);
+					listView.setItemRenderer(new CardItemRenderer(new Dimension(200, 50), 128, Orientation.VERTICAL));
+				}
+			});
+			toolBar.add(new AbstractAction("H-Cards")
+			{
+				@Override
+				public void actionPerformed(ActionEvent aE)
+				{
+					listView.setHeaderRenderer(null);
+					listView.setItemRenderer(new CardItemRenderer(new Dimension(200, 50), 128, Orientation.HORIZONTAL));
+				}
+			});
 			toolBar.add(new AbstractAction("V-Tile")
 			{
 				@Override
@@ -129,15 +122,6 @@ public class Test
 					listView.setItemRenderer(new TileItemRenderer(new Dimension(300, 160), 128, Orientation.HORIZONTAL));
 				}
 			});
-//			toolBar.add(new AbstractAction("Table")
-//			{
-//				@Override
-//				public void actionPerformed(ActionEvent aE)
-//				{
-//					listView.setHeaderRenderer(new ColumnHeaderRenderer());
-//					listView.setItemRenderer(new TableItemRenderer());
-//				}
-//			});
 
 			JFrame frame = new JFrame();
 			frame.add(toolBar, BorderLayout.NORTH);
@@ -161,16 +145,16 @@ public class Test
 		long length;
 		long modified;
 		String letter;
-		Image thumb;
+		@ListViewItemIcon BufferedImage icon;
 
 
-		public Item(int aId, String aName, long aLength, long aModified, Image aThumb)
+		public Item(int aId, String aName, long aLength, long aModified, BufferedImage aIcon)
 		{
 			this.id = aId;
 			this.name = aName;
 			this.length = aLength;
 			this.modified = aModified;
-			this.thumb = aThumb;
+			this.icon = aIcon;
 
 			char c = aName.toUpperCase().charAt(0);
 			this.letter =
@@ -207,12 +191,6 @@ public class Test
 		public String getLetter()
 		{
 			return letter;
-		}
-
-
-		public Icon getThumb()
-		{
-			return thumb == null ? null : new ImageIcon(thumb);
 		}
 	}
 }

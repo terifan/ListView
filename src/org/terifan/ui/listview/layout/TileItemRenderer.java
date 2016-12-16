@@ -11,6 +11,7 @@ import java.awt.font.FontRenderContext;
 import java.awt.font.LineMetrics;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
+import java.util.Objects;
 import javax.swing.Icon;
 import org.terifan.ui.listview.ListView;
 import org.terifan.ui.listview.ListViewColumn;
@@ -132,15 +133,18 @@ public class TileItemRenderer implements ListViewItemRenderer
 			int w = mIconWidth + 10;
 			int h = aHeight-10;
 
-			Icon icon;
-			if (aListView.getModel().getItemIconProducer() != null)
+			BufferedImage icon = null;
+
+			for (int i = 0; i < model.getColumnCount(); i++)
 			{
-				icon = aListView.getModel().getItemIconProducer().format(aItem);
+				ListViewColumn column = model.getColumn(i);
+				if (column.isTitle())
+				{
+					icon = aItem.getIcon();
+					break;
+				}
 			}
-			else
-			{
-				icon = null;
-			}
+
 			boolean drawBorder = icon != null;
 
 			int tw = mIconWidth;
@@ -148,12 +152,12 @@ public class TileItemRenderer implements ListViewItemRenderer
 
 			if (icon == null)
 			{
-				icon = style.getScaledIcon("thumbPlaceholder", tw, th, true);
+				icon = style.getScaledImage("thumbPlaceholder", tw, th, true);
 			}
 
-			double f = Math.min(tw/(double)icon.getIconWidth(), th/(double)icon.getIconHeight());
-			tw = (int)(f*icon.getIconWidth());
-			th = (int)(f*icon.getIconHeight());
+			double f = Math.min(tw/(double)icon.getWidth(), th/(double)icon.getHeight());
+			tw = (int)(f*icon.getWidth());
+			th = (int)(f*icon.getHeight());
 
 			int tx = x+(w-tw)/2;
 			int ty = y+(h-th)/2;
@@ -164,7 +168,7 @@ public class TileItemRenderer implements ListViewItemRenderer
 				aGraphics.drawImage(im, tx-3, ty-3, null);
 			}
 
-			icon.paintIcon(aListView, aGraphics, tx, ty); //, tw, th);
+			aGraphics.drawImage(icon, tx, ty, tw, th, null);
 		}
 
 		LineMetrics lm = aGraphics.getFont().getLineMetrics("Adgj", FRC);

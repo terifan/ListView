@@ -1,24 +1,25 @@
 package org.terifan.ui.listview;
 
+import java.awt.image.BufferedImage;
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import javax.swing.Icon;
 
 
 public class EntityListViewItem extends AbstractListViewItem
 {
-	private Class<?> mType;
+	protected Class<?> mThisType;
 
 
 	public EntityListViewItem()
 	{
-		mType = getClass();
+		mThisType = getClass();
 	}
 
 
 	public EntityListViewItem(Class<?> aType)
 	{
-		mType = aType;
+		mThisType = aType;
 	}
 
 
@@ -27,21 +28,18 @@ public class EntityListViewItem extends AbstractListViewItem
 	{
 		try
 		{
-			Method method = (Method)aColumn.getUserObject(EntityListViewItem.class);
+			Method method = null;
 
-			if (method == null)
+			for (Method tmp : mThisType.getDeclaredMethods())
 			{
-				for (Method tmp : mType.getDeclaredMethods())
+				String name = tmp.getName();
+				if (tmp.getParameterCount() == 0 && (name.startsWith("get") && name.substring(3).equalsIgnoreCase(aColumn.getKey())
+					|| name.startsWith("is") && name.substring(2).equalsIgnoreCase(aColumn.getKey())))
 				{
-					String name = tmp.getName();
-					if (tmp.getParameterCount() == 0 && (name.startsWith("get") && name.substring(3).equalsIgnoreCase(aColumn.getKey())
-						|| name.startsWith("is") && name.substring(2).equalsIgnoreCase(aColumn.getKey())))
-					{
-						tmp.setAccessible(true);
-						method = tmp;
-						aColumn.setUserObject(EntityListViewItem.class, method);
-						break;
-					}
+					tmp.setAccessible(true);
+					method = tmp;
+					aColumn.setUserObject(EntityListViewItem.class, method);
+					break;
 				}
 			}
 
@@ -65,8 +63,35 @@ public class EntityListViewItem extends AbstractListViewItem
 
 
 	@Override
-	public Icon getIcon(ListViewColumn aColumn)
+	public BufferedImage getIcon()
 	{
+		try
+		{
+			for (Method method : mThisType.getDeclaredMethods())
+			{
+				ListViewItemIcon ann = method.getAnnotation(ListViewItemIcon.class);
+				if (ann != null)
+				{
+					method.setAccessible(true);
+					return (BufferedImage)method.invoke(this);
+				}
+			}
+
+			for (Field field : mThisType.getDeclaredFields())
+			{
+				ListViewItemIcon ann = field.getAnnotation(ListViewItemIcon.class);
+				if (ann != null)
+				{
+					field.setAccessible(true);
+					return (BufferedImage)field.get(this);
+				}
+			}
+		}
+		catch (IllegalAccessException | InvocationTargetException e)
+		{
+			e.printStackTrace(System.err);
+		}
+
 		return null;
 	}
 }

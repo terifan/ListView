@@ -1,26 +1,24 @@
 package org.terifan.ui.listview;
 
+import java.awt.image.BufferedImage;
 import java.util.Arrays;
-import javax.swing.Icon;
 
 
 public class DefaultListViewItem extends AbstractListViewItem
 {
 	protected Object [] mValues;
-	protected Icon [] mIcons;
+	protected BufferedImage mIcon;
 
 
 	public DefaultListViewItem(int aColumnCount)
 	{
 		mValues = new Object[aColumnCount];
-		mIcons = new Icon[aColumnCount];
 	}
 
 
 	public DefaultListViewItem(Object ... aValues)
 	{
 		mValues = aValues;
-		mIcons = new Icon[mValues.length];
 	}
 
 
@@ -43,35 +41,15 @@ public class DefaultListViewItem extends AbstractListViewItem
 
 
 	@Override
-	public Icon getIcon(ListViewColumn aColumn)
+	public BufferedImage getIcon()
 	{
-		int index = aColumn.getModel().getColumnIndex(aColumn);
-		return index >= mIcons.length ? null : mIcons[index];
+		return mIcon;
 	}
 
 
-	public void setIcon(int aIndex, Icon aIcon)
+	public void setIcon(BufferedImage aIcon)
 	{
-		if (aIndex < 0 || aIndex >= mValues.length)
-		{
-			throw new IllegalArgumentException("Item don't have column index: " + aIndex);
-		}
-
-		mIcons[aIndex] = aIcon;
-	}
-
-
-	@Override
-	public boolean loadState(boolean aBackground)
-	{
-		return false;
-	}
-
-
-	@Override
-	public boolean isStateLoaded()
-	{
-		return true;
+		mIcon = aIcon;
 	}
 
 
