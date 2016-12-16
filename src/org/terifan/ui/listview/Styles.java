@@ -1,7 +1,10 @@
 package org.terifan.ui.listview;
 
 import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.Font;
+import java.awt.Point;
+import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
 import javax.imageio.ImageIO;
 
@@ -73,26 +76,25 @@ public class Styles
 	public Font header = new Font("Segoe UI", Font.PLAIN, 11);
 	public Font label = new Font("Segoe UI", Font.BOLD, 11);
 
-	public BufferedImage headerBackground = loadImage("header_silver_background_normal.png");
-	public BufferedImage headerBackgroundRollover = loadImage("header_silver_background_normal.png");
-	public BufferedImage headerBackgroundArmed = loadImage("header_silver_background_armed.png");
-	public BufferedImage headerBackgroundRolloverArmed = loadImage("header_silver_background_armed.png");
-	public BufferedImage headerBackgroundSorted = loadImage("header_silver_background_sorted.png");
-
-	public BufferedImage headerSeparator = loadImage("header_silver_seperator_normal.png");
-	public BufferedImage headerSeparatorArmed = loadImage("header_silver_seperator_armed.png");
-
-	public BufferedImage groupCollapseButton = loadImage("group_collapse.png");
-	public BufferedImage groupExpandButton = loadImage("group_expand.png");
-	public BufferedImage sortArrowAscending = loadImage("sort_ascending.png");
-	public BufferedImage sortArrowDescending = loadImage("sort_descending.png");
+	public BufferedImage headerBackground = loadImage("column_header_background_normal.png");
+	public BufferedImage headerBackgroundRollover = loadImage("column_header_background_normal.png");
+	public BufferedImage headerBackgroundArmed = loadImage("column_header_background_armed.png");
+	public BufferedImage headerBackgroundRolloverArmed = loadImage("column_header_background_armed.png");
+	public BufferedImage headerBackgroundSorted = loadImage("column_header_background_sorted.png");
+	public BufferedImage headerSeparator = loadImage("column_header_seperator_normal.png");
+	public BufferedImage headerSeparatorArmed = loadImage("column_header_seperator_armed.png");
+	
+	public BufferedImage groupCollapseIcon = loadImage("group_collapse_icon.png");
+	public BufferedImage groupExpandIcon = loadImage("group_expand_icon.png");
+	public BufferedImage sortAscendingIcon = loadImage("sort_ascending_icon.png");
+	public BufferedImage sortDescendingIcon = loadImage("sort_descending_icon.png");
 
 	public BufferedImage cardBackgroundNormal = loadImage("card_background_normal.png");
 	public BufferedImage cardBackgroundSelected = loadImage("card_background_selected.png");
 
 	public BufferedImage thumbBorderSelected = loadImage("thumb_border_selected.png");
 	public BufferedImage thumbBorderSelectedBackground = loadImage("thumb_border_selected_background.png");
-	public BufferedImage thumbBorderUnselected = loadImage("thumb_border_unselected.png");
+	public BufferedImage thumbBorderNormal = loadImage("thumb_border_normal.png");
 	public BufferedImage thumbPlaceholder = loadImage("thumb_placeholder.png");
 
 	public BufferedImage barNormal = loadImage("bar_normal.png");
@@ -101,6 +103,8 @@ public class Styles
 	public Font barFont = new Font("Ebrima", Font.BOLD, 14);
 	public Color barColor = new Color(21, 66, 139);
 
+	public Cursor cursorSplit = Toolkit.getDefaultToolkit().createCustomCursor(loadImage("cursor_split.png"), new Point(16,16), "split");
+	public Cursor cursorResize = Toolkit.getDefaultToolkit().createCustomCursor(loadImage("cursor_resize.png"), new Point(16,16), "resize");
 
 	public Styles()
 	{

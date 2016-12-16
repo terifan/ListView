@@ -138,7 +138,7 @@ public class ThumbnailItemRenderer implements ListViewItemRenderer
 
 		if (drawBorder)
 		{
-			BufferedImage im = style.getScaledImage(selected ? style.thumbBorderSelected : style.thumbBorderUnselected, tw+3+6, th+3+7, 3, 3, 7, 6);
+			BufferedImage im = style.getScaledImage(selected ? style.thumbBorderSelected : style.thumbBorderNormal, tw+3+6, th+3+7, 3, 3, 7, 6);
 			aGraphics.drawImage(im, tx-3, ty-3, null);
 		}
 

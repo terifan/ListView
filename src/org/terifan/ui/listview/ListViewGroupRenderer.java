@@ -73,11 +73,11 @@ public class ListViewGroupRenderer<T extends ListViewItem>
 		BufferedImage icon;
 		if (aListView.getModel().isGroupCollapsed(aGroup))
 		{
-			icon = style.groupExpandButton;
+			icon = style.groupExpandIcon;
 		}
 		else
 		{
-			icon = style.groupCollapseButton;
+			icon = style.groupCollapseIcon;
 		}
 		aGraphics.drawImage(icon, aOriginX + 3, aOriginY + aHeight - icon.getHeight() - 18, null);
 

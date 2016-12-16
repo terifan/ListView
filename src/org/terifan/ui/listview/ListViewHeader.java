@@ -16,9 +16,6 @@ import javax.swing.SwingUtilities;
 
 public class ListViewHeader extends JComponent
 {
-	protected Cursor SPLIT_CURSOR;
-	protected Cursor RESIZE_CURSOR;
-
 	protected ListView mListView;
 	protected String mPart;
 	protected int mRolloverColumnIndex;
@@ -37,9 +34,6 @@ public class ListViewHeader extends JComponent
 	{
 		mListView = aListView;
 		mPart = aPart;
-
-		SPLIT_CURSOR = Toolkit.getDefaultToolkit().createCustomCursor(new ImageIcon(ListView.class.getResource("resources/split_cursor.png")).getImage(), new Point(16,16), "split");
-		RESIZE_CURSOR = Toolkit.getDefaultToolkit().createCustomCursor(new ImageIcon(ListView.class.getResource("resources/resize_cursor.png")).getImage(), new Point(16,16), "resize");
 
 		mRolloverColumnIndex = -1;
 		mArmedColumnIndex = -1;
@@ -347,19 +341,19 @@ public class ListViewHeader extends JComponent
 					if (nextColumn != null && nextColumn.getWidth() == 0 && aEvent.getX() > x)
 					{
 						mIsResizeColumnArmed = true;
-						setCursor(SPLIT_CURSOR);
+						setCursor(mListView.getStyles().cursorSplit);
 						mResizeColumnIndex = nextColumnIndex;
 					}
 					else if (nextColumn != null && nextColumn.getWidth() < 3 && aEvent.getX() > x)
 					{
 						mIsResizeColumnArmed = true;
-						setCursor(RESIZE_CURSOR);
+						setCursor(mListView.getStyles().cursorResize);
 						mResizeColumnIndex = nextColumnIndex;
 					}
 					else
 					{
 						mIsResizeColumnArmed = true;
-						setCursor(RESIZE_CURSOR);
+						setCursor(mListView.getStyles().cursorResize);
 						mResizeColumnIndex = i;
 					}
 

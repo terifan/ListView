@@ -89,7 +89,7 @@ public class ColumnHeaderRenderer implements ListViewHeaderRenderer
 			aGraphics.drawLine(x, y + h - 1, x + w, y + h - 1);
 		}
 
-		BufferedImage sortIcon = aSorting == SortOrder.ASCENDING ? style.sortArrowAscending : style.sortArrowDescending;
+		BufferedImage sortIcon = aSorting == SortOrder.ASCENDING ? style.sortAscendingIcon : style.sortDescendingIcon;
 
 		Color fg = aIsArmed ? style.headerForegroundArmed : style.headerForeground;
 		Color bg = null;
