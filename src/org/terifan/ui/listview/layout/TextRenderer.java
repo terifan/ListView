@@ -1,101 +1,28 @@
-package org.terifan.ui.listview;
+package org.terifan.ui.listview.layout;
 
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
-import java.awt.RenderingHints;
 import java.awt.font.FontRenderContext;
 import java.awt.font.LineMetrics;
 import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
-import org.terifan.ui.listview.util.Anchor;
 
 
-/**
- * 
- * @deprecated use org.terifan.ui.TextBox instead
- */
-@Deprecated
-public class TextRenderer
+class TextRenderer
 {
 	private static FontRenderContext FRC = new FontRenderContext(new AffineTransform(), true, false);
 
 
-	public TextRenderer()
+	private TextRenderer()
 	{
 	}
 
 
-	public int drawString(Graphics aGraphics, Color aBackground, Color aForeground, String aText, int aRectX, int aRectY, int aTextOffsetY)
-	{
-		Font font = aGraphics.getFont();
-		LineMetrics lm = font.getLineMetrics(aText, FRC);
-		int w = (int)font.getStringBounds(aText, FRC).getWidth();
-		int lh = (int)(lm.getHeight()-lm.getDescent());
-
-		if (aTextOffsetY == 0)
-		{
-			aTextOffsetY = (int)lm.getHeight();
-		}
-
-		drawString(aGraphics, aBackground, aForeground, aText, aRectX, aRectY, w, aTextOffsetY, 0, lh);
-
-		return lh;
-	}
-
-
-	public void drawString(Graphics aGraphics, Color aBackground, Color aForeground, String aText, int aRectX, int aRectY, int aRectWidth, int aRectHeight, int aOffsetX, int aOffsetY)
-	{
-		if (aRectHeight <= 0 || aRectWidth <= 0)
-		{
-			return;
-		}
-
-		Font font = aGraphics.getFont();
-		Graphics2D g = (Graphics2D)aGraphics;
-
-		if (aBackground != null)
-		{
-			g.setColor(aBackground);
-			g.fillRect(aRectX, aRectY, aRectWidth, aRectHeight);
-		}
-
-		g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_LCD_HRGB);
-		g.setColor(aForeground);
-		g.setFont(font);
-		g.drawString(aText, aRectX, aRectY + aOffsetY);
-	}
-
-
-	/**
-	 * Draws a string within the bounds specified.
-	 *
-	 * @param aGraphics
-	 *   draw on this context
-	 * @param aString
-	 *   the string to draw
-	 * @param aRectX
-	 *   x offset
-	 * @param aRectY
-	 *   y offset
-	 * @param aRectWidth
-	 *   width of the bounds to draw within
-	 * @param aRectHeight
-	 *   height of the bounds to draw within
-	 * @param aAnchor
-	 *   a Anchor value specifying the orientation of the text.
-	 * @param aForeground
-	 *   Text color to use or null
-	 * @param aBackground
-	 *   Text background or null
-	 * @param aMultiline
-	 *   True if long lines should be split
-	 * @return
-	 *
-	 */
-	public Rectangle drawString(Graphics aGraphics, String aString, int aRectX, int aRectY, int aRectWidth, int aRectHeight, Anchor aAnchor, Color aForeground, Color aBackground, boolean aMultiline)
+	public static Rectangle drawString(Graphics aGraphics, String aString, int aRectX, int aRectY, int aRectWidth, int aRectHeight, Anchor aAnchor, Color aForeground, Color aBackground, boolean aMultiline)
 	{
 		if (aString == null)
 		{
@@ -130,11 +57,11 @@ public class TextRenderer
 
 		if (aAnchor == Anchor.SOUTH_EAST || aAnchor == Anchor.SOUTH || aAnchor == Anchor.SOUTH_WEST)
 		{
-			aRectY += Math.max(0, aRectHeight-lineCount*lineHeight);
+			aRectY += Math.max(0, aRectHeight - lineCount * lineHeight);
 		}
 		else if (aAnchor == Anchor.CENTER || aAnchor == Anchor.WEST || aAnchor == Anchor.EAST)
 		{
-			aRectY += Math.max(0, (aRectHeight-lineCount*lineHeight)/2);
+			aRectY += Math.max(0, (aRectHeight - lineCount * lineHeight) / 2);
 		}
 
 		for (int i = 0; i < lineCount; i++)
@@ -146,14 +73,14 @@ public class TextRenderer
 
 			if (aAnchor == Anchor.NORTH || aAnchor == Anchor.CENTER || aAnchor == Anchor.SOUTH)
 			{
-				x += (aRectWidth-w)/2;
+				x += (aRectWidth - w) / 2;
 			}
 			else if (aAnchor == Anchor.NORTH_EAST || aAnchor == Anchor.EAST || aAnchor == Anchor.SOUTH_EAST)
 			{
-				x += aRectWidth-w;
+				x += aRectWidth - w;
 			}
 
-			int y = aRectY+i*lineHeight;
+			int y = aRectY + i * lineHeight;
 
 			drawString(aGraphics, aBackground, aForeground, str, x, y, lineHeight);
 
@@ -164,7 +91,7 @@ public class TextRenderer
 			else
 			{
 				bounds.add(x, y);
-				bounds.add(x+w, y+lineHeight);
+				bounds.add(x + w, y + lineHeight);
 			}
 		}
 
@@ -172,7 +99,36 @@ public class TextRenderer
 	}
 
 
-	private static int getStringLength(String aString, Font aFont)
+	private static int drawString(Graphics aGraphics, Color aBackground, Color aForeground, String aText, int aRectX, int aRectY, int aTextOffsetY)
+	{
+		Font font = aGraphics.getFont();
+		LineMetrics lm = font.getLineMetrics(aText, FRC);
+		int w = (int)font.getStringBounds(aText, FRC).getWidth();
+		int lh = (int)(lm.getHeight() - lm.getDescent());
+
+		if (aTextOffsetY <= 0)
+		{
+			aTextOffsetY = (int)lm.getHeight();
+		}
+
+		if (w > 0)
+		{
+			if (aBackground != null)
+			{
+				aGraphics.setColor(aBackground);
+				aGraphics.fillRect(aRectX, aRectY, w, aTextOffsetY);
+			}
+
+			aGraphics.setColor(aForeground);
+			aGraphics.setFont(font);
+			aGraphics.drawString(aText, aRectX, aRectY + lh);
+		}
+
+		return lh;
+	}
+
+
+	public static int getStringLength(String aString, Font aFont)
 	{
 		return (int)aFont.getStringBounds(aString, FRC).getWidth();
 	}
@@ -195,7 +151,7 @@ public class TextRenderer
 					int temp = Math.max(str.lastIndexOf(' ', offset), Math.max(str.lastIndexOf('.', offset), Math.max(str.lastIndexOf('-', offset), str.lastIndexOf('_', offset))));
 					offset = Math.max(1, temp > 1 ? temp : offset);
 
-					tmp = str.substring(0,offset);
+					tmp = str.substring(0, offset);
 					str = str.substring(offset).trim();
 				}
 				else
@@ -218,14 +174,13 @@ public class TextRenderer
 		int min = 0;
 		int max = aString.length();
 
-		while (Math.abs(min-max) > 1)
+		while (Math.abs(min - max) > 1)
 		{
-			int mid = (max+min)/2;
+			int mid = (max + min) / 2;
 
-			int w = getStringLength(aString.substring(0,mid), aFont);
+			int w = getStringLength(aString.substring(0, mid), aFont);
 
 			//System.out.printf("%d\t%d\t%d\t%d\t%d\n", min, max, mid, aWidth, w);
-
 			if (w > aWidth)
 			{
 				max = mid;
@@ -257,7 +212,7 @@ public class TextRenderer
 		char[] chars = (aString + "..").toCharArray();
 		int len = aString.length() + 2;
 
-		for (;len > 0; len--)
+		for (; len > 0; len--)
 		{
 			if (len > 3)
 			{
@@ -265,6 +220,40 @@ public class TextRenderer
 			}
 
 			if (aFont.getStringBounds(chars, 0, len, FRC).getWidth() < aLength)
+			{
+				break;
+			}
+		}
+
+		return new String(chars, 0, len);
+	}
+
+
+	public static String clipString(String aString, FontMetrics aFontMetrics, int aLength)
+	{
+		aString = aString.trim();
+
+		if (aString.isEmpty() || aLength == 0)
+		{
+			return "";
+		}
+
+		if (aFontMetrics.stringWidth(aString) < aLength)
+		{
+			return aString;
+		}
+
+		char[] chars = (aString + "..").toCharArray();
+		int len = aString.length() + 2;
+
+		for (; len > 0; len--)
+		{
+			if (len > 3)
+			{
+				chars[len - 3] = '.';
+			}
+
+			if (aFontMetrics.charsWidth(chars, 0, len) < aLength)
 			{
 				break;
 			}

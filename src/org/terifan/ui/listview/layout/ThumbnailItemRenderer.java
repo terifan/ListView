@@ -4,19 +4,16 @@ import org.terifan.ui.listview.ListViewLayoutHorizontal;
 import org.terifan.ui.listview.ListViewLayoutVertical;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
-import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.util.Objects;
-import javax.swing.Icon;
 import org.terifan.ui.listview.ListView;
 import org.terifan.ui.listview.ListViewColumn;
 import org.terifan.ui.listview.ListViewItem;
 import org.terifan.ui.listview.ListViewItemRenderer;
 import org.terifan.ui.listview.ListViewLayout;
-import org.terifan.ui.listview.util.Anchor;
-import org.terifan.ui.listview.util.Orientation;
-import org.terifan.ui.listview.util.StyleSheet;
-import org.terifan.ui.listview.util.Utilities;
+import org.terifan.ui.listview.Orientation;
+import org.terifan.ui.listview.Styles;
+import org.terifan.ui.listview.Utilities;
 
 
 public class ThumbnailItemRenderer implements ListViewItemRenderer
@@ -106,7 +103,7 @@ public class ThumbnailItemRenderer implements ListViewItemRenderer
 	@Override
 	public void paintItem(Graphics2D aGraphics, int aOriginX, int aOriginY, int aWidth, int aHeight, ListView aListView, ListViewItem aItem)
 	{
-		StyleSheet style = aListView.getStylesheet();
+		Styles style = aListView.getStyles();
 		boolean selected = aListView.isItemSelected(aItem);
 
 		int x = aOriginX;
@@ -120,12 +117,11 @@ public class ThumbnailItemRenderer implements ListViewItemRenderer
 		int sy = y+h-sh;
 
 		BufferedImage icon = aItem.getIcon();
-
-		boolean drawBorder = icon != null && aItem.getRenderingHint(ListViewRenderingHints.KEY_DRAW_BORDER) != ListViewRenderingHints.VALUE_DRAW_BORDER_OFF;
+		boolean drawBorder = aListView.isBorderDrawn(aItem);
 
 		if (icon == null)
 		{
-			icon = style.getScaledImage("thumbPlaceholder", mItemSize.width, mItemSize.height, true);
+			icon = style.getScaledImageAspect(style.thumbPlaceholder, mItemSize.width, mItemSize.height);
 		}
 
 		double f = Math.min(mItemSize.width / (double)icon.getWidth(), mItemSize.height / (double)icon.getHeight());
@@ -136,24 +132,16 @@ public class ThumbnailItemRenderer implements ListViewItemRenderer
 
 		if (selected)
 		{
-			BufferedImage im = style.getScaledImage("thumbBorderSelectedBackground", sw, sh, 3, 3, 3, 3);
+			BufferedImage im = style.getScaledImage(style.thumbBorderSelectedBackground, sw, sh, 3, 3, 3, 3);
 			aGraphics.drawImage(im, sx, sy, null);
 		}
 
 		if (drawBorder)
 		{
-//			boolean ninePatch = style.getBoolean("thumbBorderNinePatch", false);
-//			if (ninePatch)
-//			{
-//			}
-//			else
-			{
-				BufferedImage im = style.getScaledImage(selected ? "thumbBorderSelected" : "thumbBorderUnselected", tw+3+6, th+3+7, 3, 3, 7, 6);
-				aGraphics.drawImage(im, tx-3, ty-3, null);
-			}
+			BufferedImage im = style.getScaledImage(selected ? style.thumbBorderSelected : style.thumbBorderUnselected, tw+3+6, th+3+7, 3, 3, 7, 6);
+			aGraphics.drawImage(im, tx-3, ty-3, null);
 		}
 
-		aGraphics.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
 		aGraphics.drawImage(icon, tx, ty, tw, th, null);
 
 		String label = null;
@@ -170,7 +158,7 @@ public class ThumbnailItemRenderer implements ListViewItemRenderer
 
 		if (label != null && mLabelHeight > 0)
 		{
-			aListView.getTextRenderer().drawString(aGraphics, label, sx+2, y+h-mLabelHeight-2, sw-4, mLabelHeight, Anchor.NORTH, style.getColor("itemForeground"), null, false);
+			TextRenderer.drawString(aGraphics, label, sx+2, y+h-mLabelHeight-2, sw-4, mLabelHeight, Anchor.NORTH, style.itemForeground, null, false);
 		}
 
 		if (aListView.getFocusItem() == aItem)

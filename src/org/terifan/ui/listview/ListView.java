@@ -1,8 +1,6 @@
 package org.terifan.ui.listview;
 
 import java.awt.BorderLayout;
-import org.terifan.ui.listview.layout.ColumnHeaderRenderer;
-import org.terifan.ui.listview.layout.DetailItemRenderer;
 import java.awt.Color;
 import java.awt.Container;
 import java.awt.Dimension;
@@ -12,8 +10,7 @@ import java.awt.Graphics2D;
 import java.awt.MouseInfo;
 import java.awt.Point;
 import java.awt.Rectangle;
-import java.awt.datatransfer.DataFlavor;
-import java.awt.datatransfer.FlavorMap;
+import java.awt.RenderingHints;
 import java.awt.dnd.DropTarget;
 import java.awt.dnd.DropTargetListener;
 import java.awt.event.ActionEvent;
@@ -22,7 +19,6 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Map;
 import javax.swing.AbstractAction;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
@@ -34,10 +30,8 @@ import javax.swing.ScrollPaneConstants;
 import javax.swing.Scrollable;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
-import org.terifan.ui.listview.util.Orientation;
-import org.terifan.ui.listview.util.PopupFactory;
-import org.terifan.ui.listview.util.StyleSheet;
-import org.terifan.ui.listview.util.Utilities;
+import org.terifan.ui.listview.layout.ColumnHeaderRenderer;
+import org.terifan.ui.listview.layout.DetailItemRenderer;
 
 
 public class ListView<T extends ListViewItem> extends JComponent implements Scrollable
@@ -45,7 +39,6 @@ public class ListView<T extends ListViewItem> extends JComponent implements Scro
 	private ListViewModel<T> mModel;
 	private LocationInfo<T> mRolloverInfo;
 	private T mFocusItem;
-	private ListViewGroup mFocusGroup;
 	private ListViewHeaderRenderer mHeaderRenderer;
 	private ListViewBarRenderer mBarRenderer;
 	private ListViewItemRenderer mItemRenderer;
@@ -53,10 +46,9 @@ public class ListView<T extends ListViewItem> extends JComponent implements Scro
 	private SelectionMode mSelectionMode;
 	private boolean mRolloverEnabled;
 	private boolean mIsConfigured;
-	private StyleSheet mStylesheet;
+	private Styles mStyles;
 	private T mAnchorItem;
 	private ArrayList<ListViewListener> mEventListeners;
-	private TextRenderer mTextRenderer;
 	private ListViewGroupRenderer mGroupRenderer;
 	private String mPlaceholder;
 	private ListViewMouseListener mMouseListener;
@@ -74,66 +66,50 @@ public class ListView<T extends ListViewItem> extends JComponent implements Scro
 
 	public ListView(ListViewModel<T> aModel)
 	{
+		mStyles = new Styles();
 		mSelectedItems = new HashSet<>();
 		mEventListeners = new ArrayList<>();
 
-		if (aModel != null)
-		{
-			setModel(aModel);
-		}
-
-		setBackground(Color.WHITE);
-		setForeground(Color.BLACK);
-		setHeaderRenderer(new ColumnHeaderRenderer());
-		setSelectionMode(SelectionMode.ROW);
-		setItemRenderer(new DetailItemRenderer());
-		setOpaque(true);
-		setGroupRenderer(new ListViewGroupRenderer());
-
+		super.setOpaque(true);
 		super.setFocusable(true);
+		super.setBackground(Color.WHITE);
+		super.setForeground(Color.BLACK);
 
 		mMouseListener = new ListViewMouseListener(this);
-		addMouseListener(mMouseListener);
-		addMouseMotionListener(mMouseListener);
-
-		ListViewKeyListener kl = new ListViewKeyListener(this);
-		addKeyListener(kl);
+		super.addMouseListener(mMouseListener);
+		super.addMouseMotionListener(mMouseListener);
+		super.addKeyListener(new ListViewKeyListener(this));
 
 		// override JScrollPane actions...
-		AbstractAction action = new AbstractAction(){@Override public void actionPerformed(ActionEvent aEvent){}};
-		registerKeyboardAction(action, KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, 0), JComponent.WHEN_FOCUSED);
-		registerKeyboardAction(action, KeyStroke.getKeyStroke(KeyEvent.VK_UP, 0), JComponent.WHEN_FOCUSED);
-		registerKeyboardAction(action, KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, 0), JComponent.WHEN_FOCUSED);
-		registerKeyboardAction(action, KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, 0), JComponent.WHEN_FOCUSED);
-		registerKeyboardAction(action, KeyStroke.getKeyStroke(KeyEvent.VK_PAGE_UP, 0), JComponent.WHEN_FOCUSED);
-		registerKeyboardAction(action, KeyStroke.getKeyStroke(KeyEvent.VK_PAGE_DOWN, 0), JComponent.WHEN_FOCUSED);
-		registerKeyboardAction(action, KeyStroke.getKeyStroke(KeyEvent.VK_HOME, 0), JComponent.WHEN_FOCUSED);
-		registerKeyboardAction(action, KeyStroke.getKeyStroke(KeyEvent.VK_END, 0), JComponent.WHEN_FOCUSED);
-		registerKeyboardAction(action, KeyStroke.getKeyStroke(KeyEvent.VK_HOME, InputEvent.CTRL_MASK), JComponent.WHEN_FOCUSED);
-		registerKeyboardAction(action, KeyStroke.getKeyStroke(KeyEvent.VK_END, InputEvent.CTRL_MASK), JComponent.WHEN_FOCUSED);
-	}
-
-
-	public void setStyleSheet(StyleSheet aStylesheet)
-	{
-		mStylesheet = aStylesheet.getStyleSheet("org.terifan.ui.listview.ListView");
-	}
-
-
-	public StyleSheet getStylesheet()
-	{
-		if (mStylesheet == null)
+		AbstractAction action = new AbstractAction()
 		{
-			Class clazz = getClass();
-			while (!clazz.getName().equals("org.terifan.ui.listview.ListView"))
+			@Override
+			public void actionPerformed(ActionEvent aEvent)
 			{
-				clazz = clazz.getSuperclass();
 			}
+		};
+		super.registerKeyboardAction(action, KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, 0), JComponent.WHEN_FOCUSED);
+		super.registerKeyboardAction(action, KeyStroke.getKeyStroke(KeyEvent.VK_UP, 0), JComponent.WHEN_FOCUSED);
+		super.registerKeyboardAction(action, KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, 0), JComponent.WHEN_FOCUSED);
+		super.registerKeyboardAction(action, KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, 0), JComponent.WHEN_FOCUSED);
+		super.registerKeyboardAction(action, KeyStroke.getKeyStroke(KeyEvent.VK_PAGE_UP, 0), JComponent.WHEN_FOCUSED);
+		super.registerKeyboardAction(action, KeyStroke.getKeyStroke(KeyEvent.VK_PAGE_DOWN, 0), JComponent.WHEN_FOCUSED);
+		super.registerKeyboardAction(action, KeyStroke.getKeyStroke(KeyEvent.VK_HOME, 0), JComponent.WHEN_FOCUSED);
+		super.registerKeyboardAction(action, KeyStroke.getKeyStroke(KeyEvent.VK_END, 0), JComponent.WHEN_FOCUSED);
+		super.registerKeyboardAction(action, KeyStroke.getKeyStroke(KeyEvent.VK_HOME, InputEvent.CTRL_MASK), JComponent.WHEN_FOCUSED);
+		super.registerKeyboardAction(action, KeyStroke.getKeyStroke(KeyEvent.VK_END, InputEvent.CTRL_MASK), JComponent.WHEN_FOCUSED);
 
-			setStyleSheet(new StyleSheet("org.terifan.ui.listview.ListView", clazz, "resources/stylesheet.xml", "resources", 512*1024));
-		}
+		setHeaderRenderer(new ColumnHeaderRenderer());
+		setItemRenderer(new DetailItemRenderer());
+		setGroupRenderer(new ListViewGroupRenderer());
+		setSelectionMode(SelectionMode.ROW);
+		setModel(aModel);
+	}
 
-		return mStylesheet;
+
+	public Styles getStyles()
+	{
+		return mStyles;
 	}
 
 
@@ -149,11 +125,13 @@ public class ListView<T extends ListViewItem> extends JComponent implements Scro
 	}
 
 
-	public void setItemRenderer(ListViewItemRenderer<T> aItemRenderer)
+	public ListView<T> setItemRenderer(ListViewItemRenderer<T> aItemRenderer)
 	{
 		mItemRenderer = aItemRenderer;
 
 		setListViewLayout(mItemRenderer.createListViewLayout(this));
+
+		return this;
 	}
 
 
@@ -195,7 +173,6 @@ public class ListView<T extends ListViewItem> extends JComponent implements Scro
 		mFocusItem = null;
 		mRolloverInfo = null;
 		mSelectedItems.clear();
-//		mSelectedItemsClone.clear();
 		mSelectionRectangle.setSize(0, 0);
 	}
 
@@ -206,7 +183,7 @@ public class ListView<T extends ListViewItem> extends JComponent implements Scro
 	}
 
 
-	public void setHeaderRenderer(ListViewHeaderRenderer aRenderer)
+	public ListView<T> setHeaderRenderer(ListViewHeaderRenderer aRenderer)
 	{
 		mHeaderRenderer = aRenderer;
 
@@ -214,6 +191,8 @@ public class ListView<T extends ListViewItem> extends JComponent implements Scro
 		{
 			configureEnclosingScrollPane();
 		}
+
+		return this;
 	}
 
 
@@ -223,7 +202,7 @@ public class ListView<T extends ListViewItem> extends JComponent implements Scro
 	}
 
 
-	public void setBarRenderer(ListViewBarRenderer aRenderer)
+	public ListView<T> setBarRenderer(ListViewBarRenderer aRenderer)
 	{
 		mBarRenderer = aRenderer;
 
@@ -231,6 +210,8 @@ public class ListView<T extends ListViewItem> extends JComponent implements Scro
 		{
 			configureEnclosingScrollPane();
 		}
+
+		return this;
 	}
 
 
@@ -240,9 +221,11 @@ public class ListView<T extends ListViewItem> extends JComponent implements Scro
 	}
 
 
-	public void setSelectionMode(SelectionMode aMode)
+	public ListView<T> setSelectionMode(SelectionMode aMode)
 	{
 		mSelectionMode = aMode;
+
+		return this;
 	}
 
 
@@ -258,25 +241,31 @@ public class ListView<T extends ListViewItem> extends JComponent implements Scro
 	}
 
 
-	public void setFocusItem(T aItem)
+	public ListView<T> setFocusItem(T aItem)
 	{
 		setFocusItem(aItem, false);
+
+		return this;
 	}
 
 
-	public void setFocusItem(T aItem, boolean aSetAnchor)
+	public ListView<T> setFocusItem(T aItem, boolean aSetAnchor)
 	{
 		mFocusItem = aItem;
 		if (aSetAnchor)
 		{
 			mAnchorItem = aItem;
 		}
+
+		return this;
 	}
 
 
-	public void setPlaceholder(String aMessage)
+	public ListView<T> setPlaceholder(String aMessage)
 	{
 		mPlaceholder = aMessage;
+
+		return this;
 	}
 
 
@@ -294,7 +283,7 @@ public class ListView<T extends ListViewItem> extends JComponent implements Scro
 
 	public void updateColumnSize(int aColumnIndex)
 	{
-		System.out.println("TODO: updateColumnSize "+aColumnIndex);
+		System.out.println("TODO: updateColumnSize " + aColumnIndex);
 	}
 
 
@@ -322,9 +311,9 @@ public class ListView<T extends ListViewItem> extends JComponent implements Scro
 
 		if (!r.isEmpty())
 		{
-			aGraphics.setColor(new Color(111,167,223,128));
-			aGraphics.fillRect(r.x+1, r.y+1, r.width, r.height);
-			aGraphics.setColor(new Color(105,153,201,128));
+			aGraphics.setColor(new Color(111, 167, 223, 128));
+			aGraphics.fillRect(r.x + 1, r.y + 1, r.width, r.height);
+			aGraphics.setColor(new Color(105, 153, 201, 128));
 			aGraphics.drawRect(r.x, r.y, r.width, r.height);
 
 			if (!r.equals(mSelectionRectangle))
@@ -342,22 +331,36 @@ public class ListView<T extends ListViewItem> extends JComponent implements Scro
 		{
 			super.paintComponent(aGraphics);
 
-			synchronized (getTreeLock())
-			{
-				mLayout.paint((Graphics2D)aGraphics);
+			// ???
+//			synchronized (getTreeLock())
+//			{
+			Graphics2D g = (Graphics2D)aGraphics;
 
-				if (mModel.getItemCount() == 0 && mPlaceholder != null && !mPlaceholder.isEmpty())
-				{
-					Utilities.enableTextAntialiasing(aGraphics);
-					aGraphics.setFont(new Font("arial", Font.ITALIC, 12));
-					aGraphics.setColor(Color.BLACK);
-					aGraphics.drawString(mPlaceholder, (getWidth()-aGraphics.getFontMetrics().stringWidth(mPlaceholder))/2, Math.min(50, getHeight()-5));
-				}
+			g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_LCD_HRGB);
+			g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+
+			mLayout.paint(g);
+
+			if (mModel.getItemCount() == 0)
+			{
+				paintPlaceHolder(g);
 			}
+//			}
 		}
 		catch (Exception e)
 		{
 			e.printStackTrace(System.err);
+		}
+	}
+
+
+	protected void paintPlaceHolder(Graphics2D aGraphics)
+	{
+		if (mPlaceholder != null && !mPlaceholder.isEmpty())
+		{
+			aGraphics.setFont(new Font("arial", Font.ITALIC, 12));
+			aGraphics.setColor(Color.BLACK);
+			aGraphics.drawString(mPlaceholder, (getWidth() - aGraphics.getFontMetrics().stringWidth(mPlaceholder)) / 2, Math.min(50, getHeight() - 5));
 		}
 	}
 
@@ -390,14 +393,15 @@ public class ListView<T extends ListViewItem> extends JComponent implements Scro
 					return;
 				}
 
-				viewport.addChangeListener(e->
-				{
-					if (mRolloverEnabled)
+				viewport.addChangeListener(e
+					-> 
 					{
-						Point p1 = MouseInfo.getPointerInfo().getLocation();
-						SwingUtilities.convertPointFromScreen(p1, ListView.this);
-						updateRollover(p1);
-					}
+						if (mRolloverEnabled)
+						{
+							Point p1 = MouseInfo.getPointerInfo().getLocation();
+							SwingUtilities.convertPointFromScreen(p1, ListView.this);
+							updateRollover(p1);
+						}
 				});
 
 				JPanel columnHeaderView = new JPanel(new BorderLayout());
@@ -422,7 +426,6 @@ public class ListView<T extends ListViewItem> extends JComponent implements Scro
 ////						Log.out.println(e);
 //					}
 //				});
-
 //				Border border = scrollPane.getBorder();
 //
 //				if (border == null || border instanceof UIResource)
@@ -520,7 +523,6 @@ public class ListView<T extends ListViewItem> extends JComponent implements Scro
 //		{
 //			c.revalidate();
 //		}
-
 		revalidate();
 		repaint();
 	}
@@ -571,7 +573,7 @@ public class ListView<T extends ListViewItem> extends JComponent implements Scro
 	 * Either marks all items selected or unselected in this ListView.
 	 *
 	 * @param aSelected
-	 *    the new state of all items.
+	 * the new state of all items.
 	 */
 	public void setItemsSelected(boolean aSelected)
 	{
@@ -594,7 +596,7 @@ public class ListView<T extends ListViewItem> extends JComponent implements Scro
 	 * Either marks all items selected or unselected in this ListView.
 	 *
 	 * @param aSelected
-	 *    the new state of all items.
+	 * the new state of all items.
 	 */
 	public void setItemsSelected(int aStartIndex, int aEndIndex, boolean aSelected)
 	{
@@ -709,7 +711,7 @@ public class ListView<T extends ListViewItem> extends JComponent implements Scro
 	 * Sets the pop-up factory for this ListView.
 	 *
 	 * @param aMenu
-	 *   a pop-up factory or null if non should exist
+	 * a pop-up factory or null if non should exist
 	 */
 	public void setPopupFactory(PopupFactory<ListView> aPopupFactory)
 	{
@@ -721,7 +723,7 @@ public class ListView<T extends ListViewItem> extends JComponent implements Scro
 	 * Returns the pop-up factory assigned for this ListView using setPopupFactory.
 	 *
 	 * @return
-	 *   a PopupFactory or null if one doesn't exists
+	 * a PopupFactory or null if one doesn't exists
 	 */
 	public PopupFactory<ListView> getPopupFactory()
 	{
@@ -742,19 +744,20 @@ public class ListView<T extends ListViewItem> extends JComponent implements Scro
 	 * currently displayed.
 	 *
 	 * @return
-	 *   a list of all selected items.
+	 * a list of all selected items.
 	 */
 	public ArrayList<T> getSelectedItems()
 	{
 		ArrayList<T> list = new ArrayList<>(mSelectedItems.size());
 
-		ItemVisitor<T> visitor = (T aItem) ->
-		{
-			if (mSelectedItems.contains(aItem))
+		ItemVisitor<T> visitor = (T aItem)
+			-> 
 			{
-				list.add(aItem);
-			}
-			return null;
+				if (mSelectedItems.contains(aItem))
+				{
+					list.add(aItem);
+				}
+				return null;
 		};
 
 		mModel.visitItems(true, visitor);
@@ -768,40 +771,22 @@ public class ListView<T extends ListViewItem> extends JComponent implements Scro
 	 * displayed.
 	 *
 	 * @return
-	 *   a list of all items.
+	 * a list of all items.
 	 */
 	public ArrayList<T> getItems()
 	{
 		final ArrayList<T> list = new ArrayList<>(mModel.getItemCount());
 
-		ItemVisitor<T> visitor = aItem ->
-		{
-			list.add(aItem);
-			return null;
+		ItemVisitor<T> visitor = aItem
+			-> 
+			{
+				list.add(aItem);
+				return null;
 		};
 
 		mModel.visitItems(true, visitor);
 
 		return list;
-	}
-
-
-	/**
-	 * Returns a TextRenderer instance used by all default item renderers. This
-	 * method lazily creates and instance of TextRenderer with a 1MiB cache.
-	 * Override this method to create a cache of different size.
-	 *
-	 * @return
-	 *   the TextRenderer instance used to render all text.
-	 */
-	public TextRenderer getTextRenderer()
-	{
-		if (mTextRenderer == null)
-		{
-			mTextRenderer = new TextRenderer();
-		}
-
-		return mTextRenderer;
 	}
 
 
@@ -850,11 +835,11 @@ public class ListView<T extends ListViewItem> extends JComponent implements Scro
 	 * Return true if the item is currently probably visible. TODO: only jscrollpane supported!!!
 	 *
 	 * @param aItem
-	 *   the item
+	 * the item
 	 * @param aExpandView
-	 *   include neighbouring items
+	 * include neighbouring items
 	 * @return
-	 *   true if the item is probably visible
+	 * true if the item is probably visible
 	 */
 	public boolean isItemDisplayable(T aItem, boolean aExpandView)
 	{
@@ -923,8 +908,6 @@ public class ListView<T extends ListViewItem> extends JComponent implements Scro
 //	{
 //		return mSelectedItemsClone;
 //	}
-
-
 	public void setRowHeaderRenderer()
 	{
 	}
@@ -957,5 +940,14 @@ public class ListView<T extends ListViewItem> extends JComponent implements Scro
 	public void addDropTargetListener(DropTargetListener aDropTargetListener)
 	{
 		new DropTarget(this, aDropTargetListener).setActive(true);
+	}
+
+
+	/**
+	 * Return true if the border of a item icon should be drawn. Default implementation return true whenever there is an icon otherwise false. Override this method for custom handling.
+	 */
+	public boolean isBorderDrawn(ListViewItem aItem)
+	{
+		return aItem.getIcon() != null;
 	}
 }

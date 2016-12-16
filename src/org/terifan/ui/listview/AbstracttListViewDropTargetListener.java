@@ -21,11 +21,11 @@ public abstract class AbstracttListViewDropTargetListener<T extends ListViewItem
 		{
 			throw new IllegalArgumentException();
 		}
-		
+
 		mListView = aListView;
 	}
 
-	
+
 	protected abstract boolean canDrop(DropTargetDragEvent aEvent, T aItem);
 
 

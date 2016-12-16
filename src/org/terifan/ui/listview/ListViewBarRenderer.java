@@ -3,8 +3,6 @@ package org.terifan.ui.listview;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import javax.swing.Icon;
-import org.terifan.ui.listview.util.StyleSheet;
-import org.terifan.ui.listview.util.Utilities;
 
 
 public class ListViewBarRenderer
@@ -22,17 +20,16 @@ public class ListViewBarRenderer
 
 	public void render(ListView aListView, Graphics2D aGraphics, int x, int y, int w, int h)
 	{
-		Utilities.enableTextAntialiasing(aGraphics);
-		StyleSheet style = aListView.getStylesheet();
+		Styles style = aListView.getStyles();
 
-		Utilities.drawScaledImage(aGraphics, style.getImage("barNormal"), x, y, w, h, 5, 5);
+		Utilities.drawScaledImage(aGraphics, style.barNormal, x, y, w, h, 5, 5);
 
 		mIcon.paintIcon(aListView, aGraphics, x+15-mIcon.getIconWidth()/2, y+13-mIcon.getIconHeight()/2);
 
 		Font oldFont = aGraphics.getFont();
 
-		aGraphics.setFont(style.getFont("bar"));
-		aGraphics.setColor(style.getColor("bar"));
+		aGraphics.setFont(style.barFont);
+		aGraphics.setColor(style.barColor);
 		aGraphics.drawString(mTitle, x+31, y+18);
 
 		aGraphics.setFont(oldFont);

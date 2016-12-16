@@ -1,7 +1,6 @@
 package org.terifan.ui.listview;
 
 import java.util.Iterator;
-import org.terifan.ui.listview.util.Formatter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -9,9 +8,6 @@ import java.util.Comparator;
 import java.util.HashSet;
 import javax.swing.Icon;
 import javax.swing.SortOrder;
-import org.terifan.ui.listview.util.SortedMap;
-import org.terifan.ui.listview.util.IconProducer;
-import org.terifan.ui.listview.util.TitleProducer;
 
 
 public class ListViewModel<T extends ListViewItem> implements Iterable<T>

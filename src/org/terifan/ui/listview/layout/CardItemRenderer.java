@@ -11,10 +11,9 @@ import org.terifan.ui.listview.ListViewItem;
 import org.terifan.ui.listview.ListViewItemRenderer;
 import org.terifan.ui.listview.ListViewLayout;
 import org.terifan.ui.listview.ListViewModel;
-import org.terifan.ui.listview.util.Anchor;
-import org.terifan.ui.listview.util.Orientation;
-import org.terifan.ui.listview.util.StyleSheet;
-import org.terifan.ui.listview.util.Utilities;
+import org.terifan.ui.listview.Orientation;
+import org.terifan.ui.listview.Styles;
+import org.terifan.ui.listview.Utilities;
 
 
 public class CardItemRenderer implements ListViewItemRenderer
@@ -118,8 +117,7 @@ public class CardItemRenderer implements ListViewItemRenderer
 	@Override
 	public void paintItem(Graphics2D aGraphics, int aOriginX, int aOriginY, int aWidth, int aHeight, ListView aListView, ListViewItem aItem)
 	{
-		Utilities.enableTextAntialiasing(aGraphics);
-		StyleSheet style = aListView.getStylesheet();
+		Styles style = aListView.getStyles();
 		ListViewModel model = aListView.getModel();
 
 		aOriginX += 6;
@@ -129,25 +127,25 @@ public class CardItemRenderer implements ListViewItemRenderer
 
 		if (aListView.isItemSelected(aItem))
 		{
-			Utilities.drawScaledImage(aGraphics, style.getImage("cardBackgroundSelected"), aOriginX, aOriginY, aWidth, aHeight, 18, 1, 6, 6);
+			Utilities.drawScaledImage(aGraphics, style.cardBackgroundSelected, aOriginX, aOriginY, aWidth, aHeight, 18, 1, 6, 6);
 		}
 		else
 		{
-			Utilities.drawScaledImage(aGraphics, style.getImage("cardBackgroundNormal"), aOriginX, aOriginY, aWidth, aHeight, 18, 1, 6, 6);
+			Utilities.drawScaledImage(aGraphics, style.cardBackgroundNormal, aOriginX, aOriginY, aWidth, aHeight, 18, 1, 6, 6);
 		}
 
 		int rowCount = Math.max(1, (aHeight - 4) / mRowHeight);
 
 //		Font plain = style.getFont("item");
 //		Font bold = style.getFont("label");
-//		Color plainColor = style.getColor("itemForeground");
-//		Color boldColor = style.getColor("itemLabelForeground");
+//		Color plainColor = style.itemForeground;
+//		Color boldColor = style.itemLabelForeground;
 
 		int x = aOriginX;
 		int y = aOriginY+2;
 
-		Color foreground = style.getColor("itemForeground");
-		Color background = style.getColor("itemBackground");
+		Color foreground = style.itemForeground;
+		Color background = style.itemBackground;
 
 		for (int col = 0, rowIndex = 0; col < model.getColumnCount() && rowIndex < rowCount; col++)
 		{
@@ -166,9 +164,9 @@ public class CardItemRenderer implements ListViewItemRenderer
 //				aGraphics.setFont(col == 0 ? bold : plain);
 //				aGraphics.setColor(col == 0 ? boldColor : plainColor);
 
-				aListView.getTextRenderer().drawString(aGraphics, column.getLabel(), x+5, y, mLabelWidth, mRowHeight, Anchor.NORTH_WEST, foreground, background, false);
+				TextRenderer.drawString(aGraphics, column.getLabel(), x+5, y, mLabelWidth, mRowHeight, Anchor.NORTH_WEST, foreground, background, false);
 
-				aListView.getTextRenderer().drawString(aGraphics, value.toString(), x+5+5+mLabelWidth, y, aWidth-15-5-mLabelWidth, mRowHeight, Anchor.NORTH_WEST, foreground, background, false);
+				TextRenderer.drawString(aGraphics, value.toString(), x+5+5+mLabelWidth, y, aWidth-15-5-mLabelWidth, mRowHeight, Anchor.NORTH_WEST, foreground, background, false);
 
 //				Component c = column.getListViewCellRenderer().getListViewCellRendererComponent(aListView, aItem, col, aItem.isSelected(), focus, false, sorted);
 //				c.setBounds(x, y, aWidth, rowHeight);

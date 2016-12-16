@@ -9,5 +9,4 @@ import java.lang.annotation.Target;
 @Target(value = {ElementType.METHOD, ElementType.FIELD}) @Retention(value = RetentionPolicy.RUNTIME)
 public @interface ListViewItemIcon
 {
-	int size() default 0;
 }

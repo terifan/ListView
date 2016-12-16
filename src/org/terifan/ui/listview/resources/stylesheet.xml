@@ -82,13 +82,7 @@
 
 		<image id="cardBackgroundNormal" value="card_background_normal.png"/>
 		<image id="cardBackgroundSelected" value="card_background_selected.png"/>
-<!--
-		<boolean id="thumbBorderNinePatch" value="true"/>
-		<image id="thumbBorderSelected" value="thumb_border_v4_selected.png"/>
-		<image id="thumbBorderSelectedBackground" value="thumb_border_v4_selected_background.png"/>
-		<image id="thumbBorderUnselected" value="thumb_border_v4_unselected.png"/>
-		<image id="thumbPlaceholder" value="placeholder.png"/>
--->
+
 		<image id="thumbBorderSelected" value="thumb_border_v2_selected.png"/>
 		<image id="thumbBorderSelectedBackground" value="thumb_border_v2_selected_background.png"/>
 		<image id="thumbBorderUnselected" value="thumb_border_v2_unselected.png"/>

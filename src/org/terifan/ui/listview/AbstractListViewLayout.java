@@ -9,6 +9,8 @@ public abstract class AbstractListViewLayout<T extends ListViewItem> implements 
 	private class FirstItemVisitor<T extends ListViewItem> implements GroupVisitor<T>
 	{
 		T mItem;
+
+
 		@Override
 		public Object visit(ListViewGroup<T> aGroup)
 		{
@@ -34,13 +36,16 @@ public abstract class AbstractListViewLayout<T extends ListViewItem> implements 
 	private class LastItemVisitor<T extends ListViewItem> implements GroupVisitor<T>
 	{
 		T mItem;
+
+
 		@Override
 		public Object visit(ListViewGroup<T> aGroup)
 		{
 			if (aGroup.getItemCount() > 0)
 			{
-				mItem = aGroup.getItem(aGroup.getItemCount()-1);
+				mItem = aGroup.getItem(aGroup.getItemCount() - 1);
 			}
+
 			// continue visiting trough out the entire tree
 			return null;
 		}

@@ -10,11 +10,4 @@ public abstract class AbstractListViewItem implements ListViewItem
 	{
 		return null;
 	}
-
-
-	@Override
-	public Object getRenderingHint(Object aKey)
-	{
-		return null;
-	}
 }

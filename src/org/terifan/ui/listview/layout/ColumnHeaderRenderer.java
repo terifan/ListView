@@ -1,16 +1,17 @@
 package org.terifan.ui.listview.layout;
 
+import java.awt.Color;
 import java.awt.Font;
-import java.awt.FontMetrics;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Rectangle;
+import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
-import javax.swing.Icon;
 import javax.swing.SortOrder;
 import org.terifan.ui.listview.ListView;
 import org.terifan.ui.listview.ListViewColumn;
 import org.terifan.ui.listview.ListViewHeaderRenderer;
-import org.terifan.ui.listview.util.StyleSheet;
-import org.terifan.ui.listview.util.Utilities;
+import org.terifan.ui.listview.Styles;
 
 
 public class ColumnHeaderRenderer implements ListViewHeaderRenderer
@@ -45,99 +46,74 @@ public class ColumnHeaderRenderer implements ListViewHeaderRenderer
 	@Override
 	public void paintColumnHeader(ListView aListView, ListViewColumn aColumn, Graphics aGraphics, int x, int y, int w, int h, boolean aIsSelected, boolean aIsArmed, boolean aIsRollover, SortOrder aSorting, boolean aFirstColumn, boolean aLastColumn)
 	{
-		Utilities.enableTextAntialiasing(aGraphics);
-		StyleSheet style = aListView.getStylesheet();
+		Styles style = aListView.getStyles();
 		Font oldFont = aGraphics.getFont();
 
-		aGraphics.setFont(style.getFont("header"));
+		((Graphics2D)aGraphics).setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_LCD_HRGB);
 
-		FontMetrics fontMetrics = aGraphics.getFontMetrics(aGraphics.getFont());
+		aGraphics.setFont(style.header);
 
 		if (aIsRollover && aIsArmed)
 		{
-			BufferedImage background = style.getScaledImage("headerBackgroundRolloverArmed", w, h-1);
+			BufferedImage background = style.getScaledImage(style.headerBackgroundRolloverArmed, w, h - 1);
 			aGraphics.drawImage(background, x, y, null);
-			aGraphics.setColor(style.getColor("headerBorder"));
-			aGraphics.drawLine(x, y+h-1, x+w, y+h-1);
+			aGraphics.setColor(style.headerBorder);
+			aGraphics.drawLine(x, y + h - 1, x + w, y + h - 1);
 		}
 		else if (aIsArmed)
 		{
-			BufferedImage background = style.getScaledImage("headerBackgroundArmed", w, h-1);
+			BufferedImage background = style.getScaledImage(style.headerBackgroundArmed, w, h - 1);
 			aGraphics.drawImage(background, x, y, null);
-			aGraphics.setColor(style.getColor("headerBorder"));
-			aGraphics.drawLine(x, y+h-1, x+w, y+h-1);
+			aGraphics.setColor(style.headerBorder);
+			aGraphics.drawLine(x, y + h - 1, x + w, y + h - 1);
 		}
 		else if (aIsRollover)
 		{
-			BufferedImage background = style.getScaledImage("headerBackgroundRollover", w, h-1);
+			BufferedImage background = style.getScaledImage(style.headerBackgroundRollover, w, h - 1);
 			aGraphics.drawImage(background, x, y, null);
-			aGraphics.setColor(style.getColor("headerBorder"));
-			aGraphics.drawLine(x, y+h-1, x+w, y+h-1);
+			aGraphics.setColor(style.headerBorder);
+			aGraphics.drawLine(x, y + h - 1, x + w, y + h - 1);
 		}
 		else if (aSorting != null && aSorting != SortOrder.UNSORTED)
 		{
-			BufferedImage background = style.getScaledImage("headerBackgroundSorted", w, h-1);
+			BufferedImage background = style.getScaledImage(style.headerBackgroundSorted, w, h - 1);
 			aGraphics.drawImage(background, x, y, null);
-			aGraphics.setColor(style.getColor("headerBorder"));
-			aGraphics.drawLine(x, y+h-1, x+w, y+h-1);
+			aGraphics.setColor(style.headerBorder);
+			aGraphics.drawLine(x, y + h - 1, x + w, y + h - 1);
 		}
 		else
 		{
-			BufferedImage background = style.getScaledImage("headerBackground", w, h-1);
+			BufferedImage background = style.getScaledImage(style.headerBackground, w, h - 1);
 			aGraphics.drawImage(background, x, y, null);
-			aGraphics.setColor(style.getColor("headerBorder"));
-			aGraphics.drawLine(x, y+h-1, x+w, y+h-1);
+			aGraphics.setColor(style.headerBorder);
+			aGraphics.drawLine(x, y + h - 1, x + w, y + h - 1);
 		}
 
-		Icon sortIcon = style.getIcon(aSorting == SortOrder.ASCENDING ? "arrowAscending" : "arrowDescending");
+		BufferedImage sortIcon = aSorting == SortOrder.ASCENDING ? style.sortArrowAscending : style.sortArrowDescending;
 
-		int iw = aSorting != SortOrder.UNSORTED ? sortIcon.getIconWidth()+10 : 0;
-		String label = Utilities.clipString(aColumn.getLabel(), fontMetrics, Math.max(w - iw - 10,1));
-		int cw = fontMetrics.stringWidth(label);
+		Color fg = aIsArmed ? style.headerForegroundArmed : style.headerForeground;
+		Color bg = null;
+		int tx = x + (aIsArmed ? 1 : 0) + 1;
+		int ty = y + (aIsArmed ? 1 : 0) + 1;
+		int tw = w - (aSorting != SortOrder.UNSORTED ? 10 + sortIcon.getWidth() : 0) - 2;
+		Rectangle rect = TextRenderer.drawString(aGraphics, aColumn.getLabel(), tx, ty, tw, h, Anchor.WEST, fg, bg, false);
 
 		if (aSorting != SortOrder.UNSORTED)
 		{
-			cw += 10+sortIcon.getIconWidth();
-		}
-
-		int z = x;
-
-		switch (aColumn.getAlignment())
-		{
-			case LEFT:
-				z += 5;
-				break;
-			case CENTER:
-				z += Math.max((w-cw)/2,5);
-				break;
-			case RIGHT:
-				z += Math.max(w-cw-5,5);
-				break;
-			default:
-				throw new RuntimeException("Unsupported alignment: " + aColumn.getAlignment());
-		}
-
-		aGraphics.setColor(aIsArmed ? style.getColor("headerForegroundArmed") : style.getColor("headerForeground"));
-		aGraphics.drawString(label, z+(aIsArmed?1:0), y+(aIsArmed?1:0) + (h + fontMetrics.getHeight()) / 2 - fontMetrics.getDescent());
-		z += fontMetrics.stringWidth(label);
-
-		if (aSorting != SortOrder.UNSORTED)
-		{
-			z = Math.min(z + 10, z + w - 10 - sortIcon.getIconWidth());
-			sortIcon.paintIcon(null, aGraphics, z+(aIsArmed?1:0), (h - sortIcon.getIconHeight()) / 2+(aIsArmed?1:0));
+			aGraphics.drawImage(sortIcon, x + (aIsArmed ? 1 : 0) + rect.width + 5, (h - sortIcon.getHeight()) / 2 + (aIsArmed ? 1 : 0), null);
 		}
 
 		if (!aLastColumn || !getExtendLastItem())
 		{
 			if (aIsArmed)
 			{
-				BufferedImage background = style.getScaledImage("headerSeperatorArmed", 1, h-1);
-				aGraphics.drawImage(background, x+w-1, y, null);
+				BufferedImage background = style.getScaledImage(style.headerSeperatorArmed, 1, h - 1);
+				aGraphics.drawImage(background, x + w - 1, y, null);
 			}
 			else
 			{
-				BufferedImage background = style.getScaledImage("headerSeperator", 1, h-1);
-				aGraphics.drawImage(background, x+w-1, y, null);
+				BufferedImage background = style.getScaledImage(style.headerSeperator, 1, h - 1);
+				aGraphics.drawImage(background, x + w - 1, y, null);
 			}
 		}
 
@@ -150,12 +126,12 @@ public class ColumnHeaderRenderer implements ListViewHeaderRenderer
 	{
 		if (w > 0 && h > 1)
 		{
-			StyleSheet style = aListView.getStylesheet();
+			Styles style = aListView.getStyles();
 
-			BufferedImage background = style.getScaledImage("headerBackground", w, h-1);
+			BufferedImage background = style.getScaledImage(style.headerBackground, w, h - 1);
 			aGraphics.drawImage(background, x, y, null);
-			aGraphics.setColor(style.getColor("headerBorder"));
-			aGraphics.drawLine(x, y+h-1, x+w, y+h-1);
+			aGraphics.setColor(style.headerBorder);
+			aGraphics.drawLine(x, y + h - 1, x + w, y + h - 1);
 		}
 	}
 
@@ -165,12 +141,12 @@ public class ColumnHeaderRenderer implements ListViewHeaderRenderer
 	{
 		if (w > 0 && h > 1)
 		{
-			StyleSheet style = aListView.getStylesheet();
+			Styles style = aListView.getStyles();
 
-			BufferedImage background = style.getScaledImage("headerBackground", w, h-1);
+			BufferedImage background = style.getScaledImage(style.headerBackground, w, h - 1);
 			aGraphics.drawImage(background, x, y, null);
-			aGraphics.setColor(style.getColor("headerBorder"));
-			aGraphics.drawLine(x, y+h-1, x+w, y+h-1);
+			aGraphics.setColor(style.headerBorder);
+			aGraphics.drawLine(x, y + h - 1, x + w, y + h - 1);
 		}
 	}
 
@@ -180,12 +156,12 @@ public class ColumnHeaderRenderer implements ListViewHeaderRenderer
 	{
 		if (w > 0 && h > 1)
 		{
-			StyleSheet style = aListView.getStylesheet();
+			Styles style = aListView.getStyles();
 
-			BufferedImage background = style.getScaledImage("headerBackground", w, h-1);
+			BufferedImage background = style.getScaledImage(style.headerBackground, w, h - 1);
 			aGraphics.drawImage(background, x, y, null);
-			aGraphics.setColor(style.getColor("headerBorder"));
-			aGraphics.drawLine(x, y+h-1, x+w, y+h-1);
+			aGraphics.setColor(style.headerBorder);
+			aGraphics.drawLine(x, y + h - 1, x + w, y + h - 1);
 		}
 	}
 
@@ -195,12 +171,12 @@ public class ColumnHeaderRenderer implements ListViewHeaderRenderer
 	{
 		if (w > 0 && h > 1)
 		{
-			StyleSheet style = aListView.getStylesheet();
+			Styles style = aListView.getStyles();
 
-			BufferedImage background = style.getScaledImage("headerBackground", w, h-1);
+			BufferedImage background = style.getScaledImage(style.headerBackground, w, h - 1);
 			aGraphics.drawImage(background, x, y, null);
-			aGraphics.setColor(style.getColor("headerBorder"));
-			aGraphics.drawLine(x, y+h-1, x+w, y+h-1);
+			aGraphics.setColor(style.headerBorder);
+			aGraphics.drawLine(x, y + h - 1, x + w, y + h - 1);
 		}
 	}
 
@@ -208,7 +184,7 @@ public class ColumnHeaderRenderer implements ListViewHeaderRenderer
 	@Override
 	public int getColumnHeaderHeight(ListView aListView)
 	{
-		return aListView.getStylesheet().getInt("headerColumnHeight");
+		return aListView.getStyles().headerColumnHeight;
 	}
 
 

@@ -3,44 +3,40 @@ package org.terifan.ui.listview;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
-import org.terifan.ui.listview.util.StyleSheet;
-import org.terifan.ui.listview.util.Utilities;
 
 
 public class ListViewGroupRenderer<T extends ListViewItem>
 {
 	public void paintGroup(ListView aListView, Graphics2D aGraphics, int aOriginX, int aOriginY, int aWidth, int aHeight, ListViewGroup<T> aGroup)
 	{
-		Utilities.enableTextAntialiasing(aGraphics);
-
 		Font oldFont = aGraphics.getFont();
 
-		StyleSheet style = aListView.getStylesheet();
+		Styles style = aListView.getStyles();
 
 //		if (aGroup.isSelected() && aListView.getRolloverGroup() == aGroup)
 //		{
-//			aGraphics.setColor(style.getColor("groupSelectedRolloverBackground"));
+//			aGraphics.setColor(style.groupSelectedRolloverBackground);
 //			aGraphics.fillRect(aOriginX, aOriginY, aWidth, aHeight);
-//			aGraphics.setColor(style.getColor("groupSelectedRolloverForeground"));
+//			aGraphics.setColor(style.groupSelectedRolloverForeground);
 //		}
 //		else if (aGroup.isSelected())
 //		{
-//			aGraphics.setColor(style.getColor("groupSelectedBackground"));
+//			aGraphics.setColor(style.groupSelectedBackground);
 //			aGraphics.fillRect(aOriginX, aOriginY, aWidth, aHeight);
-//			aGraphics.setColor(style.getColor("groupSelectedForeground"));
+//			aGraphics.setColor(style.groupSelectedForeground);
 //		}
 //		else
 		if (aListView.getRolloverGroup() == aGroup)
 		{
-			aGraphics.setColor(style.getColor("groupRolloverBackground"));
+			aGraphics.setColor(style.groupRolloverBackground);
 			aGraphics.fillRect(aOriginX, aOriginY, aWidth, aHeight);
-			aGraphics.setColor(style.getColor("groupRolloverForeground"));
+			aGraphics.setColor(style.groupRolloverForeground);
 		}
 		else
 		{
-			aGraphics.setColor(style.getColor("groupBackground"));
+			aGraphics.setColor(style.groupBackground);
 			aGraphics.fillRect(aOriginX, aOriginY, aWidth, aHeight);
-			aGraphics.setColor(style.getColor("groupForeground"));
+			aGraphics.setColor(style.groupForeground);
 		}
 
 		int cnt = aGroup.getItemCount();
@@ -58,18 +54,18 @@ public class ListViewGroupRenderer<T extends ListViewItem>
 
 		if (value != null)
 		{
-			aGraphics.setFont(style.getFont("group"));
+			aGraphics.setFont(style.group);
 			aGraphics.drawString(value.toString(), textX, textY);
 
 			textX += aGraphics.getFontMetrics().stringWidth(value + " ");
 		}
 
-		aGraphics.setColor(style.getColor("groupCountForeground"));
-		aGraphics.setFont(style.getFont("groupCount"));
+		aGraphics.setColor(style.groupCountForeground);
+		aGraphics.setFont(style.groupCount);
 		aGraphics.drawString(count, textX, textY);
 
-		aGraphics.setColor(style.getColor("groupHorizontalLine"));
-		for (int i = 1, thickness = style.getInt("groupLineThickness"); i <= thickness; i++)
+		aGraphics.setColor(style.groupHorizontalLine);
+		for (int i = 1, thickness = style.groupLineThickness; i <= thickness; i++)
 		{
 			aGraphics.drawLine(aOriginX, aOriginY + aHeight - i, aOriginX + aWidth, aOriginY + aHeight - i);
 		}
@@ -77,11 +73,11 @@ public class ListViewGroupRenderer<T extends ListViewItem>
 		BufferedImage icon;
 		if (aListView.getModel().isGroupCollapsed(aGroup))
 		{
-			icon = style.getImage("expandButton");
+			icon = style.expandButton;
 		}
 		else
 		{
-			icon = style.getImage("collapseButton");
+			icon = style.collapseButton;
 		}
 		aGraphics.drawImage(icon, aOriginX + 3, aOriginY + aHeight - icon.getHeight() - 18, null);
 

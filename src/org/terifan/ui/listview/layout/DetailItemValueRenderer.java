@@ -4,23 +4,19 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
-import java.awt.Image;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
-import java.util.HashMap;
-import javax.swing.Icon;
 import javax.swing.JComponent;
 import org.terifan.ui.listview.ListView;
 import org.terifan.ui.listview.ListViewCellRenderer;
 import org.terifan.ui.listview.ListViewColumn;
 import org.terifan.ui.listview.ListViewItem;
 import org.terifan.ui.listview.SelectionMode;
-import org.terifan.ui.listview.util.StyleSheet;
-import org.terifan.ui.listview.util.Utilities;
-import sun.rmi.runtime.Log;
+import org.terifan.ui.listview.Styles;
+import org.terifan.ui.listview.Utilities;
 
 
-public class CellRenderer extends JComponent implements ListViewCellRenderer
+public class DetailItemValueRenderer extends JComponent implements ListViewCellRenderer
 {
 	private Rectangle mTempRectangle = new Rectangle();
 
@@ -31,12 +27,11 @@ public class CellRenderer extends JComponent implements ListViewCellRenderer
 	protected boolean mIsRollover;
 	protected boolean mIsSorted;
 	protected int mColumnIndex;
-	protected HashMap<Icon,Image> mCachedHighlightedIcons = new HashMap<Icon,Image>();
 	protected FontMetrics mFontMetrics;
 	protected int mIconTextSpacing;
 
 
-	public CellRenderer()
+	public DetailItemValueRenderer()
 	{
 		setIconTextSpacing(4);
 		setOpaque(true);
@@ -61,11 +56,11 @@ public class CellRenderer extends JComponent implements ListViewCellRenderer
 	@Override
 	protected void paintComponent(Graphics aGraphics)
 	{
-		StyleSheet style = mListView.getStylesheet();
+		Styles style = mListView.getStyles();
 
 		Font oldFont = aGraphics.getFont();
 
-		Font font = style.getFont("item");
+		Font font = style.item;
 		SelectionMode selectionMode = mListView.getSelectionMode();
 
 		aGraphics.setFont(font);
@@ -93,42 +88,37 @@ public class CellRenderer extends JComponent implements ListViewCellRenderer
 			mIsSelected = false;
 		}
 
-		Color cellBackground = Colors.getCellBackground(mListView.getStylesheet(), mListView.getSelectionMode(), mIsSorted, mIsSelected, mIsRollover, mIsFocused, true);
-		Color itemBackground = Colors.getItemBackground(mListView.getStylesheet(), mListView.getSelectionMode(), mIsSorted, mIsSelected, mIsRollover, mIsFocused, true);
-		Color textForeground = Colors.getTextForeground(mListView.getStylesheet(), mListView.getSelectionMode(), mIsSorted, mIsSelected, mIsRollover, mIsFocused, true);
+		Color cellBackground = Colors.getCellBackground(mListView.getStyles(), mListView.getSelectionMode(), mIsSorted, mIsSelected, mIsRollover, mIsFocused, true);
+		Color itemBackground = Colors.getItemBackground(mListView.getStyles(), mListView.getSelectionMode(), mIsSorted, mIsSelected, mIsRollover, mIsFocused, true);
+		Color textForeground = Colors.getTextForeground(mListView.getStyles(), mListView.getSelectionMode(), mIsSorted, mIsSelected, mIsRollover, mIsFocused, true);
 
 		Color background = itemBackground != null ? itemBackground : cellBackground != null ? cellBackground : mListView.getBackground();
 
 		if (cellBackground != null && (mIsSorted || selectionMode != SelectionMode.ROW && selectionMode != SelectionMode.SINGLE_ROW))
 		{
 			aGraphics.setColor(cellBackground);
-			aGraphics.fillRect(rect.x, rect.y, rect.width, rect.height+1);
+			aGraphics.fillRect(rect.x, rect.y, rect.width, rect.height + 1);
 		}
 
-		int tx = tr.x+2+column.getIconWidth()+computeIconTextSpacing(column);
-		int ty = tr.y - 1 + tr.height - mFontMetrics.getDescent();
-		int rx = tr.x+column.getIconWidth()+computeIconTextSpacing(column);
-		int ry = rect.y;//tr.y;
-		int rw = tr.width-column.getIconWidth()-computeIconTextSpacing(column)+1;
+		int rx = tr.x + column.getIconWidth() + computeIconTextSpacing(column);
+		int ry = rect.y;
+		int rw = tr.width - column.getIconWidth() - computeIconTextSpacing(column) + 1;
 		int rh = rect.height;//tr.height;
-		tx -= rx;
-		ty -= ry;
 
-		mListView.getTextRenderer().drawString(aGraphics, background, textForeground, s, rx, ry, rw, rh, tx, ty);
+		TextRenderer.drawString(aGraphics, s, rx, ry, rw, rh, Anchor.WEST, textForeground, background, false);
 
-		aGraphics.setColor(style.getColor("verticalLine"));
-		for (int i = 1, thickness=style.getInt("itemVerticalLineThickness"); i <= thickness; i++)
+		aGraphics.setColor(style.verticalLine);
+		for (int i = 1, thickness = style.itemVerticalLineThickness; i <= thickness; i++)
 		{
-			aGraphics.drawLine(rect.x+rect.width-i, rect.y, rect.x+rect.width-i, rect.y+rect.height-1);
+			aGraphics.drawLine(rect.x + rect.width - i, rect.y, rect.x + rect.width - i, rect.y + rect.height - 1);
 		}
 
 //		if (mIsRollover)
 //		{
-//			aGraphics.setColor(style.getColor("line"));
+//			aGraphics.setColor(style.line);
 //			aGraphics.drawLine(rect.x, rect.y, rect.x+rect.width, rect.y);
 //			aGraphics.drawLine(rect.x, rect.y+rect.height-2, rect.x+rect.width, rect.y+rect.height-2);
 //		}
-
 		BufferedImage icon = mItem.getIcon();
 
 		if (icon != null && column.getIconWidth() > 0)
@@ -150,7 +140,7 @@ public class CellRenderer extends JComponent implements ListViewCellRenderer
 //				}
 //				else
 //				{
-//					image = Utilities.filterHighlight(((ImageIcon)icon).getImage(), style.getColor("itemSelectedBackground"));
+//					image = Utilities.filterHighlight(((ImageIcon)icon).getImage(), style.itemSelectedBackground);
 //					mCachedHighlightedIcons.put(icon, image, 1);
 //				}
 //
@@ -166,11 +156,11 @@ public class CellRenderer extends JComponent implements ListViewCellRenderer
 		{
 			if (selectionMode == SelectionMode.ITEM)
 			{
-				paintFocusRectangle(aGraphics, rx, ry, rw, rh-1);
+				paintFocusRectangle(aGraphics, rx, ry, rw, rh - 1);
 			}
 			else
 			{
-				paintFocusRectangle(aGraphics, rect.x, rect.y, rect.width, rect.height-1);
+				paintFocusRectangle(aGraphics, rect.x, rect.y, rect.width, rect.height - 1);
 			}
 		}
 
@@ -180,7 +170,7 @@ public class CellRenderer extends JComponent implements ListViewCellRenderer
 
 	protected String computeLabelRect(ListViewColumn column, String value, int col, int x, int y, int w, int h, boolean aIncludeIcon, Rectangle aDestRectangle)
 	{
-		String s = Utilities.clipString(value.toString(), mFontMetrics, Math.max(w - 4 - computeIconTextSpacing(column) - column.getIconWidth(), 1));
+		String s = TextRenderer.clipString(value, mFontMetrics, Math.max(w - 4 - computeIconTextSpacing(column) - column.getIconWidth(), 1));
 		int sw = mFontMetrics.stringWidth(s);
 
 		switch (column.getAlignment())
@@ -209,10 +199,10 @@ public class CellRenderer extends JComponent implements ListViewCellRenderer
 		}
 
 		aDestRectangle.y = y + (h - mFontMetrics.getHeight()) / 2;
-		aDestRectangle.height = mFontMetrics.getHeight()+1;
+		aDestRectangle.height = mFontMetrics.getHeight() + 1;
 
 		aDestRectangle.y = Math.max(aDestRectangle.y, y);
-		aDestRectangle.height = Math.min(aDestRectangle.y+aDestRectangle.height, y+h)-aDestRectangle.y;
+		aDestRectangle.height = Math.min(aDestRectangle.y + aDestRectangle.height, y + h) - aDestRectangle.y;
 
 		return s;
 	}
@@ -220,7 +210,7 @@ public class CellRenderer extends JComponent implements ListViewCellRenderer
 
 	protected void paintFocusRectangle(Graphics aGraphics, int x, int y, int w, int h)
 	{
-		aGraphics.setColor(mListView.getStylesheet().getColor("focusRect"));
+		aGraphics.setColor(mListView.getStyles().focusRect);
 		Utilities.drawDottedRect(aGraphics, x, y, w, h, false);
 	}
 

@@ -13,8 +13,8 @@ import org.terifan.ui.listview.ListViewLayout;
 import org.terifan.ui.listview.ListViewLayoutVertical;
 import org.terifan.ui.listview.ListViewModel;
 import org.terifan.ui.listview.SelectionMode;
-import org.terifan.ui.listview.util.StyleSheet;
-import org.terifan.ui.listview.util.Utilities;
+import org.terifan.ui.listview.Styles;
+import org.terifan.ui.listview.Utilities;
 
 
 public class DetailItemRenderer implements ListViewItemRenderer
@@ -68,7 +68,7 @@ public class DetailItemRenderer implements ListViewItemRenderer
 	@Override
 	public int getItemMinimumHeight(ListView aListView)
 	{
-		return aListView.getStylesheet().getInt("itemHeight");
+		return aListView.getStyles().itemHeight;
 	}
 
 
@@ -96,14 +96,14 @@ public class DetailItemRenderer implements ListViewItemRenderer
 	@Override
 	public int getItemHeight(ListView aListView, ListViewItem aItem)
 	{
-		return aListView.getStylesheet().getInt("itemHeight");
+		return aListView.getStyles().itemHeight;
 	}
 
 
 	@Override
 	public void paintItem(Graphics2D aGraphics, int aOriginX, int aOriginY, int aWidth, int aHeight, ListView aListView, ListViewItem aItem)
 	{
-		StyleSheet style = aListView.getStylesheet();
+		Styles style = aListView.getStyles();
 
 		int x = aOriginX;
 
@@ -119,24 +119,24 @@ public class DetailItemRenderer implements ListViewItemRenderer
 			{
 				if (isRollover)
 				{
-					c = style.getColor("itemSelectedRolloverBackground");
+					c = style.itemSelectedRolloverBackground;
 				}
-				else if (style.getColor("itemSelectedBackground") != null)
+				else if (style.itemSelectedBackground != null)
 				{
-					c = style.getColor("itemSelectedBackground");
+					c = style.itemSelectedBackground;
 				}
 				else
 				{
-					c = style.getColor("itemSelectedUnfocusedBackground");
+					c = style.itemSelectedUnfocusedBackground;
 				}
 			}
 			else if (isRollover)
 			{
-				c = style.getColor("itemRolloverBackground");
+				c = style.itemRolloverBackground;
 			}
 			else
 			{
-				c = style.getColor("itemBackground");
+				c = style.itemBackground;
 			}
 			aGraphics.setColor(c);
 			aGraphics.fillRect(aOriginX, aOriginY, aWidth, aHeight);
@@ -163,22 +163,22 @@ public class DetailItemRenderer implements ListViewItemRenderer
 			boolean focus = aListView.getFocusItem() == aItem && aListView.getModel().getColumn(col).isFocusable() && aListView.getSelectionMode() != SelectionMode.ROW && aListView.getSelectionMode() != SelectionMode.SINGLE_ROW;
 
 			Component c = getCellRenderer(aListView, aItem, col).getListViewCellRendererComponent(aListView, aItem, col, isSelected, focus, isRollover, sorted);
-			c.setBounds(x+1, aOriginY, w-1, aHeight-1);
+			c.setBounds(x + 1, aOriginY, w - 1, aHeight - 1);
 			c.paint(aGraphics);
 
 			x += w;
 		}
 
-		int thickness = style.getInt("itemHorizontalLineThickness");
+		int thickness = style.itemHorizontalLineThickness;
 		if (thickness > 0)
 		{
-			aGraphics.setColor(style.getColor("horizontalLine"));
+			aGraphics.setColor(style.horizontalLine);
 			aGraphics.drawLine(aOriginX, aOriginY + aHeight - thickness, aOriginX + aWidth, aOriginY + aHeight - 1);
 		}
 
 		if (aListView.getFocusItem() == aItem && (aListView.getSelectionMode() == SelectionMode.ROW || aListView.getSelectionMode() == SelectionMode.SINGLE_ROW))
 		{
-			aGraphics.setColor(style.getColor("focusRect"));
+			aGraphics.setColor(style.focusRect);
 			Utilities.drawDottedRect(aGraphics, aOriginX, aOriginY, aWidth, aHeight - 1, false);
 		}
 	}
@@ -196,19 +196,23 @@ public class DetailItemRenderer implements ListViewItemRenderer
 		Object v = aItem.getValue(aListView.getModel().getColumn(aIndex));
 		if (v instanceof JComponent)
 		{
-			return new ComponentWrapper((JComponent) v);
+			return new ComponentWrapper((JComponent)v);
 		}
-		return new CellRenderer();
+		return new DetailItemValueRenderer();
 	}
 
 
 	static class ComponentWrapper implements ListViewCellRenderer
 	{
 		JComponent c;
+
+
 		public ComponentWrapper(JComponent c)
 		{
 			this.c = c;
 		}
+
+
 		@Override
 		public JComponent getListViewCellRendererComponent(ListView aListView, ListViewItem aItem, int aColumnIndex, boolean aIsSelected, boolean aHasFocus, boolean aIsRollover, boolean aIsSorted)
 		{
@@ -216,8 +220,8 @@ public class DetailItemRenderer implements ListViewItemRenderer
 			{
 				aListView.add(c);
 			}
-			c.setForeground(Colors.getTextForeground(aListView.getStylesheet(), aListView.getSelectionMode(), aIsSorted, aIsSelected, aIsRollover, aHasFocus, true));
-			c.setBackground(Colors.getCellBackground(aListView.getStylesheet(), aListView.getSelectionMode(), aIsSorted, aIsSelected, aIsRollover, aHasFocus, true));
+			c.setForeground(Colors.getTextForeground(aListView.getStyles(), aListView.getSelectionMode(), aIsSorted, aIsSelected, aIsRollover, aHasFocus, true));
+			c.setBackground(Colors.getCellBackground(aListView.getStyles(), aListView.getSelectionMode(), aIsSorted, aIsSelected, aIsRollover, aHasFocus, true));
 			c.setFont(aListView.getFont());
 
 			return c;

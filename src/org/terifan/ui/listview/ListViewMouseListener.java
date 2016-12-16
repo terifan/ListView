@@ -4,13 +4,11 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseMotionListener;
 import java.util.HashSet;
 import javax.swing.SwingUtilities;
-import sun.rmi.runtime.Log;
 
 
-class ListViewMouseListener<T extends ListViewItem> extends MouseAdapter implements MouseMotionListener
+class ListViewMouseListener<T extends ListViewItem> extends MouseAdapter
 {
 	private HashSet<T> mSelectedItemsClone;
 	private Rectangle mTempScrollRect = new Rectangle();

@@ -1,4 +1,4 @@
-package org.terifan.ui.listview.util;
+package org.terifan.ui.listview;
 
 import java.awt.Dimension;
 import org.terifan.ui.listview.ListView;

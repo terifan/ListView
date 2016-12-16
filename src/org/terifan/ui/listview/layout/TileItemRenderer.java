@@ -6,29 +6,24 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
-import java.awt.RenderingHints;
 import java.awt.font.FontRenderContext;
 import java.awt.font.LineMetrics;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
-import java.util.Objects;
-import javax.swing.Icon;
 import org.terifan.ui.listview.ListView;
 import org.terifan.ui.listview.ListViewColumn;
 import org.terifan.ui.listview.ListViewItem;
 import org.terifan.ui.listview.ListViewItemRenderer;
 import org.terifan.ui.listview.ListViewLayout;
 import org.terifan.ui.listview.ListViewModel;
-import org.terifan.ui.listview.util.Anchor;
-import org.terifan.ui.listview.util.Orientation;
-import org.terifan.ui.listview.util.StyleSheet;
-import org.terifan.ui.listview.util.Utilities;
+import org.terifan.ui.listview.Orientation;
+import org.terifan.ui.listview.Styles;
+import org.terifan.ui.listview.Utilities;
 
 
 public class TileItemRenderer implements ListViewItemRenderer
 {
 	private static FontRenderContext FRC = new FontRenderContext(new AffineTransform(), false, false);
-	private final static int PADDING_HEIGHT = 20;
 
 	private Dimension mItemSize;
 	private Orientation mOrientation;
@@ -110,11 +105,9 @@ public class TileItemRenderer implements ListViewItemRenderer
 	@Override
 	public void paintItem(Graphics2D aGraphics, int aOriginX, int aOriginY, int aWidth, int aHeight, ListView aListView, ListViewItem aItem)
 	{
-		StyleSheet style = aListView.getStylesheet();
+		Styles style = aListView.getStyles();
 		ListViewModel model = aListView.getModel();
 		boolean selected = aListView.isItemSelected(aItem);
-
-		aGraphics.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
 
 		aOriginX += 1;
 		aOriginY += 1;
@@ -123,7 +116,7 @@ public class TileItemRenderer implements ListViewItemRenderer
 
 		if (selected)
 		{
-			BufferedImage im = style.getScaledImage("thumbBorderSelectedBackground", aWidth, aHeight, 3, 3, 3, 3);
+			BufferedImage im = style.getScaledImage(style.thumbBorderSelectedBackground, aWidth, aHeight, 3, 3, 3, 3);
 			aGraphics.drawImage(im, aOriginX, aOriginY, null);
 		}
 
@@ -133,26 +126,15 @@ public class TileItemRenderer implements ListViewItemRenderer
 			int w = mIconWidth + 10;
 			int h = aHeight-10;
 
-			BufferedImage icon = null;
-
-			for (int i = 0; i < model.getColumnCount(); i++)
-			{
-				ListViewColumn column = model.getColumn(i);
-				if (column.isTitle())
-				{
-					icon = aItem.getIcon();
-					break;
-				}
-			}
-
-			boolean drawBorder = icon != null;
+			BufferedImage icon = aItem.getIcon();
+			boolean drawBorder = aListView.isBorderDrawn(aItem);
 
 			int tw = mIconWidth;
 			int th = mItemSize.height-20;
 
 			if (icon == null)
 			{
-				icon = style.getScaledImage("thumbPlaceholder", tw, th, true);
+				icon = style.getScaledImageAspect(style.thumbPlaceholder, tw, th);
 			}
 
 			double f = Math.min(tw/(double)icon.getWidth(), th/(double)icon.getHeight());
@@ -164,7 +146,7 @@ public class TileItemRenderer implements ListViewItemRenderer
 
 			if (drawBorder)
 			{
-				BufferedImage im = style.getScaledImage(selected ? "thumbBorderSelected" : "thumbBorderUnselected", tw+3+6, th+3+7, 3, 3, 7, 6);
+				BufferedImage im = style.getScaledImage(selected ? style.thumbBorderSelected : style.thumbBorderUnselected, tw+3+6, th+3+7, 3, 3, 7, 6);
 				aGraphics.drawImage(im, tx-3, ty-3, null);
 			}
 
@@ -196,7 +178,7 @@ public class TileItemRenderer implements ListViewItemRenderer
 
 			if (label != null && y+lineHeight < itemHeight && label.toString().length() > 0)
 			{
-				Rectangle dim = aListView.getTextRenderer().drawString(aGraphics, label.toString(), x, aOriginY+y, aWidth-5-16-mIconWidth, itemHeight-y, Anchor.NORTH_WEST, col != 0 ? Color.GRAY : style.getColor("itemForeground"), null, false);
+				Rectangle dim = TextRenderer.drawString(aGraphics, label.toString(), x, aOriginY+y, aWidth-5-16-mIconWidth, itemHeight-y, Anchor.NORTH_WEST, col != 0 ? Color.GRAY : style.itemForeground, null, false);
 
 				y += 1 + dim.height;
 

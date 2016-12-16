@@ -8,10 +8,6 @@ import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
-import org.terifan.ui.listview.util.Orientation;
-import org.terifan.ui.listview.util.SortedMap;
-import org.terifan.ui.listview.util.StyleSheet;
-import org.terifan.ui.listview.util.Utilities;
 
 
 public class ListViewLayoutHorizontal<T extends ListViewItem> extends AbstractListViewLayout<T>
@@ -36,11 +32,11 @@ public class ListViewLayoutHorizontal<T extends ListViewItem> extends AbstractLi
 	@Override
 	public void paint(Graphics2D aGraphics)
 	{
-		StyleSheet style = mListView.getStylesheet();
+		Styles style = mListView.getStyles();
 
-		aGraphics.setColor(style.getColor("itemBackground"));
+		aGraphics.setColor(style.itemBackground);
 		aGraphics.fillRect(0, 0, mListView.getWidth(), mListView.getHeight());
-		aGraphics.setColor(style.getColor("itemForeground"));
+		aGraphics.setColor(style.itemForeground);
 
 		ListViewGroup root = mListView.getModel().getRoot();
 
@@ -50,7 +46,7 @@ public class ListViewLayoutHorizontal<T extends ListViewItem> extends AbstractLi
 
 		if (children != null)
 		{
-			int groupWidth = mListView.getStylesheet().getInt("groupWidth");
+			int groupWidth = mListView.getStyles().groupWidth;
 
 			for (Object key : children.getKeys())
 			{
@@ -68,8 +64,8 @@ public class ListViewLayoutHorizontal<T extends ListViewItem> extends AbstractLi
 
 	private int paintList(Graphics2D aGraphics, ListViewGroup<T> aGroup, int aLevel, int aOriginX)
 	{
-		int horizontalBarHeight = mListView.getStylesheet().getInt("horizontalBarHeight");
-		int groupWidth = mListView.getStylesheet().getInt("groupWidth");
+		int horizontalBarHeight = mListView.getStyles().horizontalBarHeight;
+		int groupWidth = mListView.getStyles().groupWidth;
 
 		Rectangle clip = aGraphics.getClipBounds();
 
@@ -109,11 +105,11 @@ public class ListViewLayoutHorizontal<T extends ListViewItem> extends AbstractLi
 
 	protected void paintHorizontalBar(Graphics2D aGraphics, int aOriginX, int aOriginY, int aWidth, int aHeight)
 	{
-		StyleSheet style = mListView.getStylesheet();
+		Styles style = mListView.getStyles();
 
-		aGraphics.setColor(style.getColor("indent"));
+		aGraphics.setColor(style.indent);
 		aGraphics.fillRect(aOriginX, aOriginY, aWidth, aHeight);
-		aGraphics.setColor(style.getColor("indentLine"));
+		aGraphics.setColor(style.indentLine);
 		aGraphics.drawLine(aOriginX + aWidth - 1, aOriginY, aOriginX + aWidth - 1, aOriginY + aHeight - 1);
 		aGraphics.drawLine(aOriginX, aOriginY + aHeight - 1, aOriginX + aWidth - 1, aOriginY + aHeight - 1);
 	}
@@ -121,40 +117,39 @@ public class ListViewLayoutHorizontal<T extends ListViewItem> extends AbstractLi
 
 	private void paintGroup(Graphics2D aGraphics, int aOriginX, int aOriginY, int aWidth, int aHeight, ListViewGroup aGroup)
 	{
-		StyleSheet style = mListView.getStylesheet();
+		Styles style = mListView.getStyles();
 
 		Font oldFont = aGraphics.getFont();
 
 //		if (aGroup.isSelected() && mListView.getRolloverGroup() == aGroup)
 //		{
-//			aGraphics.setColor(style.getColor("groupSelectedRolloverBackground"));
+//			aGraphics.setColor(style.groupSelectedRolloverBackground);
 //			aGraphics.fillRect(aOriginX, aOriginY, aWidth, aHeight);
-//			aGraphics.setColor(style.getColor("groupSelectedRolloverForeground"));
+//			aGraphics.setColor(style.groupSelectedRolloverForeground);
 //		}
 //		else if (aGroup.isSelected())
 //		{
-//			aGraphics.setColor(style.getColor("groupSelectedBackground"));
+//			aGraphics.setColor(style.groupSelectedBackground);
 //			aGraphics.fillRect(aOriginX, aOriginY, aWidth, aHeight);
-//			aGraphics.setColor(style.getColor("groupSelectedForeground"));
+//			aGraphics.setColor(style.groupSelectedForeground);
 //		}
 //		else
 		if (mListView.getRolloverGroup() == aGroup)
 		{
-			aGraphics.setColor(style.getColor("groupRolloverBackground"));
+			aGraphics.setColor(style.groupRolloverBackground);
 			aGraphics.fillRect(aOriginX, aOriginY, aWidth, aHeight);
-			aGraphics.setColor(style.getColor("groupRolloverForeground"));
+			aGraphics.setColor(style.groupRolloverForeground);
 		}
 		else
 		{
-			aGraphics.setColor(style.getColor("groupBackground"));
+			aGraphics.setColor(style.groupBackground);
 			aGraphics.fillRect(aOriginX, aOriginY, aWidth, aHeight);
-			aGraphics.setColor(style.getColor("groupForeground"));
+			aGraphics.setColor(style.groupForeground);
 		}
 
 		int cnt = aGroup.getItemCount();
 
-		Utilities.enableTextAntialiasing(aGraphics);
-		aGraphics.setFont(style.getFont("group"));
+		aGraphics.setFont(style.group);
 
 		int tx = aOriginX + 16;
 		int ty = aOriginY + 25;
@@ -163,16 +158,16 @@ public class ListViewLayoutHorizontal<T extends ListViewItem> extends AbstractLi
 		aGraphics.drawString(mListView.getModel().getColumn(mListView.getModel().getGroup(aGroup.getLevel())).getLabel() + ": " + aGroup.getGroupValue() + " (" + cnt + " item" + (cnt != 1 ? "s" : "") + ")", tx, ty);
 		aGraphics.setTransform(tr);
 
-		aGraphics.setColor(style.getColor("verticalLine"));
+		aGraphics.setColor(style.verticalLine);
 		aGraphics.drawLine(aOriginX + aWidth - 1, aOriginY, aOriginX + aWidth - 1, aOriginY + aHeight - 1);
 
 		if (aGroup.isCollapsed())
 		{
-			aGraphics.drawImage(style.getImage("expandButton"), aOriginX + 14, aOriginY + 5, null);
+			aGraphics.drawImage(style.expandButton, aOriginX + 14, aOriginY + 5, null);
 		}
 		else
 		{
-			aGraphics.drawImage(style.getImage("collapseButton"), aOriginX + 14, aOriginY + 5, null);
+			aGraphics.drawImage(style.collapseButton, aOriginX + 14, aOriginY + 5, null);
 		}
 
 		aGraphics.setFont(oldFont);
@@ -181,9 +176,9 @@ public class ListViewLayoutHorizontal<T extends ListViewItem> extends AbstractLi
 
 	private void paintItemList(Graphics2D aGraphics, ListViewGroup aGroup, int aLevel, int aOriginX)
 	{
-		int horizontalBarHeight = mListView.getStylesheet().getInt("horizontalBarHeight");
-		int columnDividerSpacing = mListView.getStylesheet().getInt("columnDividerSpacing");
-		int columnDividerWidth = mListView.getStylesheet().getInt("columnDividerWidth");
+		int horizontalBarHeight = mListView.getStyles().horizontalBarHeight;
+		int columnDividerSpacing = mListView.getStyles().columnDividerSpacing;
+		int columnDividerWidth = mListView.getStyles().columnDividerWidth;
 
 		ListViewItemRenderer renderer = mListView.getItemRenderer();
 		ArrayList<T> items = aGroup.getItems();
@@ -267,7 +262,7 @@ public class ListViewLayoutHorizontal<T extends ListViewItem> extends AbstractLi
 
 		if (children != null)
 		{
-			int groupWidth = mListView.getStylesheet().getInt("groupWidth");
+			int groupWidth = mListView.getStyles().groupWidth;
 
 			AtomicInteger x = new AtomicInteger();
 
@@ -296,8 +291,8 @@ public class ListViewLayoutHorizontal<T extends ListViewItem> extends AbstractLi
 
 	private LocationInfo getComponentAtImpl(int aLocationX, int aLocationY, AtomicInteger aOriginX, ListViewGroup aGroup, int aLevel)
 	{
-		int horizontalBarHeight = mListView.getStylesheet().getInt("horizontalBarHeight");
-		int groupWidth = mListView.getStylesheet().getInt("groupWidth");
+		int horizontalBarHeight = mListView.getStyles().horizontalBarHeight;
+		int groupWidth = mListView.getStyles().groupWidth;
 
 		int width = aGroup.isCollapsed() ? 0 : getGroupWidth(aGroup);
 
@@ -344,7 +339,7 @@ public class ListViewLayoutHorizontal<T extends ListViewItem> extends AbstractLi
 	// TODO: prettify
 	private LocationInfo getComponentAtImplPoint(ListViewGroup<T> aGroup, int aLevel, int aOriginX, int aLocationX, int aLocationY)
 	{
-		int horizontalBarHeight = mListView.getStylesheet().getInt("horizontalBarHeight");
+		int horizontalBarHeight = mListView.getStyles().horizontalBarHeight;
 
 		double y = aLocationY - horizontalBarHeight * aLevel;
 		int x = aLocationX - aOriginX;
@@ -412,14 +407,14 @@ public class ListViewLayoutHorizontal<T extends ListViewItem> extends AbstractLi
 
 	private int getGroupWidth(ListViewGroup aGroup, int aItemsPerColumn)
 	{
-		int horizontalBarHeight = mListView.getStylesheet().getInt("horizontalBarHeight");
-		int columnDividerSpacing = mListView.getStylesheet().getInt("columnDividerSpacing");
+		int horizontalBarHeight = mListView.getStyles().horizontalBarHeight;
+		int columnDividerSpacing = mListView.getStyles().columnDividerSpacing;
 
 		SortedMap<Object, ListViewGroup<T>> children = aGroup.getChildren();
 
 		if (children != null)
 		{
-			int groupWidth = mListView.getStylesheet().getInt("groupWidth");
+			int groupWidth = mListView.getStyles().groupWidth;
 			int width = 0;
 
 			for (Object key : children.getKeys())
@@ -472,7 +467,7 @@ public class ListViewLayoutHorizontal<T extends ListViewItem> extends AbstractLi
 	@Override
 	public int getItemsPerRun()
 	{
-		int horizontalBarHeight = mListView.getStylesheet().getInt("horizontalBarHeight");
+		int horizontalBarHeight = mListView.getStyles().horizontalBarHeight;
 
 		return Math.max(1, (mListView.getHeight() - horizontalBarHeight * (mListView.getModel().getGroupCount() - 1)) / mListView.getItemRenderer().getItemPreferredHeight(mListView));
 	}
@@ -480,7 +475,7 @@ public class ListViewLayoutHorizontal<T extends ListViewItem> extends AbstractLi
 
 	private double getItemHeight()
 	{
-		int horizontalBarHeight = mListView.getStylesheet().getInt("horizontalBarHeight");
+		int horizontalBarHeight = mListView.getStyles().horizontalBarHeight;
 
 		int itemMinHeight = mListView.getItemRenderer().getItemMinimumHeight(mListView);
 		int itemMaxHeight = mListView.getItemRenderer().getItemMaximumHeight(mListView);

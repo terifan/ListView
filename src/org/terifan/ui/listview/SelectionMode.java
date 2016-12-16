@@ -2,5 +2,5 @@ package org.terifan.ui.listview;
 
 public enum SelectionMode
 {
-	ITEM, CELL, ROW, NONE, SINGLE_ROW;
+	ITEM, ROW, NONE, SINGLE_ROW;
 }

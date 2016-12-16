@@ -2,44 +2,38 @@ package org.terifan.ui.listview.layout;
 
 import java.awt.Color;
 import org.terifan.ui.listview.SelectionMode;
-import org.terifan.ui.listview.util.StyleSheet;
+import org.terifan.ui.listview.Styles;
 
 
 class Colors
 {
-	public static Color getTextForeground(StyleSheet aStyle, SelectionMode aSelectionMode, boolean aIsSorted, boolean aIsSelected, boolean aIsRollover, boolean aIsFocused, boolean aIsListViewFocused)
+	public static Color getTextForeground(Styles aStyle, SelectionMode aSelectionMode, boolean aIsSorted, boolean aIsSelected, boolean aIsRollover, boolean aIsFocused, boolean aIsListViewFocused)
 	{
 		if (aIsSelected)
 		{
 			if (aIsRollover)
 			{
-				return aStyle.getColor("itemSelectedRolloverForeground");
+				return aStyle.itemSelectedRolloverForeground;
 			}
-			else if (aIsListViewFocused || aStyle.getColor("itemSelectedUnfocusedForeground") == null)
+			if (aIsListViewFocused || aStyle.itemSelectedUnfocusedForeground == null)
 			{
-				return aStyle.getColor("itemSelectedForeground");
+				return aStyle.itemSelectedForeground;
 			}
-			else
-			{
-				return aStyle.getColor("itemSelectedUnfocusedForeground");
-			}
+			return aStyle.itemSelectedUnfocusedForeground;
 		}
-		else if (aIsRollover)
+		if (aIsRollover)
 		{
-			return aStyle.getColor("itemRolloverForeground");
+			return aStyle.itemRolloverForeground;
 		}
-		else if (aIsSorted)
+		if (aIsSorted)
 		{
-			return aStyle.getColor("itemSortedForeground");
+			return aStyle.itemSortedForeground;
 		}
-		else
-		{
-			return aStyle.getColor("itemForeground");
-		}
+		return aStyle.itemForeground;
 	}
 
 
-	public static Color getCellBackground(StyleSheet style, SelectionMode aSelectionMode, boolean aIsSorted, boolean aIsSelected, boolean aIsRollover, boolean aIsFocused, boolean aListViewFocused)
+	public static Color getCellBackground(Styles style, SelectionMode aSelectionMode, boolean aIsSorted, boolean aIsSelected, boolean aIsRollover, boolean aIsFocused, boolean aListViewFocused)
 	{
 		boolean b = aSelectionMode == SelectionMode.ITEM;
 
@@ -47,67 +41,52 @@ class Colors
 		{
 			if (aIsRollover)
 			{
-				return style.getColor("itemSelectedRolloverBackground");
+				return style.itemSelectedRolloverBackground;
 			}
-			else if (aListViewFocused || style.getColor("itemSelectedUnfocusedBackground") == null)
+			if (aListViewFocused || style.itemSelectedUnfocusedBackground == null)
 			{
-				return style.getColor("itemSelectedBackground");
+				return style.itemSelectedBackground;
 			}
-			else
-			{
-				return style.getColor("itemSelectedUnfocusedBackground");
-			}
+			return style.itemSelectedUnfocusedBackground;
 		}
-		else if (aIsSorted && (!aIsSelected || b))
+		if (aIsSorted && (!aIsSelected || b))
 		{
 			if (aIsRollover)
 			{
-				return style.getColor("itemSortedRolloverBackground");
+				return style.itemSortedRolloverBackground;
 			}
-			else
-			{
-				return style.getColor("itemSortedBackground");
-			}
+			return style.itemSortedBackground;
 		}
-		else if (aIsRollover)
+		if (aIsRollover)
 		{
-			return style.getColor("itemRolloverBackground");
+			return style.itemRolloverBackground;
 		}
-		else
-		{
-			return style.getColor("itemBackground");
-		}
+		return style.itemBackground;
 	}
 
 
-	public static Color getItemBackground(StyleSheet style, SelectionMode aSelectionMode, boolean aIsSortedColumn, boolean aIsSelected, boolean aIsRollover, boolean aIsFocused, boolean aListViewFocused)
+	public static Color getItemBackground(Styles style, SelectionMode aSelectionMode, boolean aIsSortedColumn, boolean aIsSelected, boolean aIsRollover, boolean aIsFocused, boolean aListViewFocused)
 	{
 		if (aSelectionMode != SelectionMode.ITEM)
 		{
 			return null;
 		}
-		else if (aIsSelected)
+		if (aIsSelected)
 		{
 			if (aIsRollover)
 			{
-				return style.getColor("itemSelectedRolloverBackground");
+				return style.itemSelectedRolloverBackground;
 			}
-			else if (aListViewFocused || style.getColor("itemSelectedUnfocusedBackground") == null)
+			if (aListViewFocused || style.itemSelectedUnfocusedBackground == null)
 			{
-				return style.getColor("itemSelectedBackground");
+				return style.itemSelectedBackground;
 			}
-			else
-			{
-				return style.getColor("itemSelectedUnfocusedBackground");
-			}
+			return style.itemSelectedUnfocusedBackground;
 		}
-		else if (aIsRollover)
+		if (aIsRollover)
 		{
-			return style.getColor("itemRolloverBackground");
+			return style.itemRolloverBackground;
 		}
-		else
-		{
-			return null;
-		}
+		return null;
 	}
 }

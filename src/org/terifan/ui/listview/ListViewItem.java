@@ -8,6 +8,4 @@ public interface ListViewItem
 	Object getValue(ListViewColumn aColumn);
 
 	BufferedImage getIcon();
-
-	Object getRenderingHint(Object aKey);
 }
