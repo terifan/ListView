@@ -107,12 +107,12 @@ public class ColumnHeaderRenderer implements ListViewHeaderRenderer
 		{
 			if (aIsArmed)
 			{
-				BufferedImage background = style.getScaledImage(style.headerSeperatorArmed, 1, h - 1);
+				BufferedImage background = style.getScaledImage(style.headerSeparatorArmed, 1, h - 1);
 				aGraphics.drawImage(background, x + w - 1, y, null);
 			}
 			else
 			{
-				BufferedImage background = style.getScaledImage(style.headerSeperator, 1, h - 1);
+				BufferedImage background = style.getScaledImage(style.headerSeparator, 1, h - 1);
 				aGraphics.drawImage(background, x + w - 1, y, null);
 			}
 		}

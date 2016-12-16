@@ -2,8 +2,6 @@ package org.terifan.ui.listview;
 
 import java.awt.Color;
 import java.awt.Font;
-import java.awt.Graphics2D;
-import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import javax.imageio.ImageIO;
 
@@ -81,21 +79,21 @@ public class Styles
 	public BufferedImage headerBackgroundRolloverArmed = loadImage("header_silver_background_armed.png");
 	public BufferedImage headerBackgroundSorted = loadImage("header_silver_background_sorted.png");
 
-	public BufferedImage headerSeperator = loadImage("header_silver_seperator_normal.png");
-	public BufferedImage headerSeperatorArmed = loadImage("header_silver_seperator_armed.png");
+	public BufferedImage headerSeparator = loadImage("header_silver_seperator_normal.png");
+	public BufferedImage headerSeparatorArmed = loadImage("header_silver_seperator_armed.png");
 
-	public BufferedImage collapseButton = loadImage("button_collapse.png");
-	public BufferedImage expandButton = loadImage("button_expand.png");
-	public BufferedImage sortArrowAscending = loadImage("arrow_ascending.png");
-	public BufferedImage sortArrowDescending = loadImage("arrow_descending.png");
+	public BufferedImage groupCollapseButton = loadImage("group_collapse.png");
+	public BufferedImage groupExpandButton = loadImage("group_expand.png");
+	public BufferedImage sortArrowAscending = loadImage("sort_ascending.png");
+	public BufferedImage sortArrowDescending = loadImage("sort_descending.png");
 
 	public BufferedImage cardBackgroundNormal = loadImage("card_background_normal.png");
 	public BufferedImage cardBackgroundSelected = loadImage("card_background_selected.png");
 
-	public BufferedImage thumbBorderSelected = loadImage("thumb_border_v2_selected.png");
-	public BufferedImage thumbBorderSelectedBackground = loadImage("thumb_border_v2_selected_background.png");
-	public BufferedImage thumbBorderUnselected = loadImage("thumb_border_v2_unselected.png");
-	public BufferedImage thumbPlaceholder = loadImage("placeholder.png");
+	public BufferedImage thumbBorderSelected = loadImage("thumb_border_selected.png");
+	public BufferedImage thumbBorderSelectedBackground = loadImage("thumb_border_selected_background.png");
+	public BufferedImage thumbBorderUnselected = loadImage("thumb_border_unselected.png");
+	public BufferedImage thumbPlaceholder = loadImage("thumb_placeholder.png");
 
 	public BufferedImage barNormal = loadImage("bar_normal.png");
 	public BufferedImage barSelected = loadImage("bar_selected.png");

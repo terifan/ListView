@@ -163,11 +163,11 @@ public class ListViewLayoutHorizontal<T extends ListViewItem> extends AbstractLi
 
 		if (aGroup.isCollapsed())
 		{
-			aGraphics.drawImage(style.expandButton, aOriginX + 14, aOriginY + 5, null);
+			aGraphics.drawImage(style.groupExpandButton, aOriginX + 14, aOriginY + 5, null);
 		}
 		else
 		{
-			aGraphics.drawImage(style.collapseButton, aOriginX + 14, aOriginY + 5, null);
+			aGraphics.drawImage(style.groupCollapseButton, aOriginX + 14, aOriginY + 5, null);
 		}
 
 		aGraphics.setFont(oldFont);
