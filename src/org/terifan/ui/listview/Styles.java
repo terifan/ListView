@@ -92,9 +92,10 @@ public class Styles
 	public BufferedImage cardBackgroundNormal = loadImage("card_background_normal.png");
 	public BufferedImage cardBackgroundSelected = loadImage("card_background_selected.png");
 
-	public BufferedImage thumbBorderSelected = loadImage("thumb_border_selected.png");
-	public BufferedImage thumbBorderSelectedBackground = loadImage("thumb_border_selected_background.png");
-	public BufferedImage thumbBorderNormal = loadImage("thumb_border_normal.png");
+	public BufferedImage thumbBorderSelected = loadImage("thumb_border_2.png");
+	public BufferedImage thumbBorderNormal = loadImage("thumb_border_2.png");
+	public BufferedImage thumbBorderSelectedBackground = loadImage("thumb_border_2_selected_background.png");
+	public BufferedImage thumbBorderSelectedUnfocusedBackground = loadImage("thumb_border_2_background_nofocus.png");
 	public BufferedImage thumbPlaceholder = loadImage("thumb_placeholder.png");
 
 	public BufferedImage barNormal = loadImage("bar_normal.png");

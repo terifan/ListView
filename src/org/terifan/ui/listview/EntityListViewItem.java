@@ -91,6 +91,8 @@ public class EntityListViewItem extends AbstractListViewItem
 		{
 			e.printStackTrace(System.err);
 		}
+		
+		System.out.println("No icon provider specified in entity: " + mThisType);
 
 		return null;
 	}

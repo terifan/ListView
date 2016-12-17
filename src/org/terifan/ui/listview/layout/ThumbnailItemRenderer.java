@@ -24,7 +24,6 @@ public class ThumbnailItemRenderer implements ListViewItemRenderer
 	public final static int ITEM_SPACE_HOR = 4;
 	public final static int ITEM_SPACE_VER = 4;
 
-
 	private Dimension mItemSize;
 	private Orientation mOrientation;
 	private int mLabelHeight;
@@ -113,8 +112,8 @@ public class ThumbnailItemRenderer implements ListViewItemRenderer
 
 		int sw = mItemSize.width + ITEM_PAD_HOR;
 		int sh = mItemSize.height + mLabelHeight + ITEM_PAD_VER;
-		int sx = x+(w-sw)/2;
-		int sy = y+h-sh;
+		int sx = x + (w - sw) / 2;
+		int sy = y + h - sh;
 
 		BufferedImage icon = aItem.getIcon();
 		boolean drawBorder = aListView.isBorderDrawn(aItem);
@@ -132,14 +131,14 @@ public class ThumbnailItemRenderer implements ListViewItemRenderer
 
 		if (selected)
 		{
-			BufferedImage im = style.getScaledImage(style.thumbBorderSelectedBackground, sw, sh, 3, 3, 3, 3);
+			BufferedImage im = style.getScaledImage(aListView.isFocusOwner() ? style.thumbBorderSelectedBackground : style.thumbBorderSelectedUnfocusedBackground, sw, sh, 3, 3, 3, 3);
 			aGraphics.drawImage(im, sx, sy, null);
 		}
 
 		if (drawBorder)
 		{
-			BufferedImage im = style.getScaledImage(selected ? style.thumbBorderSelected : style.thumbBorderNormal, tw+3+6, th+3+7, 3, 3, 7, 6);
-			aGraphics.drawImage(im, tx-3, ty-3, null);
+			BufferedImage im = style.getScaledImage(selected ? style.thumbBorderSelected : style.thumbBorderNormal, tw + 3 + 6, th + 3 + 7, 3, 3, 7, 6);
+			aGraphics.drawImage(im, tx - 3, ty - 3, null);
 		}
 
 		aGraphics.drawImage(icon, tx, ty, tw, th, null);
@@ -158,13 +157,13 @@ public class ThumbnailItemRenderer implements ListViewItemRenderer
 
 		if (label != null && mLabelHeight > 0)
 		{
-			TextRenderer.drawString(aGraphics, label, sx+2, y+h-mLabelHeight-2, sw-4, mLabelHeight, Anchor.NORTH, style.itemForeground, null, false);
+			TextRenderer.drawString(aGraphics, label, sx + 2, y + h - mLabelHeight - 2, sw - 4, mLabelHeight, Anchor.NORTH, style.itemForeground, null, false);
 		}
 
-		if (aListView.getFocusItem() == aItem)
-		{
-			Utilities.drawDottedRect(aGraphics, sx+1, sy+1, sw-2, sh-2, false);
-		}
+//		if (aListView.getFocusItem() == aItem)
+//		{
+//			Utilities.drawDottedRect(aGraphics, sx + 1, sy + 1, sw - 2, sh - 2, false);
+//		}
 	}
 
 

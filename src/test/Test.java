@@ -6,6 +6,9 @@ import java.awt.event.ActionEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import javax.imageio.ImageIO;
 import javax.swing.AbstractAction;
 import javax.swing.JFrame;
@@ -38,7 +41,9 @@ public class Test
 			model.addColumn("Id", 50);
 			model.addGroup(model.getColumn("Letter"));
 
-			for (File file : new File("D:\\Pictures\\Wallpapers").listFiles())
+			ArrayList<File> files = new ArrayList<>(Arrays.asList(new File("D:\\Pictures\\Wallpapers").listFiles()));
+			Collections.shuffle(files);
+			for (File file : files)
 			{
 				if (model.getItemCount() > 50) break;
 				try

@@ -116,7 +116,7 @@ public class TileItemRenderer implements ListViewItemRenderer
 
 		if (selected)
 		{
-			BufferedImage im = style.getScaledImage(style.thumbBorderSelectedBackground, aWidth, aHeight, 3, 3, 3, 3);
+			BufferedImage im = style.getScaledImage(aListView.isFocusOwner() ? style.thumbBorderSelectedBackground : style.thumbBorderSelectedUnfocusedBackground, aWidth, aHeight, 3, 3, 3, 3);
 			aGraphics.drawImage(im, aOriginX, aOriginY, null);
 		}
 

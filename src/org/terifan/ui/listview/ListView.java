@@ -14,6 +14,9 @@ import java.awt.RenderingHints;
 import java.awt.dnd.DropTarget;
 import java.awt.dnd.DropTargetListener;
 import java.awt.event.ActionEvent;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
@@ -79,6 +82,7 @@ public class ListView<T extends ListViewItem> extends JComponent implements Scro
 		super.addMouseListener(mMouseListener);
 		super.addMouseMotionListener(mMouseListener);
 		super.addKeyListener(new ListViewKeyListener(this));
+		super.addFocusListener(mFocusListener);
 
 		// override JScrollPane actions...
 		AbstractAction action = new AbstractAction()
@@ -950,4 +954,20 @@ public class ListView<T extends ListViewItem> extends JComponent implements Scro
 	{
 		return aItem.getIcon() != null;
 	}
+
+
+	private FocusListener mFocusListener = new FocusAdapter()
+	{
+		@Override
+		public void focusGained(FocusEvent aE)
+		{
+			repaint();
+		}
+
+		@Override
+		public void focusLost(FocusEvent aE)
+		{
+			repaint();
+		}
+	};
 }
