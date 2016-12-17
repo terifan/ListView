@@ -121,7 +121,7 @@ public class DetailItemRenderer implements ListViewItemRenderer
 				{
 					c = style.itemSelectedRolloverBackground;
 				}
-				else if (style.itemSelectedBackground != null)
+				else if (aListView.isFocusOwner())
 				{
 					c = style.itemSelectedBackground;
 				}
@@ -160,7 +160,7 @@ public class DetailItemRenderer implements ListViewItemRenderer
 
 			boolean sorted = model.getSortedColumn() == column;
 
-			boolean focus = aListView.getFocusItem() == aItem && aListView.getModel().getColumn(col).isFocusable() && aListView.getSelectionMode() != SelectionMode.ROW && aListView.getSelectionMode() != SelectionMode.SINGLE_ROW;
+			boolean focus = aListView.isFocusOwner() && aListView.getFocusItem() == aItem && aListView.getModel().getColumn(col).isFocusable() && aListView.getSelectionMode() != SelectionMode.ROW && aListView.getSelectionMode() != SelectionMode.SINGLE_ROW;
 
 			Component c = getCellRenderer(aListView, aItem, col).getListViewCellRendererComponent(aListView, aItem, col, isSelected, focus, isRollover, sorted);
 			c.setBounds(x + 1, aOriginY, w - 1, aHeight - 1);

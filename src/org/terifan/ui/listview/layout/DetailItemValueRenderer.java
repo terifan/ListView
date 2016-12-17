@@ -89,10 +89,7 @@ public class DetailItemValueRenderer extends JComponent implements ListViewCellR
 		}
 
 		Color cellBackground = Colors.getCellBackground(mListView.getStyles(), mListView.getSelectionMode(), mIsSorted, mIsSelected, mIsRollover, mIsFocused, true);
-		Color itemBackground = Colors.getItemBackground(mListView.getStyles(), mListView.getSelectionMode(), mIsSorted, mIsSelected, mIsRollover, mIsFocused, true);
 		Color textForeground = Colors.getTextForeground(mListView.getStyles(), mListView.getSelectionMode(), mIsSorted, mIsSelected, mIsRollover, mIsFocused, true);
-
-		Color background = itemBackground != null ? itemBackground : cellBackground != null ? cellBackground : mListView.getBackground();
 
 		if (cellBackground != null && (mIsSorted || selectionMode != SelectionMode.ROW && selectionMode != SelectionMode.SINGLE_ROW))
 		{
@@ -105,7 +102,7 @@ public class DetailItemValueRenderer extends JComponent implements ListViewCellR
 		int rw = tr.width - column.getIconWidth() - computeIconTextSpacing(column) + 1;
 		int rh = rect.height;//tr.height;
 
-		TextRenderer.drawString(aGraphics, s, rx, ry, rw, rh, Anchor.WEST, textForeground, background, false);
+		TextRenderer.drawString(aGraphics, s, rx, ry, rw, rh, Anchor.WEST, textForeground, null, false);
 
 		aGraphics.setColor(style.verticalLine);
 		for (int i = 1, thickness = style.itemVerticalLineThickness; i <= thickness; i++)

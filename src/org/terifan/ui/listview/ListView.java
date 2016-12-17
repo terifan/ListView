@@ -59,6 +59,7 @@ public class ListView<T extends ListViewItem> extends JComponent implements Scro
 
 	private final Rectangle mSelectionRectangle = new Rectangle();
 	private final HashSet<T> mSelectedItems;
+	private boolean mFocused;
 
 
 	public ListView()
@@ -961,12 +962,14 @@ public class ListView<T extends ListViewItem> extends JComponent implements Scro
 		@Override
 		public void focusGained(FocusEvent aE)
 		{
+			mFocused = true;
 			repaint();
 		}
 
 		@Override
 		public void focusLost(FocusEvent aE)
 		{
+			mFocused = false;
 			repaint();
 		}
 	};

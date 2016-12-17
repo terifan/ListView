@@ -25,7 +25,7 @@ public class Styles
 	public Color itemRolloverForeground = new Color(0, 0, 0);
 	public Color itemRolloverBackground = new Color(252, 252, 252);
 	public Color itemSelectedForeground = new Color(0, 0, 0);
-	public Color itemSelectedBackground = new Color(166, 175, 201);
+	public Color itemSelectedBackground = new Color(189, 217, 252);
 	public Color itemSelectedRolloverForeground = new Color(0, 0, 0);
 	public Color itemSelectedRolloverBackground = new Color(186, 195, 221);
 	public Color itemSelectedUnfocusedForeground = new Color(0, 0, 0);

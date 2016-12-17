@@ -15,7 +15,7 @@ class Colors
 			{
 				return aStyle.itemSelectedRolloverForeground;
 			}
-			if (aIsListViewFocused || aStyle.itemSelectedUnfocusedForeground == null)
+			if (aIsListViewFocused)
 			{
 				return aStyle.itemSelectedForeground;
 			}
@@ -43,7 +43,7 @@ class Colors
 			{
 				return style.itemSelectedRolloverBackground;
 			}
-			if (aListViewFocused || style.itemSelectedUnfocusedBackground == null)
+			if (aListViewFocused)
 			{
 				return style.itemSelectedBackground;
 			}
@@ -77,7 +77,7 @@ class Colors
 			{
 				return style.itemSelectedRolloverBackground;
 			}
-			if (aListViewFocused || style.itemSelectedUnfocusedBackground == null)
+			if (aListViewFocused)
 			{
 				return style.itemSelectedBackground;
 			}
