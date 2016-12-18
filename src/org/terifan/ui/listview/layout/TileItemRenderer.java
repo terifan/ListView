@@ -23,18 +23,25 @@ import org.terifan.ui.listview.Utilities;
 
 public class TileItemRenderer implements ListViewItemRenderer
 {
-	private static FontRenderContext FRC = new FontRenderContext(new AffineTransform(), false, false);
+	private final static FontRenderContext FRC = new FontRenderContext(new AffineTransform(), false, false);
+
+	public static final int MAX_ITEMS_PER_ROW = 100; // ??
+	
+	/**
+	 * Extra height added to each item
+	 */
+	public final static int PADDING_HEIGHT = 20;
 
 	private Dimension mItemSize;
 	private Orientation mOrientation;
 	private int mIconWidth;
-
+	
 
 	/**
 	 * @param aItemWidth
-	 *   Preferred width of an item.
+	 * Preferred width of an item.
 	 * @param aItemHeight
-	 *   Preferred height of an item.
+	 * Preferred height of an item.
 	 * @param aOrientation
 	 *
 	 */
@@ -121,33 +128,33 @@ public class TileItemRenderer implements ListViewItemRenderer
 		}
 
 		{
-			int x = aOriginX+3;
-			int y = aOriginY+3;
+			int x = aOriginX + 3;
+			int y = aOriginY + 3;
 			int w = mIconWidth + 10;
-			int h = aHeight-10;
+			int h = aHeight - 10;
 
 			BufferedImage icon = aItem.getIcon();
 			boolean drawBorder = aListView.isItemBorderPainted(aItem);
 
 			int tw = mIconWidth;
-			int th = mItemSize.height-20;
+			int th = mItemSize.height - PADDING_HEIGHT;
 
 			if (icon == null)
 			{
 				icon = style.getScaledImageAspect(style.thumbPlaceholder, tw, th);
 			}
 
-			double f = Math.min(tw/(double)icon.getWidth(), th/(double)icon.getHeight());
-			tw = (int)(f*icon.getWidth());
-			th = (int)(f*icon.getHeight());
+			double f = Math.min(tw / (double)icon.getWidth(), th / (double)icon.getHeight());
+			tw = (int)(f * icon.getWidth());
+			th = (int)(f * icon.getHeight());
 
-			int tx = x+(w-tw)/2;
-			int ty = y+(h-th)/2;
+			int tx = x + (w - tw) / 2;
+			int ty = y + 5;
 
 			if (drawBorder)
 			{
-				BufferedImage im = style.getScaledImage(selected ? style.thumbBorderSelected : style.thumbBorderNormal, tw+3+6, th+3+7, 3, 3, 7, 6);
-				aGraphics.drawImage(im, tx-3, ty-3, null);
+				BufferedImage im = style.getScaledImage(selected ? style.thumbBorderSelected : style.thumbBorderNormal, tw + 3 + 6, th + 3 + 7, 3, 3, 7, 6);
+				aGraphics.drawImage(im, tx - 3, ty - 3, null);
 			}
 
 			aGraphics.drawImage(icon, tx, ty, tw, th, null);
@@ -159,7 +166,7 @@ public class TileItemRenderer implements ListViewItemRenderer
 		int itemHeight = aHeight - 4;
 
 		int x = aOriginX + mIconWidth + 16;
-		int y = 4;
+		int y = 3 + 5;
 
 		for (int col = 0; col < model.getColumnCount(); col++)
 		{
@@ -176,9 +183,9 @@ public class TileItemRenderer implements ListViewItemRenderer
 				label = column.getFormatter().format(label);
 			}
 
-			if (label != null && y+lineHeight < itemHeight && label.toString().length() > 0)
+			if (label != null && y + lineHeight < itemHeight && label.toString().length() > 0)
 			{
-				Rectangle dim = TextRenderer.drawString(aGraphics, label.toString(), x, aOriginY+y, aWidth-5-16-mIconWidth, itemHeight-y, Anchor.NORTH_WEST, col != 0 ? Color.GRAY : style.itemForeground, null, false);
+				Rectangle dim = TextRenderer.drawString(aGraphics, label.toString(), x, aOriginY + y, aWidth - 5 - 16 - mIconWidth, itemHeight - y, Anchor.NORTH_WEST, col != 0 ? Color.GRAY : style.itemForeground, null, false);
 
 				y += 1 + dim.height;
 
@@ -191,7 +198,7 @@ public class TileItemRenderer implements ListViewItemRenderer
 
 		if (aListView.getFocusItem() == aItem)
 		{
-			Utilities.drawDottedRect(aGraphics, aOriginX+1, aOriginY+1, aWidth-2, aHeight-2, false);
+			Utilities.drawDottedRect(aGraphics, aOriginX + 1, aOriginY + 1, aWidth - 2, aHeight - 2, false);
 		}
 	}
 
@@ -201,7 +208,7 @@ public class TileItemRenderer implements ListViewItemRenderer
 	{
 		if (mOrientation == Orientation.VERTICAL)
 		{
-			return new ListViewLayoutVertical(aListView, 5);
+			return new ListViewLayoutVertical(aListView, MAX_ITEMS_PER_ROW);
 		}
 		else
 		{

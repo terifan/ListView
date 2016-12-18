@@ -522,11 +522,6 @@ public class ListView<T extends ListViewItem> extends JComponent implements Scro
 	public void validateLayout()
 	{
 		getModel().validate();
-
-//		for (Component c = this; c != null; c = c.getParent())
-//		{
-//			c.revalidate();
-//		}
 		revalidate();
 		repaint();
 	}

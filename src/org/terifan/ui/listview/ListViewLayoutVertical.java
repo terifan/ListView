@@ -415,7 +415,7 @@ public class ListViewLayoutVertical<T extends ListViewItem> extends AbstractList
 		int windowWidth = mListView.getWidth() - verticalIndent;
 		int prefItemWidth = Math.max(mListView.getItemRenderer().getItemPreferredWidth(mListView) + mListView.getItemRenderer().getItemSpacing(mListView).x, 1);
 
-		return Math.min(Math.max(1, windowWidth / prefItemWidth), mMaxItemsPerRow <= 0 ? 1 << 30 : mMaxItemsPerRow);
+		return Math.min(Math.max(1, windowWidth / prefItemWidth), mMaxItemsPerRow <= 0 ? Integer.MAX_VALUE : mMaxItemsPerRow);
 	}
 
 
