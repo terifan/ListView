@@ -16,7 +16,7 @@ import org.terifan.ui.listview.Styles;
 import org.terifan.ui.listview.Utilities;
 
 
-public class ThumbnailItemRenderer implements ListViewItemRenderer
+public class ThumbnailItemRenderer<T extends ListViewItem> implements ListViewItemRenderer<T>
 {
 	public final static int DEFAULT_LABEL_HEIGHT = 15;
 	public final static int ITEM_PAD_HOR = 20;
@@ -44,63 +44,63 @@ public class ThumbnailItemRenderer implements ListViewItemRenderer
 
 
 	@Override
-	public int getItemMinimumWidth(ListView aListView)
+	public int getItemMinimumWidth(ListView<T> aListView)
 	{
 		return getItemPreferredWidth(aListView);
 	}
 
 
 	@Override
-	public int getItemMaximumWidth(ListView aListView)
+	public int getItemMaximumWidth(ListView<T> aListView)
 	{
 		return getItemPreferredWidth(aListView);
 	}
 
 
 	@Override
-	public int getItemPreferredWidth(ListView aListView)
+	public int getItemPreferredWidth(ListView<T> aListView)
 	{
 		return mItemSize.width + ITEM_PAD_HOR + ITEM_SPACE_HOR;
 	}
 
 
 	@Override
-	public int getItemMinimumHeight(ListView aListView)
+	public int getItemMinimumHeight(ListView<T> aListView)
 	{
 		return getItemPreferredHeight(aListView);
 	}
 
 
 	@Override
-	public int getItemMaximumHeight(ListView aListView)
+	public int getItemMaximumHeight(ListView<T> aListView)
 	{
 		return getItemPreferredHeight(aListView);
 	}
 
 
 	@Override
-	public int getItemPreferredHeight(ListView aListView)
+	public int getItemPreferredHeight(ListView<T> aListView)
 	{
 		return mItemSize.height + ITEM_PAD_VER + ITEM_SPACE_VER + mLabelHeight;
 	}
 
 
 	@Override
-	public int getItemWidth(ListView aListView, ListViewItem aItem)
+	public int getItemWidth(ListView<T> aListView, T aItem)
 	{
 		return getItemPreferredWidth(aListView);
 	}
 
 
 	@Override
-	public int getItemHeight(ListView aListView, ListViewItem aItem)
+	public int getItemHeight(ListView<T> aListView, T aItem)
 	{
 		return getItemPreferredHeight(aListView);
 	}
 
 
 	@Override
-	public void paintItem(Graphics2D aGraphics, int aOriginX, int aOriginY, int aWidth, int aHeight, ListView aListView, ListViewItem aItem)
+	public void paintItem(Graphics2D aGraphics, int aOriginX, int aOriginY, int aWidth, int aHeight, ListView<T> aListView, T aItem)
 	{
 		Styles style = aListView.getStyles();
 		boolean selected = aListView.isItemSelected(aItem);
@@ -109,9 +109,12 @@ public class ThumbnailItemRenderer implements ListViewItemRenderer
 		int y = aOriginY;
 		int w = aWidth;
 		int h = aHeight;
+		
+		int labelHeight = getLabelHeight(aItem);
+		int itemHeight = mItemSize.height - getLabelHeight(aItem) + mLabelHeight;
 
 		int sw = mItemSize.width + ITEM_PAD_HOR;
-		int sh = mItemSize.height + mLabelHeight + ITEM_PAD_VER;
+		int sh = itemHeight + labelHeight + ITEM_PAD_VER;
 		int sx = x + (w - sw) / 2;
 		int sy = y + h - sh;
 
@@ -119,24 +122,24 @@ public class ThumbnailItemRenderer implements ListViewItemRenderer
 
 		if (icon == null)
 		{
-			icon = style.getScaledImageAspect(style.thumbPlaceholder, mItemSize.width, mItemSize.height);
+			icon = Utilities.getScaledImageAspect(style.thumbPlaceholder, mItemSize.width, itemHeight);
 		}
 
-		double f = Math.min(mItemSize.width / (double)icon.getWidth(), mItemSize.height / (double)icon.getHeight());
+		double f = Math.min(mItemSize.width / (double)icon.getWidth(), itemHeight / (double)icon.getHeight());
 		int tw = (int)(f * icon.getWidth());
 		int th = (int)(f * icon.getHeight());
 		int tx = x + (w - tw) / 2;
-		int ty = y + h - 8 - th - mLabelHeight;
+		int ty = y + h - 8 - th - labelHeight;
 
 		if (selected)
 		{
-			BufferedImage im = style.getScaledImage(aListView.isFocusOwner() ? style.thumbBorderSelectedBackground : style.thumbBorderSelectedUnfocusedBackground, sw, sh, 3, 3, 3, 3);
+			BufferedImage im = Utilities.getScaledImage(aListView.isFocusOwner() ? style.thumbBorderSelectedBackground : style.thumbBorderSelectedUnfocusedBackground, sw, sh, 3, 3, 3, 3);
 			aGraphics.drawImage(im, sx, sy, null);
 		}
 
 		if (aListView.isItemBorderPainted(aItem))
 		{
-			BufferedImage im = style.getScaledImage(selected ? style.thumbBorderSelected : style.thumbBorderNormal, tw + 3 + 6, th + 3 + 7, 3, 3, 7, 6);
+			BufferedImage im = Utilities.getScaledImage(selected ? style.thumbBorderSelected : style.thumbBorderNormal, tw + 3 + 6, th + 3 + 7, 3, 3, 7, 6);
 			aGraphics.drawImage(im, tx - 3, ty - 3, null);
 		}
 
@@ -154,9 +157,9 @@ public class ThumbnailItemRenderer implements ListViewItemRenderer
 			}
 		}
 
-		if (label != null && mLabelHeight > 0)
+		if (label != null && labelHeight > 0)
 		{
-			TextRenderer.drawString(aGraphics, label, sx + 2, y + h - mLabelHeight - 2, sw - 4, mLabelHeight, Anchor.NORTH, style.itemForeground, null, false);
+			TextRenderer.drawString(aGraphics, label, sx + 2, y + h - labelHeight - 2, sw - 4, labelHeight, Anchor.NORTH, style.itemForeground, null, false);
 		}
 
 		if (aListView.getFocusItem() == aItem)
@@ -167,7 +170,7 @@ public class ThumbnailItemRenderer implements ListViewItemRenderer
 
 
 	@Override
-	public ListViewLayout createListViewLayout(ListView aListView)
+	public ListViewLayout createListViewLayout(ListView<T> aListView)
 	{
 		if (mOrientation == Orientation.VERTICAL)
 		{
@@ -177,5 +180,11 @@ public class ThumbnailItemRenderer implements ListViewItemRenderer
 		{
 			return new ListViewLayoutHorizontal(aListView);
 		}
+	}
+
+
+	protected int getLabelHeight(T aItem)
+	{
+		return mLabelHeight;
 	}
 }

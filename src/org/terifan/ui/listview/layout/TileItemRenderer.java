@@ -123,7 +123,7 @@ public class TileItemRenderer implements ListViewItemRenderer
 
 		if (selected)
 		{
-			BufferedImage im = style.getScaledImage(aListView.isFocusOwner() ? style.thumbBorderSelectedBackground : style.thumbBorderSelectedUnfocusedBackground, aWidth, aHeight, 3, 3, 3, 3);
+			BufferedImage im = Utilities.getScaledImage(aListView.isFocusOwner() ? style.thumbBorderSelectedBackground : style.thumbBorderSelectedUnfocusedBackground, aWidth, aHeight, 3, 3, 3, 3);
 			aGraphics.drawImage(im, aOriginX, aOriginY, null);
 		}
 
@@ -141,7 +141,7 @@ public class TileItemRenderer implements ListViewItemRenderer
 
 			if (icon == null)
 			{
-				icon = style.getScaledImageAspect(style.thumbPlaceholder, tw, th);
+				icon = Utilities.getScaledImageAspect(style.thumbPlaceholder, tw, th);
 			}
 
 			double f = Math.min(tw / (double)icon.getWidth(), th / (double)icon.getHeight());
@@ -153,7 +153,7 @@ public class TileItemRenderer implements ListViewItemRenderer
 
 			if (drawBorder)
 			{
-				BufferedImage im = style.getScaledImage(selected ? style.thumbBorderSelected : style.thumbBorderNormal, tw + 3 + 6, th + 3 + 7, 3, 3, 7, 6);
+				BufferedImage im = Utilities.getScaledImage(selected ? style.thumbBorderSelected : style.thumbBorderNormal, tw + 3 + 6, th + 3 + 7, 3, 3, 7, 6);
 				aGraphics.drawImage(im, tx - 3, ty - 3, null);
 			}
 

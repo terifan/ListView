@@ -109,22 +109,4 @@ public class Styles
 	public Styles()
 	{
 	}
-
-
-	public BufferedImage getScaledImage(BufferedImage aImage, int aWidth, int aHeight, int aFrameTop, int aFrameLeft, int aFrameBottom, int aFrameRight)
-	{
-		return Utilities.getScaledImage(aImage, aWidth, aHeight, aFrameTop, aFrameLeft, aFrameBottom, aFrameRight);
-	}
-
-
-	public BufferedImage getScaledImage(BufferedImage aImage, int aWidth, int aHeight)
-	{
-		return Utilities.getScaledImage(aImage, aWidth, aHeight);
-	}
-
-
-	public BufferedImage getScaledImageAspect(BufferedImage aImage, int aWidth, int aHeight)
-	{
-		return Utilities.getScaledImageAspect(aImage, aWidth, aHeight);
-	}
 }
