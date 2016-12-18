@@ -24,13 +24,13 @@ public class ListViewGroup<T extends ListViewItem>
 	}
 
 
-	public ListViewGroup getParent()
+	public ListViewGroup<T> getParent()
 	{
 		return mParent;
 	}
 
 
-	public int getGroupIndex(ListViewGroup aGroup)
+	public int getGroupIndex(ListViewGroup<T> aGroup)
 	{
 		return mChildren.indexOfValue(aGroup);
 	}
@@ -173,9 +173,9 @@ public class ListViewGroup<T extends ListViewItem>
 	}
 
 
-	public ListViewGroup getRoot()
+	public ListViewGroup<T> getRoot()
 	{
-		ListViewGroup group = this;
+		ListViewGroup<T> group = this;
 		while (group.getParent() != null)
 		{
 			group = group.getParent();
@@ -235,7 +235,7 @@ public class ListViewGroup<T extends ListViewItem>
 	private ListViewGroup mTempGroup;
 	private boolean mTempBoolean;
 
-	private synchronized ListViewGroup getSiblingGroupHeavy(ListViewGroup<T> aGroup, int aDirection, boolean aVisibleOnly)
+	private synchronized ListViewGroup<T> getSiblingGroupHeavy(ListViewGroup<T> aGroup, int aDirection, boolean aVisibleOnly)
 	{
 		if (aGroup.mChildren != null)
 		{
@@ -265,7 +265,7 @@ public class ListViewGroup<T extends ListViewItem>
 
 				if (group.getLevel() < mLevel && (!aVisibleOnly || !group.isCollapsed()))
 				{
-					ListViewGroup result = getSiblingGroupHeavy(group, aDirection, aVisibleOnly);
+					ListViewGroup<T> result = getSiblingGroupHeavy(group, aDirection, aVisibleOnly);
 
 					if (result != null)
 					{

@@ -15,8 +15,8 @@ public class ListViewModel<T extends ListViewItem> implements Iterable<T>
 	protected ArrayList<ListViewColumn> mColumns;
 	protected ArrayList<Integer> mGroups;
 	protected ArrayList<T> mItems;
-	protected ListViewGroup mTree;
-	protected ListViewColumn mSortedColumn;
+	protected ListViewGroup<T> mTree;
+	protected ListViewColumn<T> mSortedColumn;
 	protected HashSet<Object> mCollapsedGroups;
 
 
@@ -359,7 +359,7 @@ public class ListViewModel<T extends ListViewItem> implements Iterable<T>
 	}
 
 
-	public ListViewColumn getColumn(int aIndex)
+	public ListViewColumn<T> getColumn(int aIndex)
 	{
 		return mColumns.get(aIndex);
 	}
@@ -371,20 +371,20 @@ public class ListViewModel<T extends ListViewItem> implements Iterable<T>
 	}
 
 
-	public void setSortedColumn(ListViewColumn aSortedColumn)
+	public void setSortedColumn(ListViewColumn<T> aSortedColumn)
 	{
 		mSortedColumn = aSortedColumn;
 	}
 
 
-	public ListViewColumn getSortedColumn()
+	public ListViewColumn<T> getSortedColumn()
 	{
 		return mSortedColumn;
 	}
 
 	// -- Tree -----------------
 
-	public ListViewGroup getRoot()
+	public ListViewGroup<T> getRoot()
 	{
 		if (mTree == null)
 		{

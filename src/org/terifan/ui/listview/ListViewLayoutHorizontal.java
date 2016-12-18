@@ -258,7 +258,7 @@ public class ListViewLayoutHorizontal<T extends ListViewItem> extends AbstractLi
 	@Override
 	public LocationInfo getLocationInfo(int aLocationX, int aLocationY)
 	{
-		SortedMap<Object, ListViewGroup> children = mListView.getModel().getRoot().getChildren();
+		SortedMap<Object, ListViewGroup<T>> children = mListView.getModel().getRoot().getChildren();
 
 		if (children != null)
 		{

@@ -7,7 +7,7 @@ import java.awt.image.BufferedImage;
 
 public class ListViewGroupRenderer<T extends ListViewItem>
 {
-	public void paintGroup(ListView aListView, Graphics2D aGraphics, int aOriginX, int aOriginY, int aWidth, int aHeight, ListViewGroup<T> aGroup)
+	public void paintGroup(ListView<T> aListView, Graphics2D aGraphics, int aOriginX, int aOriginY, int aWidth, int aHeight, ListViewGroup<T> aGroup)
 	{
 		Font oldFont = aGraphics.getFont();
 

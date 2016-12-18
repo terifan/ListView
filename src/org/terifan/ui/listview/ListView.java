@@ -117,13 +117,13 @@ public class ListView<T extends ListViewItem> extends JComponent implements Scro
 	}
 
 
-	public void setGroupRenderer(ListViewGroupRenderer aGroupRenderer)
+	public void setGroupRenderer(ListViewGroupRenderer<T> aGroupRenderer)
 	{
 		mGroupRenderer = aGroupRenderer;
 	}
 
 
-	public ListViewGroupRenderer getGroupRenderer()
+	public ListViewGroupRenderer<T> getGroupRenderer()
 	{
 		return mGroupRenderer;
 	}
@@ -187,7 +187,7 @@ public class ListView<T extends ListViewItem> extends JComponent implements Scro
 	}
 
 
-	public ListView<T> setHeaderRenderer(ListViewHeaderRenderer aRenderer)
+	public ListView<T> setHeaderRenderer(ListViewHeaderRenderer<T> aRenderer)
 	{
 		mHeaderRenderer = aRenderer;
 
@@ -800,7 +800,7 @@ public class ListView<T extends ListViewItem> extends JComponent implements Scro
 	}
 
 
-	public ListViewGroup getRolloverGroup()
+	public ListViewGroup<T> getRolloverGroup()
 	{
 		return mRolloverInfo == null ? null : mRolloverInfo.getGroup();
 	}
@@ -950,7 +950,7 @@ public class ListView<T extends ListViewItem> extends JComponent implements Scro
 	/**
 	 * Return true if the border of a item icon should be drawn. Default implementation return true whenever there is an icon otherwise false. Override this method for custom handling.
 	 */
-	public boolean isBorderPainted(T aItem)
+	public boolean isItemBorderPainted(T aItem)
 	{
 		return aItem.getIcon() != null;
 	}

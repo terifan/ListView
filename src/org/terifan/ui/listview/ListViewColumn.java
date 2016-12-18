@@ -6,9 +6,9 @@ import java.util.HashMap;
 import javax.swing.SortOrder;
 
 
-public class ListViewColumn
+public class ListViewColumn<T extends ListViewItem>
 {
-	private final ListViewModel mModel;
+	private final ListViewModel<T> mModel;
 	protected String mKey;
 	protected Alignment mAlignment;
 	protected String mLabel;
@@ -21,10 +21,10 @@ public class ListViewColumn
 	protected Font mHeaderFont;
 	protected SortOrder mInitialSortOrder;
 	protected SortOrder mSortOrder;
-	protected Comparator mComparator;
-	protected Comparator mGroupComparator;
-	protected Formatter mFormatter;
-	protected Formatter mGroupFormatter;
+	protected Comparator<T> mComparator;
+	protected Comparator<T> mGroupComparator;
+	protected Formatter<T> mFormatter;
+	protected Formatter<T> mGroupFormatter;
 	protected HashMap<Object,Object> mUserObject;
 	protected boolean mTitle;
 
@@ -50,14 +50,14 @@ public class ListViewColumn
 	}
 
 
-	public ListViewColumn setGroupOnSort(boolean aGroupOnSort)
+	public ListViewColumn<T> setGroupOnSort(boolean aGroupOnSort)
 	{
 		mGroupOnSort = aGroupOnSort;
 		return this;
 	}
 
 
-	public ListViewColumn setFormatter(Formatter aFormatter)
+	public ListViewColumn<T> setFormatter(Formatter<T> aFormatter)
 	{
 		mFormatter = aFormatter;
 
@@ -71,7 +71,7 @@ public class ListViewColumn
 	}
 
 
-	public ListViewColumn setGroupFormatter(Formatter aGroupFormatter)
+	public ListViewColumn<T> setGroupFormatter(Formatter<T> aGroupFormatter)
 	{
 		mGroupFormatter = aGroupFormatter;
 
@@ -85,7 +85,7 @@ public class ListViewColumn
 	}
 
 
-	public ListViewColumn setInitialSortOrder(SortOrder aInitialSortOrder)
+	public ListViewColumn<T> setInitialSortOrder(SortOrder aInitialSortOrder)
 	{
 		mInitialSortOrder = aInitialSortOrder;
 		setSortOrder(aInitialSortOrder);
@@ -99,7 +99,7 @@ public class ListViewColumn
 	}
 
 
-	public ListViewColumn setSortOrder(SortOrder aSortOrder)
+	public ListViewColumn<T> setSortOrder(SortOrder aSortOrder)
 	{
 		mSortOrder = aSortOrder;
 		return this;
@@ -112,7 +112,7 @@ public class ListViewColumn
 	}
 
 
-	public ListViewColumn setLabel(String aLabel)
+	public ListViewColumn<T> setLabel(String aLabel)
 	{
 		mLabel = aLabel;
 		return this;
@@ -125,7 +125,7 @@ public class ListViewColumn
 	}
 
 
-	public ListViewColumn setFocusable(boolean aFocusable)
+	public ListViewColumn<T> setFocusable(boolean aFocusable)
 	{
 		mFocusable = aFocusable;
 		return this;
@@ -138,7 +138,7 @@ public class ListViewColumn
 	}
 
 
-	public ListViewColumn setWidth(int aWidth)
+	public ListViewColumn<T> setWidth(int aWidth)
 	{
 		mWidth = aWidth;
 		return this;
@@ -151,7 +151,7 @@ public class ListViewColumn
 	}
 
 
-	public ListViewColumn setIconWidth(int aIconWidth)
+	public ListViewColumn<T> setIconWidth(int aIconWidth)
 	{
 		mIconWidth = aIconWidth;
 		return this;
@@ -172,7 +172,7 @@ public class ListViewColumn
 	 * @return
 	 *   return this column
 	 */
-	public ListViewColumn setAlignment(Alignment aAlignment)
+	public ListViewColumn<T> setAlignment(Alignment aAlignment)
 	{
 		mAlignment = aAlignment;
 		return this;
@@ -185,7 +185,7 @@ public class ListViewColumn
 	}
 
 
-	public ListViewColumn setVisible(boolean aVisible)
+	public ListViewColumn<T> setVisible(boolean aVisible)
 	{
 		mVisible = aVisible;
 		return this;
@@ -211,7 +211,7 @@ public class ListViewColumn
 	}
 
 
-	public ListViewColumn setComparator(Comparator aComparator)
+	public ListViewColumn<T> setComparator(Comparator<T> aComparator)
 	{
 		mComparator = aComparator;
 		return this;
@@ -224,7 +224,7 @@ public class ListViewColumn
 	}
 
 
-	public ListViewColumn setGroupComparator(Comparator aGroupComparator)
+	public ListViewColumn<T> setGroupComparator(Comparator<T> aGroupComparator)
 	{
 		mGroupComparator = aGroupComparator;
 		return this;
@@ -237,7 +237,7 @@ public class ListViewColumn
 	}
 
 
-	public ListViewModel getModel()
+	public ListViewModel<T> getModel()
 	{
 		return mModel;
 	}
@@ -268,7 +268,7 @@ public class ListViewColumn
 	}
 
 
-	public ListViewColumn setTitle(boolean aTitle)
+	public ListViewColumn<T> setTitle(boolean aTitle)
 	{
 		this.mTitle = aTitle;
 		return this;
