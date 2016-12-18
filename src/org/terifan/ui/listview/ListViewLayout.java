@@ -8,29 +8,29 @@ import java.util.ArrayList;
 
 public interface ListViewLayout<T extends ListViewItem>
 {
-	public Orientation getLayoutOrientation();
+	Orientation getLayoutOrientation();
 
-	public void paint(Graphics2D aGraphics);
+	void paint(Graphics2D aGraphics);
 
-	public LocationInfo<T> getLocationInfo(int aLocationX, int aLocationY);
+	LocationInfo<T> getLocationInfo(int aLocationX, int aLocationY);
 
-	public int getMarginLeft();
+	int getMarginLeft();
 
-	public Dimension getPreferredSize();
+	Dimension getPreferredSize();
 
-	public Dimension getMinimumSize();
+	Dimension getMinimumSize();
 
-	public int getItemsPerRun();
+	int getItemsPerRun();
 
-	public T getItemRelativeTo(T aItem, int aDiffX, int aDiffY);
+	T getItemRelativeTo(T aItem, int aDiffX, int aDiffY);
 
-	public ArrayList<T> getItemsIntersecting(T aFromItem, T aToItem);
+	ArrayList<T> getItemsIntersecting(T aFromItem, T aToItem);
 
-	public ArrayList<T> getItemsIntersecting(int x1, int y1, int x2, int y2, ArrayList<T> aList);
+	ArrayList<T> getItemsIntersecting(int x1, int y1, int x2, int y2, ArrayList<T> aList);
 
-	public boolean getItemBounds(T aItem, Rectangle aRectangle);
+	boolean getItemBounds(T aItem, Rectangle aRectangle);
 
-	public T getFirstItem();
+	T getFirstItem();
 
-	public T getLastItem();
+	T getLastItem();
 }
