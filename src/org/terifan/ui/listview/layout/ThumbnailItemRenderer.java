@@ -116,7 +116,6 @@ public class ThumbnailItemRenderer implements ListViewItemRenderer
 		int sy = y + h - sh;
 
 		BufferedImage icon = aItem.getIcon();
-		boolean drawBorder = aListView.isBorderDrawn(aItem);
 
 		if (icon == null)
 		{
@@ -135,7 +134,7 @@ public class ThumbnailItemRenderer implements ListViewItemRenderer
 			aGraphics.drawImage(im, sx, sy, null);
 		}
 
-		if (drawBorder)
+		if (aListView.isBorderPainted(aItem))
 		{
 			BufferedImage im = style.getScaledImage(selected ? style.thumbBorderSelected : style.thumbBorderNormal, tw + 3 + 6, th + 3 + 7, 3, 3, 7, 6);
 			aGraphics.drawImage(im, tx - 3, ty - 3, null);
@@ -160,10 +159,10 @@ public class ThumbnailItemRenderer implements ListViewItemRenderer
 			TextRenderer.drawString(aGraphics, label, sx + 2, y + h - mLabelHeight - 2, sw - 4, mLabelHeight, Anchor.NORTH, style.itemForeground, null, false);
 		}
 
-//		if (aListView.getFocusItem() == aItem)
-//		{
-//			Utilities.drawDottedRect(aGraphics, sx + 1, sy + 1, sw - 2, sh - 2, false);
-//		}
+		if (aListView.getFocusItem() == aItem)
+		{
+			Utilities.drawDottedRect(aGraphics, sx + 1, sy + 1, sw - 2, sh - 2, false);
+		}
 	}
 
 

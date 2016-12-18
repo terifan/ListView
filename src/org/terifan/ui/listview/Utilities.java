@@ -4,12 +4,26 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
+import javax.imageio.ImageIO;
 
 
 public final class Utilities
 {
 	private Utilities()
 	{
+	}
+
+
+	public static BufferedImage loadImage(Class aOwer, String aPath)
+	{
+		try
+		{
+			return ImageIO.read(aOwer.getResource(aPath));
+		}
+		catch (Exception e)
+		{
+			throw new IllegalArgumentException(e);
+		}
 	}
 
 

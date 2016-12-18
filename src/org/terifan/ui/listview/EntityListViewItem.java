@@ -24,7 +24,7 @@ public class EntityListViewItem extends AbstractListViewItem
 
 
 	@Override
-	public Object getValue(ListViewColumn aColumn)
+	public final Object getValue(ListViewColumn aColumn)
 	{
 		try
 		{
@@ -63,7 +63,7 @@ public class EntityListViewItem extends AbstractListViewItem
 
 
 	@Override
-	public BufferedImage getIcon()
+	public final BufferedImage getIcon()
 	{
 		try
 		{

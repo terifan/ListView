@@ -6,17 +6,14 @@ import java.awt.Font;
 import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
-import javax.imageio.ImageIO;
 
 
 public class Styles
 {
 	public int itemHeight = 19;
-	public int groupHeight = 70;
+	public int horizontalBarHeight = 22;
 	public int verticalBarWidth = 15;
 	public int headerColumnHeight = 22;
-	public int groupWidth = 50;
-	public int horizontalBarHeight = 22;
 	public int columnDividerSpacing = 19;
 	public int columnDividerWidth = 3;
 
@@ -44,6 +41,11 @@ public class Styles
 	public Color itemLabelForegroundSelected = new Color(0, 0, 0);
 	public Color itemLabelBackgroundSelected = new Color(242, 248, 255);
 
+	public int groupWidth = 50;
+	public int groupHeight = 50;
+	public int groupLineThickness = 2;
+	public Font group = new Font("Segoe UI light", Font.PLAIN, 26);
+	public Font groupCount = new Font("Segoe UI", Font.PLAIN, 11);
 	public Color groupForeground = new Color(53, 90, 180);
 	public Color groupCountForeground = new Color(110, 110, 110);
 	public Color groupBackground = new Color(255, 255, 255);
@@ -62,7 +64,6 @@ public class Styles
 	public Color indentLine = new Color(255, 255, 255);
 	public Color indent = new Color(253, 238, 201);
 
-	public int groupLineThickness = 2;
 	public int itemHorizontalLineThickness = 1;
 	public int itemVerticalLineThickness = 0;
 
@@ -71,57 +72,42 @@ public class Styles
 	public Color headerForegroundArmed = new Color(0, 0, 0);
 
 	public Font item = new Font("Segoe UI", Font.PLAIN, 11);
-	public Font group = new Font("Segoe UI light", Font.PLAIN, 26);
-	public Font groupCount = new Font("Segoe UI", Font.PLAIN, 11);
 	public Font header = new Font("Segoe UI", Font.PLAIN, 11);
 	public Font label = new Font("Segoe UI", Font.BOLD, 11);
 
-	public BufferedImage headerBackground = loadImage("column_header_background_normal.png");
-	public BufferedImage headerBackgroundRollover = loadImage("column_header_background_normal.png");
-	public BufferedImage headerBackgroundArmed = loadImage("column_header_background_armed.png");
-	public BufferedImage headerBackgroundRolloverArmed = loadImage("column_header_background_armed.png");
-	public BufferedImage headerBackgroundSorted = loadImage("column_header_background_sorted.png");
-	public BufferedImage headerSeparator = loadImage("column_header_seperator_normal.png");
-	public BufferedImage headerSeparatorArmed = loadImage("column_header_seperator_armed.png");
+	public BufferedImage headerBackground = Utilities.loadImage(Styles.class, "resources/column_header_background_normal.png");
+	public BufferedImage headerBackgroundRollover = Utilities.loadImage(Styles.class, "resources/column_header_background_normal.png");
+	public BufferedImage headerBackgroundArmed = Utilities.loadImage(Styles.class, "resources/column_header_background_armed.png");
+	public BufferedImage headerBackgroundRolloverArmed = Utilities.loadImage(Styles.class, "resources/column_header_background_armed.png");
+	public BufferedImage headerBackgroundSorted = Utilities.loadImage(Styles.class, "resources/column_header_background_sorted.png");
+	public BufferedImage headerSeparator = Utilities.loadImage(Styles.class, "resources/column_header_seperator_normal.png");
+	public BufferedImage headerSeparatorArmed = Utilities.loadImage(Styles.class, "resources/column_header_seperator_armed.png");
 	
-	public BufferedImage groupCollapseIcon = loadImage("group_collapse_icon.png");
-	public BufferedImage groupExpandIcon = loadImage("group_expand_icon.png");
-	public BufferedImage sortAscendingIcon = loadImage("sort_ascending_icon.png");
-	public BufferedImage sortDescendingIcon = loadImage("sort_descending_icon.png");
+	public BufferedImage groupCollapseIcon = Utilities.loadImage(Styles.class, "resources/group_collapse_icon.png");
+	public BufferedImage groupExpandIcon = Utilities.loadImage(Styles.class, "resources/group_expand_icon.png");
+	public BufferedImage sortAscendingIcon = Utilities.loadImage(Styles.class, "resources/sort_ascending_icon.png");
+	public BufferedImage sortDescendingIcon = Utilities.loadImage(Styles.class, "resources/sort_descending_icon.png");
 
-	public BufferedImage cardBackgroundNormal = loadImage("card_background_normal.png");
-	public BufferedImage cardBackgroundSelected = loadImage("card_background_selected.png");
+	public BufferedImage cardBackgroundNormal = Utilities.loadImage(Styles.class, "resources/card_background_normal.png");
+	public BufferedImage cardBackgroundSelected = Utilities.loadImage(Styles.class, "resources/card_background_selected.png");
 
-	public BufferedImage thumbBorderSelected = loadImage("thumb_border_2.png");
-	public BufferedImage thumbBorderNormal = loadImage("thumb_border_2.png");
-	public BufferedImage thumbBorderSelectedBackground = loadImage("thumb_border_2_selected_background.png");
-	public BufferedImage thumbBorderSelectedUnfocusedBackground = loadImage("thumb_border_2_background_nofocus.png");
-	public BufferedImage thumbPlaceholder = loadImage("thumb_placeholder.png");
+	public BufferedImage thumbBorderSelected = Utilities.loadImage(Styles.class, "resources/thumb_border_2.png");
+	public BufferedImage thumbBorderNormal = Utilities.loadImage(Styles.class, "resources/thumb_border_2.png");
+	public BufferedImage thumbBorderSelectedBackground = Utilities.loadImage(Styles.class, "resources/thumb_border_2_selected_background.png");
+	public BufferedImage thumbBorderSelectedUnfocusedBackground = Utilities.loadImage(Styles.class, "resources/thumb_border_2_background_nofocus.png");
+	public BufferedImage thumbPlaceholder = Utilities.loadImage(Styles.class, "resources/thumb_placeholder.png");
 
-	public BufferedImage barNormal = loadImage("bar_normal.png");
-	public BufferedImage barSelected = loadImage("bar_selected.png");
+	public BufferedImage barNormal = Utilities.loadImage(Styles.class, "resources/bar_normal.png");
+	public BufferedImage barSelected = Utilities.loadImage(Styles.class, "resources/bar_selected.png");
 
 	public Font barFont = new Font("Ebrima", Font.BOLD, 14);
 	public Color barColor = new Color(21, 66, 139);
 
-	public Cursor cursorSplit = Toolkit.getDefaultToolkit().createCustomCursor(loadImage("cursor_split.png"), new Point(16,16), "split");
-	public Cursor cursorResize = Toolkit.getDefaultToolkit().createCustomCursor(loadImage("cursor_resize.png"), new Point(16,16), "resize");
+	public Cursor cursorSplit = Toolkit.getDefaultToolkit().createCustomCursor(Utilities.loadImage(Styles.class, "resources/cursor_split.png"), new Point(16,16), "split");
+	public Cursor cursorResize = Toolkit.getDefaultToolkit().createCustomCursor(Utilities.loadImage(Styles.class, "resources/cursor_resize.png"), new Point(16,16), "resize");
 
 	public Styles()
 	{
-	}
-
-
-	private BufferedImage loadImage(String aName)
-	{
-		try
-		{
-			return ImageIO.read(getClass().getResource("resources/" + aName));
-		}
-		catch (Exception e)
-		{
-			throw new IllegalArgumentException(e);
-		}
 	}
 
 

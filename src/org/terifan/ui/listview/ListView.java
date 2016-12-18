@@ -59,7 +59,6 @@ public class ListView<T extends ListViewItem> extends JComponent implements Scro
 
 	private final Rectangle mSelectionRectangle = new Rectangle();
 	private final HashSet<T> mSelectedItems;
-	private boolean mFocused;
 
 
 	public ListView()
@@ -146,13 +145,13 @@ public class ListView<T extends ListViewItem> extends JComponent implements Scro
 	}
 
 
-	public ListViewLayout getListViewLayout()
+	public ListViewLayout<T> getListViewLayout()
 	{
 		return mLayout;
 	}
 
 
-	public ListViewItemRenderer getItemRenderer()
+	public ListViewItemRenderer<T> getItemRenderer()
 	{
 		return mItemRenderer;
 	}
@@ -951,7 +950,7 @@ public class ListView<T extends ListViewItem> extends JComponent implements Scro
 	/**
 	 * Return true if the border of a item icon should be drawn. Default implementation return true whenever there is an icon otherwise false. Override this method for custom handling.
 	 */
-	public boolean isBorderDrawn(ListViewItem aItem)
+	public boolean isBorderPainted(T aItem)
 	{
 		return aItem.getIcon() != null;
 	}
@@ -962,14 +961,12 @@ public class ListView<T extends ListViewItem> extends JComponent implements Scro
 		@Override
 		public void focusGained(FocusEvent aE)
 		{
-			mFocused = true;
 			repaint();
 		}
 
 		@Override
 		public void focusLost(FocusEvent aE)
 		{
-			mFocused = false;
 			repaint();
 		}
 	};

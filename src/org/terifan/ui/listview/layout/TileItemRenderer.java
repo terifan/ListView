@@ -127,7 +127,7 @@ public class TileItemRenderer implements ListViewItemRenderer
 			int h = aHeight-10;
 
 			BufferedImage icon = aItem.getIcon();
-			boolean drawBorder = aListView.isBorderDrawn(aItem);
+			boolean drawBorder = aListView.isBorderPainted(aItem);
 
 			int tw = mIconWidth;
 			int th = mItemSize.height-20;
