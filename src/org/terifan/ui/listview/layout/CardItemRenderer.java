@@ -4,6 +4,7 @@ import org.terifan.ui.listview.ListViewLayoutVertical;
 import org.terifan.ui.listview.ListViewLayoutHorizontal;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Graphics2D;
 import org.terifan.ui.listview.ListView;
 import org.terifan.ui.listview.ListViewColumn;
@@ -27,12 +28,9 @@ public class CardItemRenderer implements ListViewItemRenderer
 
 
 	/**
-	 * @param aItemWidth
-	 *   Preferred width of an item.
-	 * @param aItemHeight
-	 *   Preferred height of an item.
-	 * @param aOrientation
-	 *   The orientation
+	 * @param aItemWidth Preferred width of an item.
+	 * @param aItemHeight Preferred height of an item.
+	 * @param aOrientation The orientation
 	 */
 	public CardItemRenderer(Dimension aItemSize, int aLabelWidth, Orientation aOrientation)
 	{
@@ -67,7 +65,7 @@ public class CardItemRenderer implements ListViewItemRenderer
 	@Override
 	public int getItemPreferredHeight(ListView aListView)
 	{
-		return aListView.getModel().getColumnCount()*mRowHeight;
+		return aListView.getModel().getColumnCount() * mRowHeight;
 	}
 
 
@@ -96,21 +94,40 @@ public class CardItemRenderer implements ListViewItemRenderer
 	public int getItemHeight(ListView aListView, ListViewItem aItem)
 	{
 		ListViewModel model = aListView.getModel();
+
 		int h = 0;
-		for (int i = 0, sz = model.getColumnCount(); i < sz; i++)
+
+		for (int i = 0, j = 0; i < model.getColumnCount(); i++)
 		{
 			ListViewColumn column = model.getColumn(i);
-			Object value = aItem.getValue(column);
-			if (column.getFormatter() != null)
+
+			if (!column.isVisible())
 			{
-				value = column.getFormatter().format(value);
+				continue;
 			}
-			if (value != null && value.toString().length() > 0)
+
+			if (j == 0)
 			{
-				h += mRowHeight;
+				h += 20;
 			}
+			else
+			{
+				Object value = aItem.getValue(column);
+				if (column.getFormatter() != null)
+				{
+					value = column.getFormatter().format(value);
+				}
+
+				if (value != null && value.toString().length() > 0)
+				{
+					h += mRowHeight;
+				}
+			}
+
+			j++;
 		}
-		return PADDING+Math.max(mRowHeight, h);
+
+		return PADDING + Math.max(mRowHeight, h);
 	}
 
 
@@ -127,29 +144,29 @@ public class CardItemRenderer implements ListViewItemRenderer
 
 		if (aListView.isItemSelected(aItem))
 		{
-			Utilities.drawScaledImage(aGraphics, style.cardBackgroundSelected, aOriginX, aOriginY, aWidth, aHeight, 18, 1, 6, 6);
+			Utilities.drawScaledImage(aGraphics, style.cardBackgroundSelected, aOriginX, aOriginY, aWidth, aHeight, 20, 2, 2, 2);
 		}
 		else
 		{
-			Utilities.drawScaledImage(aGraphics, style.cardBackgroundNormal, aOriginX, aOriginY, aWidth, aHeight, 18, 1, 6, 6);
+			Utilities.drawScaledImage(aGraphics, style.cardBackgroundNormal, aOriginX, aOriginY, aWidth, aHeight, 20, 2, 2, 2);
 		}
 
 		int rowCount = Math.max(1, (aHeight - 4) / mRowHeight);
 
-//		Font plain = style.getFont("item");
-//		Font bold = style.getFont("label");
-//		Color plainColor = style.itemForeground;
-//		Color boldColor = style.itemLabelForeground;
-
-		int x = aOriginX;
-		int y = aOriginY+2;
+		int x = aOriginX + 5;
+		int y = aOriginY;
 
 		Color foreground = style.itemForeground;
-		Color background = style.itemBackground;
+		Font font = style.item;
 
 		for (int col = 0, rowIndex = 0; col < model.getColumnCount() && rowIndex < rowCount; col++)
 		{
 			ListViewColumn column = model.getColumn(col);
+
+			if (!column.isVisible())
+			{
+				continue;
+			}
 
 			Object value = aItem.getValue(column);
 			if (column.getFormatter() != null)
@@ -158,21 +175,24 @@ public class CardItemRenderer implements ListViewItemRenderer
 			}
 			if (value != null)
 			{
-//				boolean sorted = model.getSortedColumn() == column;
-//				boolean focus = aListView.getFocusItem() == aItem && aListView.getSelectionMode() == SelectionMode.CELL;
+				if (rowIndex == 0)
+				{
+					aGraphics.setFont(font.deriveFont(Font.BOLD));
 
-//				aGraphics.setFont(col == 0 ? bold : plain);
-//				aGraphics.setColor(col == 0 ? boldColor : plainColor);
+					TextRenderer.drawString(aGraphics, value.toString(), x, y + 1, aWidth - 5 - 5, 20, Anchor.WEST, foreground, null, false);
 
-				TextRenderer.drawString(aGraphics, column.getLabel(), x+5, y, mLabelWidth, mRowHeight, Anchor.NORTH_WEST, foreground, background, false);
+					y += 20 + 2;
+				}
+				else
+				{
+					aGraphics.setFont(font);
 
-				TextRenderer.drawString(aGraphics, value.toString(), x+5+5+mLabelWidth, y, aWidth-15-5-mLabelWidth, mRowHeight, Anchor.NORTH_WEST, foreground, background, false);
+					TextRenderer.drawString(aGraphics, column.getLabel(), x, y, mLabelWidth, mRowHeight, Anchor.NORTH_WEST, foreground, null, false);
+					TextRenderer.drawString(aGraphics, value.toString(), x + 5 + mLabelWidth, y, aWidth - 15 - 5 - mLabelWidth, mRowHeight, Anchor.NORTH_WEST, foreground, null, false);
 
-//				Component c = column.getListViewCellRenderer().getListViewCellRendererComponent(aListView, aItem, col, aItem.isSelected(), focus, false, sorted);
-//				c.setBounds(x, y, aWidth, rowHeight);
-//				c.paint(aGraphics);
+					y += mRowHeight;
+				}
 
-				y += mRowHeight;
 				rowIndex++;
 			}
 		}
