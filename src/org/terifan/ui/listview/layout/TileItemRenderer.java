@@ -141,7 +141,7 @@ public class TileItemRenderer implements ListViewItemRenderer
 
 			if (icon == null)
 			{
-				icon = Utilities.getScaledImageAspect(style.thumbPlaceholder, tw, th);
+				icon = Utilities.getScaledImageAspect(style.thumbPlaceholder, tw, th, true);
 			}
 
 			double f = Math.min(tw / (double)icon.getWidth(), th / (double)icon.getHeight());

@@ -48,7 +48,7 @@ public class Test
 				if (model.getItemCount() > 50) break;
 				try
 				{
-					BufferedImage thumb = Utilities.getScaledImageAspect(ImageIO.read(file), 128, 128);
+					BufferedImage thumb = Utilities.getScaledImageAspect(ImageIO.read(file), 128, 128, false);
 					model.addItem(new Item(model.getItemCount(), file.getName(), file.length(), file.lastModified(), thumb));
 				}
 				catch (Exception e)

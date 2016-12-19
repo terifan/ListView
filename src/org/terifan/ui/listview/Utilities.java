@@ -78,6 +78,8 @@ public final class Utilities
 		int tw = aImage.getWidth();
 		int th = aImage.getHeight();
 
+		((Graphics2D)aGraphics).setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+		
 		aGraphics.drawImage(aImage, aPositionX, aPositionY, aPositionX + aFrameLeft, aPositionY + aHeight, 0, 0, aFrameLeft, th, null);
 		aGraphics.drawImage(aImage, aPositionX + aFrameLeft, aPositionY, aPositionX + aWidth - aFrameRight, aPositionY + aHeight, aFrameLeft, 0, tw - aFrameRight, th, null);
 		aGraphics.drawImage(aImage, aPositionX + aWidth - aFrameRight, aPositionY, aPositionX + aWidth, aPositionY + aHeight, tw - aFrameRight, 0, tw, th, null);
@@ -89,6 +91,8 @@ public final class Utilities
 		int tw = aImage.getWidth();
 		int th = aImage.getHeight();
 
+		((Graphics2D)aGraphics).setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+		
 		aGraphics.drawImage(aImage, aPositionX, aPositionY, aPositionX + aFrameLeft, aPositionY + aFrameTop, 0, 0, aFrameLeft, aFrameTop, null);
 		aGraphics.drawImage(aImage, aPositionX + aFrameLeft, aPositionY, aPositionX + aWidth - aFrameRight, aPositionY + aFrameTop, aFrameLeft, 0, tw - aFrameRight, aFrameTop, null);
 		aGraphics.drawImage(aImage, aPositionX + aWidth - aFrameRight, aPositionY, aPositionX + aWidth, aPositionY + aFrameTop, tw - aFrameRight, 0, tw, aFrameTop, null);
@@ -106,6 +110,7 @@ public final class Utilities
 	public static BufferedImage getScaledImage(BufferedImage aImage, int aWidth, int aHeight, int aFrameTop, int aFrameLeft, int aFrameBottom, int aFrameRight)
 	{
 		BufferedImage image = new BufferedImage(aWidth, aHeight, BufferedImage.TYPE_INT_ARGB);
+
 		Graphics2D g = image.createGraphics();
 		Utilities.drawScaledImage(g, aImage, 0, 0, aWidth, aHeight, aFrameTop, aFrameLeft, aFrameBottom, aFrameRight);
 		g.dispose();
@@ -114,11 +119,11 @@ public final class Utilities
 	}
 
 
-	public static BufferedImage getScaledImage(BufferedImage aImage, int aWidth, int aHeight)
+	public static BufferedImage getScaledImage(BufferedImage aImage, int aWidth, int aHeight, boolean aQuality)
 	{
 		if (aWidth < aImage.getWidth() || aHeight < aImage.getHeight())
 		{
-			aImage = resizeDown(aImage, Math.min(aWidth, aImage.getWidth()), Math.min(aHeight, aImage.getHeight()));
+			aImage = resizeDown(aImage, Math.min(aWidth, aImage.getWidth()), Math.min(aHeight, aImage.getHeight()), aQuality);
 		}
 
 		if (aWidth > aImage.getWidth() || aHeight > aImage.getHeight())
@@ -126,7 +131,7 @@ public final class Utilities
 			BufferedImage temp = new BufferedImage(aWidth, aHeight, BufferedImage.TYPE_INT_ARGB);
 
 			Graphics2D g = temp.createGraphics();
-			g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+			g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, aQuality ? RenderingHints.VALUE_INTERPOLATION_BICUBIC : RenderingHints.VALUE_INTERPOLATION_BILINEAR);
 			g.drawImage(aImage, 0, 0, aWidth, aHeight, 0, 0, aImage.getWidth(), aImage.getHeight(), null);
 			g.dispose();
 
@@ -137,7 +142,7 @@ public final class Utilities
 	}
 
 
-	public static BufferedImage getScaledImageAspect(BufferedImage aImage, int aWidth, int aHeight)
+	public static BufferedImage getScaledImageAspect(BufferedImage aImage, int aWidth, int aHeight, boolean aQuality)
 	{
 		if (aImage == null)
 		{
@@ -162,11 +167,11 @@ public final class Utilities
 			}
 		}
 
-		return getScaledImage(aImage, Math.max(dw, 1), Math.max(dh, 1));
+		return getScaledImage(aImage, Math.max(dw, 1), Math.max(dh, 1), aQuality);
 	}
 
 
-	private static BufferedImage resizeDown(BufferedImage aImage, int aTargetWidth, int aTargetHeight)
+	private static BufferedImage resizeDown(BufferedImage aImage, int aTargetWidth, int aTargetHeight, boolean aQuality)
 	{
 		if (aTargetWidth <= 0 || aTargetHeight <= 0)
 		{
@@ -190,8 +195,7 @@ public final class Utilities
 
 			BufferedImage tmp = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
 			Graphics2D g = tmp.createGraphics();
-			g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-			g.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+			g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, aQuality ? RenderingHints.VALUE_INTERPOLATION_BICUBIC : RenderingHints.VALUE_INTERPOLATION_BILINEAR);
 			g.drawImage(ret, 0, 0, w, h, null);
 			g.dispose();
 

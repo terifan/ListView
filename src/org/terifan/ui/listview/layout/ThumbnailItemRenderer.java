@@ -122,7 +122,7 @@ public class ThumbnailItemRenderer<T extends ListViewItem> implements ListViewIt
 
 		if (icon == null)
 		{
-			icon = Utilities.getScaledImageAspect(style.thumbPlaceholder, mItemSize.width, itemHeight);
+			icon = Utilities.getScaledImageAspect(style.thumbPlaceholder, mItemSize.width, itemHeight, true);
 		}
 
 		double f = Math.min(mItemSize.width / (double)icon.getWidth(), itemHeight / (double)icon.getHeight());
