@@ -12,7 +12,7 @@ import org.terifan.ui.listview.ListView;
 import org.terifan.ui.listview.ListViewColumn;
 import org.terifan.ui.listview.ListViewHeaderRenderer;
 import org.terifan.ui.listview.Styles;
-import org.terifan.ui.listview.Utilities;
+import org.terifan.ui.listview.util.Utilities;
 
 
 public class ColumnHeaderRenderer implements ListViewHeaderRenderer

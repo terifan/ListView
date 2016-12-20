@@ -1,5 +1,6 @@
 package org.terifan.ui.listview;
 
+import org.terifan.ui.listview.util.Utilities;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Font;

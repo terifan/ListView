@@ -23,8 +23,8 @@ import org.terifan.ui.listview.layout.ColumnHeaderRenderer;
 import org.terifan.ui.listview.layout.DetailItemRenderer;
 import org.terifan.ui.listview.layout.ThumbnailItemRenderer;
 import org.terifan.ui.listview.layout.TileItemRenderer;
-import org.terifan.ui.listview.Orientation;
-import org.terifan.ui.listview.Utilities;
+import org.terifan.ui.listview.util.Orientation;
+import org.terifan.ui.listview.util.Utilities;
 
 
 public class Test

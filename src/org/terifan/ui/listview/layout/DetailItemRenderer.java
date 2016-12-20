@@ -14,7 +14,7 @@ import org.terifan.ui.listview.ListViewLayoutVertical;
 import org.terifan.ui.listview.ListViewModel;
 import org.terifan.ui.listview.SelectionMode;
 import org.terifan.ui.listview.Styles;
-import org.terifan.ui.listview.Utilities;
+import org.terifan.ui.listview.util.Utilities;
 
 
 public class DetailItemRenderer implements ListViewItemRenderer

@@ -12,9 +12,9 @@ import org.terifan.ui.listview.ListViewItem;
 import org.terifan.ui.listview.ListViewItemRenderer;
 import org.terifan.ui.listview.ListViewLayout;
 import org.terifan.ui.listview.ListViewModel;
-import org.terifan.ui.listview.Orientation;
+import org.terifan.ui.listview.util.Orientation;
 import org.terifan.ui.listview.Styles;
-import org.terifan.ui.listview.Utilities;
+import org.terifan.ui.listview.util.Utilities;
 
 
 public class CardItemRenderer implements ListViewItemRenderer

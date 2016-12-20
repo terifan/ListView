@@ -11,9 +11,9 @@ import org.terifan.ui.listview.ListViewColumn;
 import org.terifan.ui.listview.ListViewItem;
 import org.terifan.ui.listview.ListViewItemRenderer;
 import org.terifan.ui.listview.ListViewLayout;
-import org.terifan.ui.listview.Orientation;
+import org.terifan.ui.listview.util.Orientation;
 import org.terifan.ui.listview.Styles;
-import org.terifan.ui.listview.Utilities;
+import org.terifan.ui.listview.util.Utilities;
 
 
 public class ThumbnailItemRenderer<T extends ListViewItem> implements ListViewItemRenderer<T>
@@ -119,15 +119,19 @@ public class ThumbnailItemRenderer<T extends ListViewItem> implements ListViewIt
 		int sy = y + h - sh;
 
 		BufferedImage icon = aItem.getIcon();
+		BufferedImage scaledIcon;
 
 		if (icon == null)
 		{
-			icon = Utilities.getScaledImageAspect(style.thumbPlaceholder, mItemSize.width, itemHeight, true);
+			scaledIcon = Utilities.getScaledImageAspect(style.thumbPlaceholder, mItemSize.width, itemHeight, true);
+		}
+		else
+		{
+			scaledIcon = Utilities.getScaledImageAspect(icon, mItemSize.width, itemHeight, true);
 		}
 
-		double f = Math.min(mItemSize.width / (double)icon.getWidth(), itemHeight / (double)icon.getHeight());
-		int tw = (int)(f * icon.getWidth());
-		int th = (int)(f * icon.getHeight());
+		int tw = scaledIcon.getWidth();
+		int th = scaledIcon.getHeight();
 		int tx = x + (w - tw) / 2;
 		int ty = y + h - 8 - th - labelHeight;
 
@@ -143,7 +147,7 @@ public class ThumbnailItemRenderer<T extends ListViewItem> implements ListViewIt
 			aGraphics.drawImage(im, tx - 3, ty - 3, null);
 		}
 
-		aGraphics.drawImage(icon, tx, ty, tw, th, null);
+		aGraphics.drawImage(scaledIcon, tx, ty, null);
 
 		String label = null;
 

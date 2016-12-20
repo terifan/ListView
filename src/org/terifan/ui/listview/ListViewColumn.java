@@ -1,5 +1,6 @@
 package org.terifan.ui.listview;
 
+import org.terifan.ui.listview.util.Alignment;
 import java.awt.Font;
 import java.util.Comparator;
 import java.util.HashMap;

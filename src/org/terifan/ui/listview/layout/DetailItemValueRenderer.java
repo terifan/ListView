@@ -13,7 +13,7 @@ import org.terifan.ui.listview.ListViewColumn;
 import org.terifan.ui.listview.ListViewItem;
 import org.terifan.ui.listview.SelectionMode;
 import org.terifan.ui.listview.Styles;
-import org.terifan.ui.listview.Utilities;
+import org.terifan.ui.listview.util.Utilities;
 
 
 public class DetailItemValueRenderer extends JComponent implements ListViewCellRenderer

@@ -1,4 +1,4 @@
-package org.terifan.ui.listview;
+package org.terifan.ui.listview.util;
 
 import java.awt.Point;
 import javax.swing.JPopupMenu;

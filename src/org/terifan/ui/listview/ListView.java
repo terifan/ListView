@@ -1,5 +1,7 @@
 package org.terifan.ui.listview;
 
+import org.terifan.ui.listview.util.Orientation;
+import org.terifan.ui.listview.util.PopupFactory;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Container;

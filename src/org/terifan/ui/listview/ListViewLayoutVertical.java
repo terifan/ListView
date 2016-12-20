@@ -1,5 +1,7 @@
 package org.terifan.ui.listview;
 
+import org.terifan.ui.listview.util.Orientation;
+import org.terifan.ui.listview.util.SortedMap;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;

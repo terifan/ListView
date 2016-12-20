@@ -1,5 +1,6 @@
 package org.terifan.ui.listview;
 
+import org.terifan.ui.listview.util.Utilities;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import javax.swing.Icon;

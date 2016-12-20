@@ -1,4 +1,4 @@
-package org.terifan.ui.listview;
+package org.terifan.ui.listview.util;
 
 
 public enum Alignment
