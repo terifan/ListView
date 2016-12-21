@@ -4,7 +4,7 @@ import java.awt.image.BufferedImage;
 import java.util.Objects;
 
 
-public class ImageCacheKey 
+public class ImageCacheKey
 {
 	private BufferedImage mImage;
 	private String mParameters;
@@ -13,7 +13,7 @@ public class ImageCacheKey
 	public ImageCacheKey(BufferedImage aImage, int aWidth, int aHeight, boolean aQuality)
 	{
 		mImage = aImage;
-		mParameters = aWidth+","+aHeight+","+aQuality;
+		mParameters = aWidth + "," + aHeight + "," + aQuality;
 	}
 
 

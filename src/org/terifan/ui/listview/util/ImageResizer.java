@@ -9,6 +9,11 @@ import java.awt.image.BufferedImage;
 
 public class ImageResizer
 {
+	private ImageResizer()
+	{
+	}
+
+
 	public static BufferedImage getScaledImageAspect(BufferedImage aSource, int aWidth, int aHeight, boolean aQuality, Cache<ImageCacheKey,BufferedImage> aCache)
 	{
 		double scale = Math.min(aWidth / (double)aSource.getWidth(), aHeight / (double)aSource.getHeight());
@@ -63,6 +68,8 @@ public class ImageResizer
 				}
 			}
 
+			if(aCache!=null)System.out.println("#"+aSource.getWidth()+"->"+aWidth+","+aSource.getHeight()+"->"+aHeight+","+aQuality+" "+aCache.getUsedSize());
+			
 			if (aWidth < aSource.getWidth() || aHeight < aSource.getHeight())
 			{
 				aSource = resizeDown(aSource, aWidth, aHeight, aQuality);
