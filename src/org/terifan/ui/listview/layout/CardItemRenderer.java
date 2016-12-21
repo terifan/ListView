@@ -16,6 +16,7 @@ import org.terifan.ui.listview.ListViewLayout;
 import org.terifan.ui.listview.ListViewModel;
 import org.terifan.ui.listview.util.Orientation;
 import org.terifan.ui.listview.Styles;
+import org.terifan.ui.listview.util.ImageResizer;
 import org.terifan.ui.listview.util.Utilities;
 
 
@@ -146,11 +147,11 @@ public class CardItemRenderer implements ListViewItemRenderer
 
 		if (aListView.isItemSelected(aItem))
 		{
-			Utilities.drawScaledImage(aGraphics, style.cardBackgroundSelected, aOriginX, aOriginY, aWidth, aHeight, 20, 2, 2, 2);
+			ImageResizer.drawScaledImage(aGraphics, style.cardBackgroundSelected, aOriginX, aOriginY, aWidth, aHeight, 20, 2, 2, 2, false);
 		}
 		else
 		{
-			Utilities.drawScaledImage(aGraphics, style.cardBackgroundNormal, aOriginX, aOriginY, aWidth, aHeight, 20, 2, 2, 2);
+			ImageResizer.drawScaledImage(aGraphics, style.cardBackgroundNormal, aOriginX, aOriginY, aWidth, aHeight, 20, 2, 2, 2, false);
 		}
 
 		int rowCount = Math.max(1, (aHeight - 4) / mRowHeight);

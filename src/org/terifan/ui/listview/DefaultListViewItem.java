@@ -2,41 +2,31 @@ package org.terifan.ui.listview;
 
 import java.awt.image.BufferedImage;
 import java.util.Arrays;
+import java.util.HashMap;
 
 
 public class DefaultListViewItem implements ListViewItem
 {
-	protected Object [] mValues;
+	protected HashMap<ListViewColumn, Object> mValues;
 	protected BufferedImage mIcon;
 
 
-	public DefaultListViewItem(int aColumnCount)
+	public DefaultListViewItem()
 	{
-		mValues = new Object[aColumnCount];
-	}
-
-
-	public DefaultListViewItem(Object ... aValues)
-	{
-		mValues = aValues;
+		mValues = new HashMap<>();
 	}
 
 
 	@Override
 	public Object getValue(ListViewColumn aColumn)
 	{
-		return mValues[aColumn.getModel().getColumnIndex(aColumn)];
+		return mValues.get(aColumn);
 	}
 
 
-	public void setValue(int aIndex, Object aValue)
+	public void setValue(ListViewColumn aColumn, Object aValue)
 	{
-		if (aIndex < 0 || aIndex >= mValues.length)
-		{
-			throw new IllegalArgumentException("Item don't have column index: " + aIndex);
-		}
-
-		mValues[aIndex] = aValue;
+		mValues.put(aColumn, aValue);
 	}
 
 
@@ -65,7 +55,7 @@ public class DefaultListViewItem implements ListViewItem
 	{
 		if (aObject instanceof DefaultListViewItem)
 		{
-			return Arrays.equals(((DefaultListViewItem)aObject).mValues, mValues);
+			return mValues.equals(((DefaultListViewItem)aObject).mValues);
 		}
 		return false;
 	}
@@ -74,6 +64,6 @@ public class DefaultListViewItem implements ListViewItem
 	@Override
 	public int hashCode()
 	{
-		return Arrays.hashCode(mValues);
+		return mValues.hashCode();
 	}
 }

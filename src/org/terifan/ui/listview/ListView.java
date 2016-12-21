@@ -22,6 +22,7 @@ import java.awt.event.FocusListener;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.HashSet;
 import javax.swing.AbstractAction;
@@ -36,6 +37,8 @@ import javax.swing.Scrollable;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import org.terifan.ui.listview.layout.DetailItemRenderer;
+import org.terifan.ui.listview.util.Cache;
+import org.terifan.ui.listview.util.ImageCacheKey;
 
 
 public class ListView<T extends ListViewItem> extends JComponent implements Scrollable
@@ -57,7 +60,7 @@ public class ListView<T extends ListViewItem> extends JComponent implements Scro
 	private String mPlaceholder;
 	private ListViewMouseListener mMouseListener;
 	private PopupFactory<ListView> mPopupFactory;
-
+	private Cache<ImageCacheKey,BufferedImage> mImageCache;
 	private final Rectangle mSelectionRectangle = new Rectangle();
 	private final HashSet<T> mSelectedItems;
 
@@ -73,6 +76,7 @@ public class ListView<T extends ListViewItem> extends JComponent implements Scro
 		mStyles = new Styles();
 		mSelectedItems = new HashSet<>();
 		mEventListeners = new ArrayList<>();
+		mImageCache = new Cache<>(1 * 1024 * 1024);
 
 		super.setOpaque(true);
 		super.setFocusable(true);
@@ -109,6 +113,12 @@ public class ListView<T extends ListViewItem> extends JComponent implements Scro
 		setGroupRenderer(new ListViewGroupRenderer());
 		setSelectionMode(SelectionMode.ROW);
 		setModel(aModel);
+	}
+
+
+	public Cache<ImageCacheKey, BufferedImage> getImageCache()
+	{
+		return mImageCache;
 	}
 
 

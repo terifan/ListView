@@ -23,8 +23,8 @@ import org.terifan.ui.listview.ColumnHeaderRenderer;
 import org.terifan.ui.listview.layout.DetailItemRenderer;
 import org.terifan.ui.listview.layout.ThumbnailItemRenderer;
 import org.terifan.ui.listview.layout.TileItemRenderer;
+import org.terifan.ui.listview.util.ImageResizer;
 import org.terifan.ui.listview.util.Orientation;
-import org.terifan.ui.listview.util.Utilities;
 
 
 public class Test
@@ -48,7 +48,7 @@ public class Test
 				if (model.getItemCount() > 50) break;
 				try
 				{
-					BufferedImage thumb = Utilities.getScaledImageAspect(ImageIO.read(file), 128, 128, false);
+					BufferedImage thumb = ImageResizer.getScaledImageAspect(ImageIO.read(file), 128, 128, false, null);
 					model.addItem(new Item(model.getItemCount(), file.getName(), file.length(), file.lastModified(), thumb));
 				}
 				catch (Exception e)

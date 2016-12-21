@@ -1,9 +1,9 @@
 package org.terifan.ui.listview;
 
-import org.terifan.ui.listview.util.Utilities;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import javax.swing.Icon;
+import org.terifan.ui.listview.util.ImageResizer;
 
 
 public class ListViewBarRenderer
@@ -23,7 +23,7 @@ public class ListViewBarRenderer
 	{
 		Styles style = aListView.getStyles();
 
-		Utilities.drawScaledImage(aGraphics, style.barNormal, x, y, w, h, 5, 5);
+		ImageResizer.drawScaledImage(aGraphics, style.barNormal, x, y, w, h, 5, 5, false);
 
 		mIcon.paintIcon(aListView, aGraphics, x+15-mIcon.getIconWidth()/2, y+13-mIcon.getIconHeight()/2);
 

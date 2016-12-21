@@ -15,6 +15,7 @@ import org.terifan.ui.listview.ListViewItemRenderer;
 import org.terifan.ui.listview.ListViewLayout;
 import org.terifan.ui.listview.util.Orientation;
 import org.terifan.ui.listview.Styles;
+import org.terifan.ui.listview.util.ImageResizer;
 import org.terifan.ui.listview.util.Utilities;
 
 
@@ -125,11 +126,11 @@ public class ThumbnailItemRenderer<T extends ListViewItem> implements ListViewIt
 
 		if (icon == null)
 		{
-			scaledIcon = Utilities.getScaledImageAspect(style.thumbPlaceholder, mItemSize.width, itemHeight, true);
+			scaledIcon = ImageResizer.getScaledImageAspect(style.thumbPlaceholder, mItemSize.width, itemHeight, true, aListView.getImageCache());
 		}
 		else
 		{
-			scaledIcon = Utilities.getScaledImageAspect(icon, mItemSize.width, itemHeight, true);
+			scaledIcon = ImageResizer.getScaledImageAspect(icon, mItemSize.width, itemHeight, true, aListView.getImageCache());
 		}
 
 		int tw = scaledIcon.getWidth();
@@ -139,13 +140,13 @@ public class ThumbnailItemRenderer<T extends ListViewItem> implements ListViewIt
 
 		if (selected)
 		{
-			BufferedImage im = Utilities.getScaledImage(aListView.isFocusOwner() ? style.thumbBorderSelectedBackground : style.thumbBorderSelectedUnfocusedBackground, sw, sh, 3, 3, 3, 3);
+			BufferedImage im = ImageResizer.getScaledImage(aListView.isFocusOwner() ? style.thumbBorderSelectedBackground : style.thumbBorderSelectedUnfocusedBackground, sw, sh, 3, 3, 3, 3, false);
 			aGraphics.drawImage(im, sx, sy, null);
 		}
 
 		if (aListView.isItemBorderPainted(aItem))
 		{
-			BufferedImage im = Utilities.getScaledImage(selected ? style.thumbBorderSelected : style.thumbBorderNormal, tw + 3 + 6, th + 3 + 7, 3, 3, 7, 6);
+			BufferedImage im = ImageResizer.getScaledImage(selected ? style.thumbBorderSelected : style.thumbBorderNormal, tw + 3 + 6, th + 3 + 7, 3, 3, 7, 6, false);
 			aGraphics.drawImage(im, tx - 3, ty - 3, null);
 		}
 
