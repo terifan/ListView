@@ -1,4 +1,4 @@
-package org.terifan.ui.listview.layout;
+package org.terifan.ui.listview;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -8,10 +8,8 @@ import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import javax.swing.SortOrder;
-import org.terifan.ui.listview.ListView;
-import org.terifan.ui.listview.ListViewColumn;
-import org.terifan.ui.listview.ListViewHeaderRenderer;
-import org.terifan.ui.listview.Styles;
+import org.terifan.ui.listview.util.Anchor;
+import org.terifan.ui.listview.util.TextRenderer;
 import org.terifan.ui.listview.util.Utilities;
 
 

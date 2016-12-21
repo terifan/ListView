@@ -7,6 +7,8 @@ import java.awt.Font;
 import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
+import org.terifan.ui.listview.layout.CardItemRenderer;
+import org.terifan.ui.listview.layout.ThumbnailItemRenderer;
 
 
 public class Styles
@@ -76,36 +78,36 @@ public class Styles
 	public Font header = new Font("Segoe UI", Font.PLAIN, 11);
 	public Font label = new Font("Segoe UI", Font.BOLD, 11);
 
-	public BufferedImage headerBackground = Utilities.loadImage(Styles.class, "resources/column_header_background_normal.png");
-	public BufferedImage headerBackgroundRollover = Utilities.loadImage(Styles.class, "resources/column_header_background_normal.png");
-	public BufferedImage headerBackgroundArmed = Utilities.loadImage(Styles.class, "resources/column_header_background_armed.png");
-	public BufferedImage headerBackgroundRolloverArmed = Utilities.loadImage(Styles.class, "resources/column_header_background_armed.png");
-	public BufferedImage headerBackgroundSorted = Utilities.loadImage(Styles.class, "resources/column_header_background_sorted.png");
-	public BufferedImage headerSeparator = Utilities.loadImage(Styles.class, "resources/column_header_seperator_normal.png");
-	public BufferedImage headerSeparatorArmed = Utilities.loadImage(Styles.class, "resources/column_header_seperator_armed.png");
+	public BufferedImage headerBackground = Utilities.loadImage(ColumnHeaderRenderer.class, "column_header_background_normal.png");
+	public BufferedImage headerBackgroundRollover = Utilities.loadImage(ColumnHeaderRenderer.class, "column_header_background_normal.png");
+	public BufferedImage headerBackgroundArmed = Utilities.loadImage(ColumnHeaderRenderer.class, "column_header_background_armed.png");
+	public BufferedImage headerBackgroundRolloverArmed = Utilities.loadImage(ColumnHeaderRenderer.class, "column_header_background_armed.png");
+	public BufferedImage headerBackgroundSorted = Utilities.loadImage(ColumnHeaderRenderer.class, "column_header_background_sorted.png");
+	public BufferedImage headerSeparator = Utilities.loadImage(ColumnHeaderRenderer.class, "column_header_seperator_normal.png");
+	public BufferedImage headerSeparatorArmed = Utilities.loadImage(ColumnHeaderRenderer.class, "column_header_seperator_armed.png");
 	
-	public BufferedImage groupCollapseIcon = Utilities.loadImage(Styles.class, "resources/group_collapse_icon.png");
-	public BufferedImage groupExpandIcon = Utilities.loadImage(Styles.class, "resources/group_expand_icon.png");
-	public BufferedImage sortAscendingIcon = Utilities.loadImage(Styles.class, "resources/sort_ascending_icon.png");
-	public BufferedImage sortDescendingIcon = Utilities.loadImage(Styles.class, "resources/sort_descending_icon.png");
+	public BufferedImage groupCollapseIcon = Utilities.loadImage(ListViewGroupRenderer.class, "group_collapse_icon.png");
+	public BufferedImage groupExpandIcon = Utilities.loadImage(ListViewGroupRenderer.class, "group_expand_icon.png");
+	public BufferedImage sortAscendingIcon = Utilities.loadImage(ColumnHeaderRenderer.class, "sort_ascending_icon.png");
+	public BufferedImage sortDescendingIcon = Utilities.loadImage(ColumnHeaderRenderer.class, "sort_descending_icon.png");
 
-	public BufferedImage cardBackgroundNormal = Utilities.loadImage(Styles.class, "resources/card_background_normal.png");
-	public BufferedImage cardBackgroundSelected = Utilities.loadImage(Styles.class, "resources/card_background_selected.png");
+	public BufferedImage cardBackgroundNormal = Utilities.loadImage(CardItemRenderer.class, "card_background_normal.png");
+	public BufferedImage cardBackgroundSelected = Utilities.loadImage(CardItemRenderer.class, "card_background_selected.png");
 
-	public BufferedImage thumbBorderSelected = Utilities.loadImage(Styles.class, "resources/thumb_border_2.png");
-	public BufferedImage thumbBorderNormal = Utilities.loadImage(Styles.class, "resources/thumb_border_2.png");
-	public BufferedImage thumbBorderSelectedBackground = Utilities.loadImage(Styles.class, "resources/thumb_border_2_selected_background.png");
-	public BufferedImage thumbBorderSelectedUnfocusedBackground = Utilities.loadImage(Styles.class, "resources/thumb_border_2_background_nofocus.png");
-	public BufferedImage thumbPlaceholder = Utilities.loadImage(Styles.class, "resources/thumb_placeholder.png");
+	public BufferedImage thumbBorderSelected = Utilities.loadImage(ThumbnailItemRenderer.class, "thumb_border_2.png");
+	public BufferedImage thumbBorderNormal = Utilities.loadImage(ThumbnailItemRenderer.class, "thumb_border_2.png");
+	public BufferedImage thumbBorderSelectedBackground = Utilities.loadImage(ThumbnailItemRenderer.class, "thumb_border_2_selected_background.png");
+	public BufferedImage thumbBorderSelectedUnfocusedBackground = Utilities.loadImage(ThumbnailItemRenderer.class, "thumb_border_2_background_nofocus.png");
+	public BufferedImage thumbPlaceholder = Utilities.loadImage(ThumbnailItemRenderer.class, "thumb_placeholder.png");
 
-	public BufferedImage barNormal = Utilities.loadImage(Styles.class, "resources/bar_normal.png");
-	public BufferedImage barSelected = Utilities.loadImage(Styles.class, "resources/bar_selected.png");
+	public BufferedImage barNormal = Utilities.loadImage(ListViewBarRenderer.class, "bar_normal.png");
+	public BufferedImage barSelected = Utilities.loadImage(ListViewBarRenderer.class, "bar_selected.png");
 
 	public Font barFont = new Font("Ebrima", Font.BOLD, 14);
 	public Color barColor = new Color(21, 66, 139);
 
-	public Cursor cursorSplit = Toolkit.getDefaultToolkit().createCustomCursor(Utilities.loadImage(Styles.class, "resources/cursor_split.png"), new Point(16,16), "split");
-	public Cursor cursorResize = Toolkit.getDefaultToolkit().createCustomCursor(Utilities.loadImage(Styles.class, "resources/cursor_resize.png"), new Point(16,16), "resize");
+	public Cursor cursorSplit = Toolkit.getDefaultToolkit().createCustomCursor(Utilities.loadImage(ListViewHeader.class, "cursor_split.png"), new Point(16,16), "split");
+	public Cursor cursorResize = Toolkit.getDefaultToolkit().createCustomCursor(Utilities.loadImage(ListViewHeader.class, "cursor_resize.png"), new Point(16,16), "resize");
 
 	public Styles()
 	{

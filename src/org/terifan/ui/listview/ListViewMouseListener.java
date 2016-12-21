@@ -44,7 +44,7 @@ class ListViewMouseListener<T extends ListViewItem> extends MouseAdapter
 			mDragStarted = false;
 			mDragRectStarted = false;
 			mIsDragDrop = false;
-			
+
 			ListViewLayout<T> layout = mListView.getListViewLayout();
 			LocationInfo<T> info = layout.getLocationInfo(aEvent.getX(), aEvent.getY());
 			boolean itemSelected = info != null && info.getItem() != null && mListView.isItemSelected(info.getItem());
@@ -57,7 +57,7 @@ class ListViewMouseListener<T extends ListViewItem> extends MouseAdapter
 					mSelectedItemsClone.addAll(mListView.getSelectedItems());
 				}
 			}
-			
+
 			process(aEvent, false);
 
 			// use modulo to avoid tripple clicks to be regarded as two double clicks etc.
@@ -94,7 +94,7 @@ class ListViewMouseListener<T extends ListViewItem> extends MouseAdapter
 		{
 			mPopupTriggered = mListView.firePopupMenu(aEvent.getPoint());
 		}
-		
+
 		if (!mDragRectStarted && !mDragStarted && !mIsControlDown && !mIsShiftDown && !mIsDragDrop)
 		{
 			mListView.setItemsSelected(false);

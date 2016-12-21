@@ -1,5 +1,6 @@
-package org.terifan.ui.listview.layout;
+package org.terifan.ui.listview.util;
 
+import org.terifan.ui.listview.util.Anchor;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontMetrics;
@@ -11,7 +12,7 @@ import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
 
 
-class TextRenderer
+public class TextRenderer
 {
 	private static FontRenderContext FRC = new FontRenderContext(new AffineTransform(), true, false);
 

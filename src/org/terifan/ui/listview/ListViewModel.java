@@ -83,6 +83,8 @@ public class ListViewModel<T extends ListViewItem> implements Iterable<T>
 		return (T)visitItems(false, new ItemVisitor<T>()
 		{
 			int index;
+
+
 			@Override
 			public Object visit(T aItem)
 			{
@@ -137,7 +139,6 @@ public class ListViewModel<T extends ListViewItem> implements Iterable<T>
 
 
 	// -- Groups -----------------
-
 	public boolean addGroup(ListViewColumn aColumn)
 	{
 		int index = getColumnIndex(aColumn);
@@ -203,7 +204,7 @@ public class ListViewModel<T extends ListViewItem> implements Iterable<T>
 	}
 
 
-	public boolean collapse(Object ... aGroupValues)
+	public boolean collapse(Object... aGroupValues)
 	{
 		ListViewGroup group = getGroup(aGroupValues);
 
@@ -218,7 +219,7 @@ public class ListViewModel<T extends ListViewItem> implements Iterable<T>
 	}
 
 
-	public boolean collapseChildren(Object ... aGroupValues)
+	public boolean collapseChildren(Object... aGroupValues)
 	{
 		ListViewGroup group = getGroup(aGroupValues);
 
@@ -248,7 +249,7 @@ public class ListViewModel<T extends ListViewItem> implements Iterable<T>
 	}
 
 
-	public boolean expand(Object ... aGroupValues)
+	public boolean expand(Object... aGroupValues)
 	{
 		ListViewGroup group = getGroup(aGroupValues);
 
@@ -263,7 +264,7 @@ public class ListViewModel<T extends ListViewItem> implements Iterable<T>
 	}
 
 
-	public boolean expandChildren(Object ... aGroupValues)
+	public boolean expandChildren(Object... aGroupValues)
 	{
 		ListViewGroup group = getGroup(aGroupValues);
 
@@ -417,7 +418,7 @@ public class ListViewModel<T extends ListViewItem> implements Iterable<T>
 
 	protected void sortRecursive(ListViewGroup aParent, int aLevel)
 	{
-		SortedMap<Object,ListViewGroup> children = aParent.getChildren();
+		SortedMap<Object, ListViewGroup> children = aParent.getChildren();
 
 		ArrayList list;
 		ListViewColumn column;
@@ -437,7 +438,7 @@ public class ListViewModel<T extends ListViewItem> implements Iterable<T>
 		{
 			for (Object key : children.getKeys())
 			{
-				sortRecursive(children.get(key), aLevel+1);
+				sortRecursive(children.get(key), aLevel + 1);
 			}
 
 			column = mColumns.get(mGroups.get(aLevel));
@@ -455,7 +456,7 @@ public class ListViewModel<T extends ListViewItem> implements Iterable<T>
 
 		if (groupCount == 0)
 		{
-			ListViewGroup root = new ListViewGroup(this,null,0,null);
+			ListViewGroup root = new ListViewGroup(this, null, 0, null);
 			ArrayList<T> items = new ArrayList<>();
 			root.setItems(items);
 
@@ -470,7 +471,7 @@ public class ListViewModel<T extends ListViewItem> implements Iterable<T>
 		}
 		else
 		{
-			ListViewGroup<T> root = new ListViewGroup<>(this,null,0,null);
+			ListViewGroup<T> root = new ListViewGroup<>(this, null, 0, null);
 			root.setChildren(new SortedMap<>());
 
 			for (T item : mItems)
@@ -497,7 +498,7 @@ public class ListViewModel<T extends ListViewItem> implements Iterable<T>
 					{
 						next = new ListViewGroup(this, group, groupIndex, groupKey);
 
-						if (groupIndex == groupCount-1)
+						if (groupIndex == groupCount - 1)
 						{
 							next.setItems(new ArrayList<>());
 						}
@@ -527,7 +528,7 @@ public class ListViewModel<T extends ListViewItem> implements Iterable<T>
 	}
 
 
-	protected ListViewGroup getGroup(Object ... aGroupValues)
+	protected ListViewGroup getGroup(Object... aGroupValues)
 	{
 		if (mGroups.isEmpty())
 		{
@@ -569,12 +570,15 @@ public class ListViewModel<T extends ListViewItem> implements Iterable<T>
 
 	private Object visitGroups(boolean aVisitCollapsedGroups, boolean aOnlyVisitLeafGroups, GroupVisitor aVisitor, ListViewGroup aGroup)
 	{
-		SortedMap<Object,ListViewGroup> children = aGroup.getChildren();
+		SortedMap<Object, ListViewGroup> children = aGroup.getChildren();
 
 		if (!aOnlyVisitLeafGroups || children == null)
 		{
 			Object o = aVisitor.visit(aGroup);
-			if (o != null) return o;
+			if (o != null)
+			{
+				return o;
+			}
 		}
 
 		if (children != null)
@@ -585,7 +589,10 @@ public class ListViewModel<T extends ListViewItem> implements Iterable<T>
 				if (aVisitCollapsedGroups || !isGroupCollapsed(group))
 				{
 					Object o = visitGroups(aVisitCollapsedGroups, aOnlyVisitLeafGroups, aVisitor, group);
-					if (o != null) return o;
+					if (o != null)
+					{
+						return o;
+					}
 				}
 			}
 		}
@@ -596,7 +603,7 @@ public class ListViewModel<T extends ListViewItem> implements Iterable<T>
 
 	private Object visitItems(boolean aVisitCollapsedGroups, ItemVisitor<T> aVisitor, ListViewGroup<T> aGroup)
 	{
-		SortedMap<Object,ListViewGroup<T>> children = aGroup.getChildren();
+		SortedMap<Object, ListViewGroup<T>> children = aGroup.getChildren();
 
 		if (children != null)
 		{
@@ -635,12 +642,14 @@ public class ListViewModel<T extends ListViewItem> implements Iterable<T>
 		private boolean mAscending;
 		private Comparator mComparator;
 
+
 		public ComparatorProxy(Comparator aComparator, int aColumnIndex, boolean aAscending)
 		{
 			mComparator = aComparator;
 			mColumnIndex = aColumnIndex;
 			mAscending = aAscending;
 		}
+
 
 		@Override
 		public int compare(E t1, E t2)
@@ -678,16 +687,13 @@ public class ListViewModel<T extends ListViewItem> implements Iterable<T>
 			{
 				return mComparator.compare(v1, v2);
 			}
+			else if (v1 instanceof Comparable)
+			{
+				return ((Comparable)v1).compareTo(v2);
+			}
 			else
 			{
-				if (v1 instanceof Comparable)
-				{
-					return ((Comparable)v1).compareTo(v2);
-				}
-				else
-				{
-					return v1.toString().compareTo(v2.toString());
-				}
+				return v1.toString().compareTo(v2.toString());
 			}
 		}
 	}

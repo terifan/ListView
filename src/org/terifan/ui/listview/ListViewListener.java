@@ -3,11 +3,11 @@ package org.terifan.ui.listview;
 
 public interface ListViewListener<T extends ListViewItem>
 {
-	public void selectionChanged(ListViewEvent<T> aEvent);
+	void selectionChanged(ListViewEvent<T> aEvent);
 
-	public void selectionAction(ListViewEvent<T> aEvent);
+	void selectionAction(ListViewEvent<T> aEvent);
 
-	public void sortedColumnWillChange(ListViewEvent<T> aEvent);
+	void sortedColumnWillChange(ListViewEvent<T> aEvent);
 
-	public void sortedColumnChanged(ListViewEvent<T> aEvent);
+	void sortedColumnChanged(ListViewEvent<T> aEvent);
 }

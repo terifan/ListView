@@ -1,7 +1,7 @@
-package org.terifan.ui.listview.layout;
+package org.terifan.ui.listview.util;
 
 
-enum Anchor
+public enum Anchor
 {
 	NORTH_WEST,
 	NORTH,

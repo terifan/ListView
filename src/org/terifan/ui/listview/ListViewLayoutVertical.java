@@ -283,7 +283,6 @@ public class ListViewLayoutVertical<T extends ListViewItem> extends AbstractList
 	}
 
 
-	// TODO: prettify
 	private LocationInfo getComponentAtImplPoint(ListViewGroup<T> aGroup, int aLevel, int aOriginY, int aLocationX, int aLocationY)
 	{
 		if (aLocationX < 0 || aLocationX >= mListView.getWidth())
@@ -478,7 +477,6 @@ public class ListViewLayoutVertical<T extends ListViewItem> extends AbstractList
 		if (containingGroup == null)
 		{
 			return null;
-//			throw new RuntimeException("Failed to find containing group, aItem: " + aItem + ", aDiffX: " + aDiffX + ", aDiffY: "+aDiffY);
 		}
 
 		int itemsPerRun = getItemsPerRun();

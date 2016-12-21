@@ -35,7 +35,6 @@ import javax.swing.ScrollPaneConstants;
 import javax.swing.Scrollable;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
-import org.terifan.ui.listview.layout.ColumnHeaderRenderer;
 import org.terifan.ui.listview.layout.DetailItemRenderer;
 
 
@@ -337,9 +336,6 @@ public class ListView<T extends ListViewItem> extends JComponent implements Scro
 		{
 			super.paintComponent(aGraphics);
 
-			// ???
-//			synchronized (getTreeLock())
-//			{
 			Graphics2D g = (Graphics2D)aGraphics;
 
 			g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_LCD_HRGB);
@@ -351,7 +347,6 @@ public class ListView<T extends ListViewItem> extends JComponent implements Scro
 			{
 				paintPlaceHolder(g);
 			}
-//			}
 		}
 		catch (Exception e)
 		{
@@ -412,37 +407,16 @@ public class ListView<T extends ListViewItem> extends JComponent implements Scro
 
 				JPanel columnHeaderView = new JPanel(new BorderLayout());
 				columnHeaderView.add(new ListViewBar(this), BorderLayout.NORTH);
-				columnHeaderView.add(new ListViewHeader(this, "column_header"), BorderLayout.SOUTH);
+				columnHeaderView.add(new ListViewHeader(this, ListViewHeader.COLUMN_HEADER), BorderLayout.SOUTH);
 
 				ListViewHeader rowHeaderView;
-				rowHeaderView = new ListViewHeader(this, "row_header");
+				rowHeaderView = new ListViewHeader(this, ListViewHeader.ROW_HEADER);
 
 				scrollPane.setRowHeaderView(rowHeaderView);
 				scrollPane.setColumnHeaderView(columnHeaderView);
-				scrollPane.setCorner(ScrollPaneConstants.UPPER_LEFT_CORNER, new ListViewHeader(this, "upper_left_corner"));
-				scrollPane.setCorner(ScrollPaneConstants.UPPER_RIGHT_CORNER, new ListViewHeader(this, "upper_right_corner"));
+				scrollPane.setCorner(ScrollPaneConstants.UPPER_LEFT_CORNER, new ListViewHeader(this, ListViewHeader.UPPER_LEFT_CORNER));
+				scrollPane.setCorner(ScrollPaneConstants.UPPER_RIGHT_CORNER, new ListViewHeader(this, ListViewHeader.UPPER_RIGHT_CORNER));
 				scrollPane.setBorder(null);
-
-//				scrollPane.addMouseWheelListener(new MouseWheelListener()
-//				{
-//					@Override
-//					public void mouseWheelMoved(MouseWheelEvent e)
-//					{
-//						if (e.getScrollType() == MouseWheelEvent.WHEEL_UNIT_SCROLL) Log.out.println("unit " + scrollPane.getVerticalScrollBar().getUnitIncrement(1));
-////						Log.out.println(e);
-//					}
-//				});
-//				Border border = scrollPane.getBorder();
-//
-//				if (border == null || border instanceof UIResource)
-//				{
-//					Border scrollPaneBorder = UIManager.getBorder("Table.scrollPaneBorder");
-//
-//					if (scrollPaneBorder != null)
-//					{
-//						scrollPane.setBorder(scrollPaneBorder);
-//					}
-//				}
 			}
 		}
 	}

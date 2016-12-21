@@ -4,7 +4,6 @@ import org.terifan.ui.listview.util.Orientation;
 import java.awt.Dimension;
 import org.terifan.ui.listview.ListView;
 import org.terifan.ui.listview.layout.CardItemRenderer;
-import org.terifan.ui.listview.layout.ColumnHeaderRenderer;
 import org.terifan.ui.listview.layout.DetailItemRenderer;
 import org.terifan.ui.listview.layout.ThumbnailItemRenderer;
 import org.terifan.ui.listview.layout.TileItemRenderer;

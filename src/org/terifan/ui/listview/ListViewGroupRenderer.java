@@ -13,19 +13,6 @@ public class ListViewGroupRenderer<T extends ListViewItem>
 
 		Styles style = aListView.getStyles();
 
-//		if (aGroup.isSelected() && aListView.getRolloverGroup() == aGroup)
-//		{
-//			aGraphics.setColor(style.groupSelectedRolloverBackground);
-//			aGraphics.fillRect(aOriginX, aOriginY, aWidth, aHeight);
-//			aGraphics.setColor(style.groupSelectedRolloverForeground);
-//		}
-//		else if (aGroup.isSelected())
-//		{
-//			aGraphics.setColor(style.groupSelectedBackground);
-//			aGraphics.fillRect(aOriginX, aOriginY, aWidth, aHeight);
-//			aGraphics.setColor(style.groupSelectedForeground);
-//		}
-//		else
 		if (aListView.getRolloverGroup() == aGroup)
 		{
 			aGraphics.setColor(style.groupRolloverBackground);

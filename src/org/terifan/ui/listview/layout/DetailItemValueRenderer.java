@@ -1,5 +1,7 @@
 package org.terifan.ui.listview.layout;
 
+import org.terifan.ui.listview.util.TextRenderer;
+import org.terifan.ui.listview.util.Anchor;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontMetrics;

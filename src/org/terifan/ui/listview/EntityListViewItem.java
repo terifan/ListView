@@ -6,7 +6,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 
-public class EntityListViewItem extends AbstractListViewItem
+public class EntityListViewItem implements ListViewItem
 {
 	protected Class<?> mThisType;
 
@@ -89,7 +89,7 @@ public class EntityListViewItem extends AbstractListViewItem
 		}
 		catch (IllegalAccessException | InvocationTargetException e)
 		{
-			e.printStackTrace();
+			e.printStackTrace(System.out);
 		}
 
 		System.out.println("No icon provider specified in entity: " + mThisType);

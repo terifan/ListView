@@ -19,7 +19,7 @@ import org.terifan.ui.listview.ListView;
 import org.terifan.ui.listview.ListViewItemIcon;
 import org.terifan.ui.listview.ListViewModel;
 import org.terifan.ui.listview.layout.CardItemRenderer;
-import org.terifan.ui.listview.layout.ColumnHeaderRenderer;
+import org.terifan.ui.listview.ColumnHeaderRenderer;
 import org.terifan.ui.listview.layout.DetailItemRenderer;
 import org.terifan.ui.listview.layout.ThumbnailItemRenderer;
 import org.terifan.ui.listview.layout.TileItemRenderer;

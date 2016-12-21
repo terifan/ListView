@@ -123,19 +123,6 @@ public class ListViewLayoutHorizontal<T extends ListViewItem> extends AbstractLi
 
 		Font oldFont = aGraphics.getFont();
 
-//		if (aGroup.isSelected() && mListView.getRolloverGroup() == aGroup)
-//		{
-//			aGraphics.setColor(style.groupSelectedRolloverBackground);
-//			aGraphics.fillRect(aOriginX, aOriginY, aWidth, aHeight);
-//			aGraphics.setColor(style.groupSelectedRolloverForeground);
-//		}
-//		else if (aGroup.isSelected())
-//		{
-//			aGraphics.setColor(style.groupSelectedBackground);
-//			aGraphics.fillRect(aOriginX, aOriginY, aWidth, aHeight);
-//			aGraphics.setColor(style.groupSelectedForeground);
-//		}
-//		else
 		if (mListView.getRolloverGroup() == aGroup)
 		{
 			aGraphics.setColor(style.groupRolloverBackground);
@@ -354,7 +341,6 @@ public class ListViewLayoutHorizontal<T extends ListViewItem> extends AbstractLi
 		int row = -1;
 		int col = 0;
 
-// ta bort itemspercolumn, r�kna ut Y, se getGroupWidth
 		for (int i = 0, sz = items.size(); i < sz; i++)
 		{
 			tempWidth = Math.max(tempWidth, mListView.getItemRenderer().getItemWidth(mListView, items.get(i)));
@@ -479,7 +465,6 @@ public class ListViewLayoutHorizontal<T extends ListViewItem> extends AbstractLi
 	{
 		int horizontalBarHeight = mListView.getStyles().horizontalBarHeight;
 
-		int itemMinHeight = mListView.getItemRenderer().getItemMinimumHeight(mListView);
 		int itemMaxHeight = mListView.getItemRenderer().getItemMaximumHeight(mListView);
 		int itemPrefHeight = mListView.getItemRenderer().getItemPreferredHeight(mListView);
 		int height = mListView.getHeight() - horizontalBarHeight * (mListView.getModel().getGroupCount() - 1);

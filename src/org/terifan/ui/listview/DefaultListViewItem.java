@@ -4,7 +4,7 @@ import java.awt.image.BufferedImage;
 import java.util.Arrays;
 
 
-public class DefaultListViewItem extends AbstractListViewItem
+public class DefaultListViewItem implements ListViewItem
 {
 	protected Object [] mValues;
 	protected BufferedImage mIcon;

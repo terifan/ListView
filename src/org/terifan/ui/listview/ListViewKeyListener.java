@@ -18,118 +18,111 @@ class ListViewKeyListener<T extends ListViewItem> extends KeyAdapter
 	@Override
 	public void keyPressed(KeyEvent aEvent)
 	{
-		try
+		ListViewLayout<T> layout = mListView.getListViewLayout();
+		T newFocusItem = null;
+		T focusItem = mListView.getFocusItem();
+
+		if (focusItem == null)
 		{
-			ListViewLayout<T> layout = mListView.getListViewLayout();
-			T newFocusItem = null;
-			T focusItem = mListView.getFocusItem();
+			mListView.setFocusItem(layout.getFirstItem());
+			focusItem = mListView.getFocusItem();
+		}
 
-			if (focusItem == null)
-			{
-				mListView.setFocusItem(layout.getFirstItem());
-				focusItem = mListView.getFocusItem();
-			}
-
-			switch (aEvent.getKeyCode())
-			{
-				case KeyEvent.VK_LEFT:
-					newFocusItem = layout.getItemRelativeTo(focusItem, -1, 0);
-					break;
-				case KeyEvent.VK_RIGHT:
-					newFocusItem = layout.getItemRelativeTo(focusItem, 1, 0);
-					break;
-				case KeyEvent.VK_UP:
-					newFocusItem = layout.getItemRelativeTo(focusItem, 0, -1);
-					break;
-				case KeyEvent.VK_DOWN:
-					newFocusItem = layout.getItemRelativeTo(focusItem, 0, 1);
-					break;
-				case KeyEvent.VK_HOME:
-					newFocusItem = layout.getFirstItem();
-					break;
-				case KeyEvent.VK_END:
-					newFocusItem = layout.getLastItem();
-					break;
-				case KeyEvent.VK_PAGE_UP:
-					break;
-				case KeyEvent.VK_PAGE_DOWN:
-					break;
-				case KeyEvent.VK_SPACE:
-					if (mListView.getFocusItem() != null)
+		switch (aEvent.getKeyCode())
+		{
+			case KeyEvent.VK_LEFT:
+				newFocusItem = layout.getItemRelativeTo(focusItem, -1, 0);
+				break;
+			case KeyEvent.VK_RIGHT:
+				newFocusItem = layout.getItemRelativeTo(focusItem, 1, 0);
+				break;
+			case KeyEvent.VK_UP:
+				newFocusItem = layout.getItemRelativeTo(focusItem, 0, -1);
+				break;
+			case KeyEvent.VK_DOWN:
+				newFocusItem = layout.getItemRelativeTo(focusItem, 0, 1);
+				break;
+			case KeyEvent.VK_HOME:
+				newFocusItem = layout.getFirstItem();
+				break;
+			case KeyEvent.VK_END:
+				newFocusItem = layout.getLastItem();
+				break;
+			case KeyEvent.VK_PAGE_UP:
+				break;
+			case KeyEvent.VK_PAGE_DOWN:
+				break;
+			case KeyEvent.VK_SPACE:
+				if (mListView.getFocusItem() != null)
+				{
+					if (!aEvent.isControlDown())
 					{
-						if (!aEvent.isControlDown())
-						{
-							mListView.setItemsSelected(false);
-						}
-						if (aEvent.isShiftDown())
-						{
-							for (T item : layout.getItemsIntersecting(mListView.getAnchorItem(), mListView.getFocusItem()))
-							{
-								mListView.setItemSelected(item, true);
-							}
-						}
-						else
-						{
-							mListView.invertItemSelection(mListView.getFocusItem());
-							mListView.setAnchorItem(mListView.getFocusItem());
-						}
-						mListView.repaint();
-						return;
+						mListView.setItemsSelected(false);
 					}
-					break;
-				case KeyEvent.VK_ENTER:
-					mListView.fireSelectionAction(new ListViewEvent(mListView, aEvent));
-					break;
-				default:
+					if (aEvent.isShiftDown())
+					{
+						for (T item : layout.getItemsIntersecting(mListView.getAnchorItem(), mListView.getFocusItem()))
+						{
+							mListView.setItemSelected(item, true);
+						}
+					}
+					else
+					{
+						mListView.invertItemSelection(mListView.getFocusItem());
+						mListView.setAnchorItem(mListView.getFocusItem());
+					}
+					mListView.repaint();
 					return;
-			}
-
-			if (newFocusItem != null && !aEvent.isShiftDown() && !aEvent.isControlDown())
-			{
-				mListView.setAnchorItem(newFocusItem);
-			}
-
-			if (newFocusItem != null)
-			{
-				if (!aEvent.isControlDown())
-				{
-					mListView.setItemsSelected(false);
 				}
+				break;
+			case KeyEvent.VK_ENTER:
+				mListView.fireSelectionAction(new ListViewEvent(mListView, aEvent));
+				break;
+			default:
+				return;
+		}
 
-				mListView.setFocusItem(newFocusItem);
+		if (newFocusItem != null && !aEvent.isShiftDown() && !aEvent.isControlDown())
+		{
+			mListView.setAnchorItem(newFocusItem);
+		}
 
-				if (!aEvent.isControlDown())
-				{
-					mListView.setItemSelected(newFocusItem, true);
-				}
-				mListView.fireSelectionChanged(new ListViewEvent(mListView, aEvent));
-			}
-
-			if (aEvent.isShiftDown() && mListView.getFocusItem() != null)
+		if (newFocusItem != null)
+		{
+			if (!aEvent.isControlDown())
 			{
 				mListView.setItemsSelected(false);
-
-				for (T item : layout.getItemsIntersecting(mListView.getAnchorItem(), mListView.getFocusItem()))
-				{
-					mListView.setItemSelected(item, true);
-				}
 			}
 
-			if (newFocusItem != null)
+			mListView.setFocusItem(newFocusItem);
+
+			if (!aEvent.isControlDown())
 			{
-				mListView.ensureItemIsVisible(newFocusItem);
+				mListView.setItemSelected(newFocusItem, true);
 			}
-
-			if (mListView.getAnchorItem() == null)
-			{
-				mListView.setAnchorItem(mListView.getFocusItem());
-			}
-
-			mListView.repaint();
+			mListView.fireSelectionChanged(new ListViewEvent(mListView, aEvent));
 		}
-		catch (Exception e)
+
+		if (aEvent.isShiftDown() && mListView.getFocusItem() != null)
 		{
-			e.printStackTrace();
+			mListView.setItemsSelected(false);
+
+			for (T item : layout.getItemsIntersecting(mListView.getAnchorItem(), mListView.getFocusItem()))
+			{
+				mListView.setItemSelected(item, true);
+			}
 		}
+
+		if (newFocusItem != null)
+		{
+			mListView.ensureItemIsVisible(newFocusItem);
+		}
+
+		if (mListView.getAnchorItem() == null)
+		{
+			mListView.setAnchorItem(mListView.getFocusItem());
+		}
+
+		mListView.repaint();
 	}
 }

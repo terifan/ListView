@@ -4,11 +4,9 @@ import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Point;
-import java.awt.Toolkit;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
-import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.SortOrder;
 import javax.swing.SwingUtilities;
@@ -16,6 +14,11 @@ import javax.swing.SwingUtilities;
 
 public class ListViewHeader extends JComponent
 {
+	public final static String COLUMN_HEADER = "column_header";
+	public final static String ROW_HEADER = "row_header";
+	public final static String UPPER_LEFT_CORNER = "upper_left_corner";
+	public final static String UPPER_RIGHT_CORNER = "upper_right_corner";
+
 	protected ListView mListView;
 	protected String mPart;
 	protected int mRolloverColumnIndex;
@@ -38,35 +41,31 @@ public class ListViewHeader extends JComponent
 		mRolloverColumnIndex = -1;
 		mArmedColumnIndex = -1;
 
-		addMouseListener(new MouseListener());
-		addMouseMotionListener(new MouseMotionListener());
+		super.addMouseListener(new MouseListener());
+		super.addMouseMotionListener(new MouseMotionListener());
 	}
 
 
 	@Override
 	protected void paintComponent(Graphics aGraphics)
 	{
-		try
+		ListViewHeaderRenderer renderer = mListView.getHeaderRenderer();
+
+		if (renderer == null)
 		{
-			ListViewHeaderRenderer renderer = mListView.getHeaderRenderer();
+			return;
+		}
 
-			if (renderer == null)
-			{
-				return;
-			}
-
-			if (mPart.equals("upper_right_corner"))
-			{
+		switch (mPart)
+		{
+			case UPPER_RIGHT_CORNER:
 				renderer.paintUpperRightCorner(mListView, aGraphics, 0, 0, getWidth(), getHeight());
-			}
-			else if (mPart.equals("upper_left_corner"))
-			{
+				break;
+			case UPPER_LEFT_CORNER:
 				renderer.paintUpperLeftCorner(mListView, aGraphics, 0, 0, getWidth(), getHeight());
-			}
-			else if (mPart.equals("row_header"))
-			{
+				break;
+			case ROW_HEADER:
 				int y = 0;
-
 				for (int i = 0; i < 100; i++)
 				{
 					boolean isSelected = false, isArmed = false, isRollover = false;
@@ -75,20 +74,14 @@ public class ListViewHeader extends JComponent
 
 					y += 19;
 				}
-			}
-			else if (mPart.equals("column_header"))
-			{
+				break;
+			case COLUMN_HEADER:
 				ListViewModel model = mListView.getModel();
-
 				int leadWidth = mListView.getListViewLayout().getMarginLeft();
-
 				if (leadWidth > 0)
 				{
 					renderer.paintColumnHeaderLeading(mListView, aGraphics, 0, 0, leadWidth, getHeight());
-				}
-
-				int x = leadWidth;
-
+				}	int x = leadWidth;
 				for (int i = 0; i < model.getColumnCount(); i++)
 				{
 					ListViewColumn column = model.getColumn(i);
@@ -100,9 +93,9 @@ public class ListViewHeader extends JComponent
 
 					int w = column.getWidth();
 
-					if (renderer.getExtendLastItem() && i+1 == model.getColumnCount())
+					if (renderer.getExtendLastItem() && i + 1 == model.getColumnCount())
 					{
-						w = getWidth()-x;
+						w = getWidth() - x;
 					}
 
 					SortOrder sorting = model.getSortedColumn() == column ? column.getSortOrder() : SortOrder.UNSORTED;
@@ -123,21 +116,18 @@ public class ListViewHeader extends JComponent
 							}
 						}
 
-						renderer.paintColumnHeader(mListView, column, aGraphics, x, 0, w, getHeight(), isSelected, isArmed, isRollover, sorting, i==0, last);
+						renderer.paintColumnHeader(mListView, column, aGraphics, x, 0, w, getHeight(), isSelected, isArmed, isRollover, sorting, i == 0, last);
 
 						x += w;
 					}
-				}
-
-				if (getWidth()-x > 0)
+				}	
+				if (getWidth() - x > 0)
 				{
-					renderer.paintColumnHeaderTrailing(mListView, aGraphics, x, 0, getWidth()-x, getHeight());
+					renderer.paintColumnHeaderTrailing(mListView, aGraphics, x, 0, getWidth() - x, getHeight());
 				}
-			}
-		}
-		catch (Exception e)
-		{
-			e.printStackTrace(System.err);
+				break;
+			default:
+				break;
 		}
 	}
 
@@ -145,43 +135,35 @@ public class ListViewHeader extends JComponent
 	@Override
 	public Dimension getPreferredSize()
 	{
-		try
+		ListViewHeaderRenderer renderer = mListView.getHeaderRenderer();
+
+		if (renderer == null)
 		{
-			ListViewHeaderRenderer renderer = mListView.getHeaderRenderer();
-
-			if (renderer == null)
-			{
-				return new Dimension(0, 0);
-			}
-			else if (mPart.equals("row_header"))
-			{
-				return new Dimension(renderer.getRowHeaderWidth(), 1);
-			}
-			else
-			{
-				int w = 0;
-				ListViewModel model = mListView.getModel();
-				for (int i = 0; i < model.getColumnCount(); i++)
-				{
-					ListViewColumn column = model.getColumn(i);
-					if (column.isVisible())
-					{
-						w += column.getWidth();
-					}
-				}
-
-				return new Dimension(w, renderer.getColumnHeaderHeight(mListView));
-			}
+			return new Dimension(0, 0);
 		}
-		catch (Exception e)
+		else if (mPart.equals(ROW_HEADER))
 		{
-			e.printStackTrace(System.err);
-			return new Dimension(16, 16);
+			return new Dimension(renderer.getRowHeaderWidth(), 1);
+		}
+		else
+		{
+			int w = 0;
+			ListViewModel model = mListView.getModel();
+			for (int i = 0; i < model.getColumnCount(); i++)
+			{
+				ListViewColumn column = model.getColumn(i);
+				if (column.isVisible())
+				{
+					w += column.getWidth();
+				}
+			}
+
+			return new Dimension(w, renderer.getColumnHeaderHeight(mListView));
 		}
 	}
 
 
-	class MouseListener extends MouseAdapter
+	private class MouseListener extends MouseAdapter
 	{
 		@Override
 		public void mousePressed(MouseEvent aEvent)
@@ -243,7 +225,7 @@ public class ListViewHeader extends JComponent
 					ListViewColumn newGroup = event.getListViewColumn();
 					if (!model.isGrouped(model.getColumnIndex(newGroup)))
 					{
-						ListViewColumn lastGroup = model.getColumn(model.getGroup(model.getGroupCount()-1));
+						ListViewColumn lastGroup = model.getColumn(model.getGroup(model.getGroupCount() - 1));
 						model.removeGroup(lastGroup);
 						model.addGroup(newGroup);
 						model.validate();
@@ -280,7 +262,7 @@ public class ListViewHeader extends JComponent
 	}
 
 
-	class MouseMotionListener extends MouseMotionAdapter
+	private class MouseMotionListener extends MouseMotionAdapter
 	{
 		@Override
 		public void mouseMoved(MouseEvent aEvent)
@@ -322,12 +304,12 @@ public class ListViewHeader extends JComponent
 				int w = column.getWidth();
 				x += w;
 
-				if (aEvent.getX() >= x-5 && aEvent.getX() <= x+5)
+				if (aEvent.getX() >= x - 5 && aEvent.getX() <= x + 5)
 				{
 					ListViewColumn nextColumn = null;
 					int nextColumnIndex = 0;
 
-					for (int j = i+1; j < model.getColumnCount(); j++)
+					for (int j = i + 1; j < model.getColumnCount(); j++)
 					{
 						ListViewColumn tmp = model.getColumn(j);
 						if (tmp.isVisible())
@@ -376,7 +358,7 @@ public class ListViewHeader extends JComponent
 			{
 				ListViewColumn column = mListView.getModel().getColumn(mResizeColumnIndex);
 
-				int w = Math.max(column.getWidth()+aEvent.getX()-mPoint.x, 0);
+				int w = Math.max(column.getWidth() + aEvent.getX() - mPoint.x, 0);
 
 				column.setWidth(w);
 
@@ -388,8 +370,6 @@ public class ListViewHeader extends JComponent
 				repaint();
 				mListView.validateLayout();
 				mListView.repaint();
-
-				return;
 			}
 		}
 	}
@@ -412,7 +392,7 @@ public class ListViewHeader extends JComponent
 
 			int w = column.getWidth();
 
-			if (aPoint.x >= x && aPoint.x < x+w)
+			if (aPoint.x >= x && aPoint.x < x + w)
 			{
 				return i;
 			}

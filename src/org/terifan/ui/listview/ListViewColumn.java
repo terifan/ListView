@@ -271,7 +271,7 @@ public class ListViewColumn<T extends ListViewItem>
 
 	public ListViewColumn<T> setTitle(boolean aTitle)
 	{
-		this.mTitle = aTitle;
+		mTitle = aTitle;
 		return this;
 	}
 }
