@@ -21,7 +21,7 @@ import org.terifan.ui.listview.util.Utilities;
 
 public class ThumbnailItemRenderer<T extends ListViewItem> implements ListViewItemRenderer<T>
 {
-	public final static int DEFAULT_LABEL_HEIGHT = 15;
+	public final static int DEFAULT_LABEL_HEIGHT = -1;
 	public final static int ITEM_PAD_HOR = 20;
 	public final static int ITEM_PAD_VER = 20;
 	public final static int ITEM_SPACE_HOR = 4;
@@ -114,7 +114,13 @@ public class ThumbnailItemRenderer<T extends ListViewItem> implements ListViewIt
 		int h = aHeight;
 		
 		int labelHeight = getLabelHeight(aItem);
-		int itemHeight = mItemSize.height - getLabelHeight(aItem) + mLabelHeight;
+		
+		if (labelHeight < 0)
+		{
+			labelHeight = Math.abs(labelHeight * (aGraphics.getFontMetrics().getHeight() + 2));
+		}
+		
+		int itemHeight = mItemSize.height - labelHeight + mLabelHeight;
 
 		int sw = mItemSize.width + ITEM_PAD_HOR;
 		int sh = itemHeight + labelHeight + ITEM_PAD_VER;
@@ -190,6 +196,9 @@ public class ThumbnailItemRenderer<T extends ListViewItem> implements ListViewIt
 	}
 
 
+	/**
+	 * Return the height of the label. Negative numbers indicate a number of lines instead of pixels (eg. -2 is two lines of text at current font size).
+	 */
 	protected int getLabelHeight(T aItem)
 	{
 		return mLabelHeight;
