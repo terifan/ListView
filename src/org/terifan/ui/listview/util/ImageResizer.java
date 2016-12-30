@@ -68,8 +68,6 @@ public class ImageResizer
 				}
 			}
 
-			if(aCache!=null)System.out.println("#"+aSource.getWidth()+"->"+aWidth+","+aSource.getHeight()+"->"+aHeight+","+aQuality+" "+aCache.getUsedSize());
-			
 			if (aWidth < aSource.getWidth() || aHeight < aSource.getHeight())
 			{
 				aSource = resizeDown(aSource, aWidth, aHeight, aQuality);
@@ -146,48 +144,58 @@ public class ImageResizer
 	}
 
 
-	public static void drawScaledImage(Graphics aGraphics, BufferedImage aImage, int aPositionX, int aPositionY, int aWidth, int aHeight, int aFrameLeft, int aFrameRight, boolean aQuality)
+	public static BufferedImage getScaledImage(BufferedImage aSource, int aWidth, int aHeight, int aFrameTop, int aFrameLeft, int aFrameBottom, int aFrameRight, boolean aQuality, Cache<ImageCacheKey,BufferedImage> aCache)
 	{
-		int tw = aImage.getWidth();
-		int th = aImage.getHeight();
+		ImageCacheKey key = null;
 
-		((Graphics2D)aGraphics).setRenderingHint(RenderingHints.KEY_INTERPOLATION, aQuality ? RenderingHints.VALUE_INTERPOLATION_BICUBIC : RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-		
-		aGraphics.drawImage(aImage, aPositionX, aPositionY, aPositionX + aFrameLeft, aPositionY + aHeight, 0, 0, aFrameLeft, th, null);
-		aGraphics.drawImage(aImage, aPositionX + aFrameLeft, aPositionY, aPositionX + aWidth - aFrameRight, aPositionY + aHeight, aFrameLeft, 0, tw - aFrameRight, th, null);
-		aGraphics.drawImage(aImage, aPositionX + aWidth - aFrameRight, aPositionY, aPositionX + aWidth, aPositionY + aHeight, tw - aFrameRight, 0, tw, th, null);
-	}
+		if (aCache != null)
+		{
+			key = new ImageCacheKey(aSource, aWidth, aHeight, aQuality);
+			BufferedImage image = aCache.get(key);
+			if (image != null)
+			{
+				return image;
+			}
+		}
 
-
-	public static void drawScaledImage(Graphics aGraphics, BufferedImage aImage, int aPositionX, int aPositionY, int aWidth, int aHeight, int aFrameTop, int aFrameLeft, int aFrameBottom, int aFrameRight, boolean aQuality)
-	{
-		int tw = aImage.getWidth();
-		int th = aImage.getHeight();
-
-		((Graphics2D)aGraphics).setRenderingHint(RenderingHints.KEY_INTERPOLATION, aQuality ? RenderingHints.VALUE_INTERPOLATION_BICUBIC : RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-		
-		aGraphics.drawImage(aImage, aPositionX, aPositionY, aPositionX + aFrameLeft, aPositionY + aFrameTop, 0, 0, aFrameLeft, aFrameTop, null);
-		aGraphics.drawImage(aImage, aPositionX + aFrameLeft, aPositionY, aPositionX + aWidth - aFrameRight, aPositionY + aFrameTop, aFrameLeft, 0, tw - aFrameRight, aFrameTop, null);
-		aGraphics.drawImage(aImage, aPositionX + aWidth - aFrameRight, aPositionY, aPositionX + aWidth, aPositionY + aFrameTop, tw - aFrameRight, 0, tw, aFrameTop, null);
-
-		aGraphics.drawImage(aImage, aPositionX, aPositionY + aFrameTop, aPositionX + aFrameLeft, aPositionY + aHeight - aFrameBottom, 0, aFrameTop, aFrameLeft, th - aFrameBottom, null);
-		aGraphics.drawImage(aImage, aPositionX + aFrameLeft, aPositionY + aFrameTop, aPositionX + aWidth - aFrameRight, aPositionY + aHeight - aFrameBottom, aFrameLeft, aFrameTop, tw - aFrameRight, th - aFrameBottom, null);
-		aGraphics.drawImage(aImage, aPositionX + aWidth - aFrameRight, aPositionY + aFrameTop, aPositionX + aWidth, aPositionY + aHeight - aFrameBottom, tw - aFrameRight, aFrameTop, tw, th - aFrameBottom, null);
-
-		aGraphics.drawImage(aImage, aPositionX, aPositionY + aHeight - aFrameBottom, aPositionX + aFrameLeft, aPositionY + aHeight, 0, th - aFrameBottom, aFrameLeft, th, null);
-		aGraphics.drawImage(aImage, aPositionX + aFrameLeft, aPositionY + aHeight - aFrameBottom, aPositionX + aWidth - aFrameRight, aPositionY + aHeight, aFrameLeft, th - aFrameBottom, tw - aFrameRight, th, null);
-		aGraphics.drawImage(aImage, aPositionX + aWidth - aFrameRight, aPositionY + aHeight - aFrameBottom, aPositionX + aWidth, aPositionY + aHeight, tw - aFrameRight, th - aFrameBottom, tw, th, null);
-	}
-
-
-	public static BufferedImage getScaledImage(BufferedImage aSource, int aWidth, int aHeight, int aFrameTop, int aFrameLeft, int aFrameBottom, int aFrameRight, boolean aQuality)
-	{
 		BufferedImage image = new BufferedImage(aWidth, aHeight, aSource.getTransparency() == Transparency.OPAQUE ? BufferedImage.TYPE_INT_RGB : BufferedImage.TYPE_INT_ARGB);
 
 		Graphics2D g = image.createGraphics();
-		drawScaledImage(g, aSource, 0, 0, aWidth, aHeight, aFrameTop, aFrameLeft, aFrameBottom, aFrameRight, aQuality);
+		getScaledImageFrameImpl(g, aSource, aWidth, aHeight, aFrameTop, aFrameLeft, aFrameBottom, aFrameRight, aQuality);
 		g.dispose();
 
+		if (aCache != null)
+		{
+			aCache.put(key, image, aWidth * aHeight * 4);
+		}
+
 		return image;
+	}
+
+
+	private static void getScaledImageFrameImpl(Graphics aGraphics, BufferedImage aImage, int aWidth, int aHeight, int aFrameTop, int aFrameLeft, int aFrameBottom, int aFrameRight, boolean aQuality)
+	{
+		int tw = aImage.getWidth();
+		int th = aImage.getHeight();
+
+		((Graphics2D)aGraphics).setRenderingHint(RenderingHints.KEY_INTERPOLATION, aQuality ? RenderingHints.VALUE_INTERPOLATION_BICUBIC : RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+		
+		if (aFrameTop > 0)
+		{
+			aGraphics.drawImage(aImage, 0, 0, aFrameLeft, aFrameTop, 0, 0, aFrameLeft, aFrameTop, null);
+			aGraphics.drawImage(aImage, aFrameLeft, 0, aWidth - aFrameRight, aFrameTop, aFrameLeft, 0, tw - aFrameRight, aFrameTop, null);
+			aGraphics.drawImage(aImage, aWidth - aFrameRight, 0, aWidth, aFrameTop, tw - aFrameRight, 0, tw, aFrameTop, null);
+		}
+
+		aGraphics.drawImage(aImage, 0, aFrameTop, aFrameLeft, aHeight - aFrameBottom, 0, aFrameTop, aFrameLeft, th - aFrameBottom, null);
+		aGraphics.drawImage(aImage, aFrameLeft, aFrameTop, aWidth - aFrameRight, aHeight - aFrameBottom, aFrameLeft, aFrameTop, tw - aFrameRight, th - aFrameBottom, null);
+		aGraphics.drawImage(aImage, aWidth - aFrameRight, aFrameTop, aWidth, aHeight - aFrameBottom, tw - aFrameRight, aFrameTop, tw, th - aFrameBottom, null);
+
+		if (aFrameBottom > 0)
+		{
+			aGraphics.drawImage(aImage, 0, aHeight - aFrameBottom, aFrameLeft, aHeight, 0, th - aFrameBottom, aFrameLeft, th, null);
+			aGraphics.drawImage(aImage, aFrameLeft, aHeight - aFrameBottom, aWidth - aFrameRight, aHeight, aFrameLeft, th - aFrameBottom, tw - aFrameRight, th, null);
+			aGraphics.drawImage(aImage, aWidth - aFrameRight, aHeight - aFrameBottom, aWidth, aHeight, tw - aFrameRight, th - aFrameBottom, tw, th, null);
+		}
 	}
 }

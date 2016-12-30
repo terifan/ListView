@@ -8,6 +8,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
 import org.terifan.ui.listview.ListView;
 import org.terifan.ui.listview.ListViewColumn;
 import org.terifan.ui.listview.ListViewItem;
@@ -145,14 +146,16 @@ public class CardItemRenderer implements ListViewItemRenderer
 		aWidth -= 6;
 		aHeight -= 6;
 
+		BufferedImage scaledImage;
 		if (aListView.isItemSelected(aItem))
 		{
-			ImageResizer.drawScaledImage(aGraphics, style.cardBackgroundSelected, aOriginX, aOriginY, aWidth, aHeight, 20, 2, 2, 2, false);
+			scaledImage = ImageResizer.getScaledImage(style.cardBackgroundSelected, aWidth, aHeight, 20, 2, 2, 2, false, aListView.getImageCache());
 		}
 		else
 		{
-			ImageResizer.drawScaledImage(aGraphics, style.cardBackgroundNormal, aOriginX, aOriginY, aWidth, aHeight, 20, 2, 2, 2, false);
+			scaledImage = ImageResizer.getScaledImage(style.cardBackgroundNormal, aWidth, aHeight, 20, 2, 2, 2, false, aListView.getImageCache());
 		}
+		aGraphics.drawImage(scaledImage, aOriginX, aOriginY, null);
 
 		int rowCount = Math.max(1, (aHeight - 4) / mRowHeight);
 
@@ -207,7 +210,7 @@ public class CardItemRenderer implements ListViewItemRenderer
 	{
 		if (mOrientation == Orientation.VERTICAL)
 		{
-			return new ListViewLayoutVertical(aListView, 5);
+			return new ListViewLayoutVertical(aListView, 100);
 		}
 		else
 		{

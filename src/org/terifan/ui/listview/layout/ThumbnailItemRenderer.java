@@ -1,7 +1,5 @@
 package org.terifan.ui.listview.layout;
 
-import org.terifan.ui.listview.util.TextRenderer;
-import org.terifan.ui.listview.util.Anchor;
 import org.terifan.ui.listview.ListViewLayoutHorizontal;
 import org.terifan.ui.listview.ListViewLayoutVertical;
 import java.awt.Dimension;
@@ -13,9 +11,11 @@ import org.terifan.ui.listview.ListViewColumn;
 import org.terifan.ui.listview.ListViewItem;
 import org.terifan.ui.listview.ListViewItemRenderer;
 import org.terifan.ui.listview.ListViewLayout;
-import org.terifan.ui.listview.util.Orientation;
 import org.terifan.ui.listview.Styles;
+import org.terifan.ui.listview.util.Anchor;
 import org.terifan.ui.listview.util.ImageResizer;
+import org.terifan.ui.listview.util.Orientation;
+import org.terifan.ui.listview.util.TextRenderer;
 import org.terifan.ui.listview.util.Utilities;
 
 
@@ -105,6 +105,9 @@ public class ThumbnailItemRenderer<T extends ListViewItem> implements ListViewIt
 	@Override
 	public void paintItem(Graphics2D aGraphics, int aOriginX, int aOriginY, int aWidth, int aHeight, ListView<T> aListView, T aItem)
 	{
+//		aGraphics.setColor(new Color(new Random().nextInt(0xff),new Random().nextInt(0xff),new Random().nextInt(0xff),16));
+//		aGraphics.fillRect(aOriginX, aOriginY, aWidth, aHeight);
+		
 		Styles style = aListView.getStyles();
 		boolean selected = aListView.isItemSelected(aItem);
 
@@ -146,13 +149,13 @@ public class ThumbnailItemRenderer<T extends ListViewItem> implements ListViewIt
 
 		if (selected)
 		{
-			BufferedImage im = ImageResizer.getScaledImage(aListView.isFocusOwner() ? style.thumbBorderSelectedBackground : style.thumbBorderSelectedUnfocusedBackground, sw, sh, 3, 3, 3, 3, false);
+			BufferedImage im = ImageResizer.getScaledImage(aListView.isFocusOwner() ? style.thumbBorderSelectedBackground : style.thumbBorderSelectedUnfocusedBackground, sw, sh, 3, 3, 3, 3, false, aListView.getImageCache());
 			aGraphics.drawImage(im, sx, sy, null);
 		}
 
 		if (aListView.isItemBorderPainted(aItem))
 		{
-			BufferedImage im = ImageResizer.getScaledImage(selected ? style.thumbBorderSelected : style.thumbBorderNormal, tw + 3 + 6, th + 3 + 7, 3, 3, 7, 6, false);
+			BufferedImage im = ImageResizer.getScaledImage(selected ? style.thumbBorderSelected : style.thumbBorderNormal, tw + 3 + 6, th + 3 + 7, 3, 3, 7, 6, false, aListView.getImageCache());
 			aGraphics.drawImage(im, tx - 3, ty - 3, null);
 		}
 

@@ -41,14 +41,13 @@ public class Test
 			model.addColumn("Id", 50);
 			model.addGroup(model.getColumn("Letter"));
 
-			ArrayList<File> files = new ArrayList<>(Arrays.asList(new File("D:\\Pictures\\Wallpapers").listFiles()));
+			ArrayList<File> files = new ArrayList<>(Arrays.asList(new File("d:\\temp\\thumbs").listFiles()));
 			Collections.shuffle(files);
 			for (File file : files)
 			{
-				if (model.getItemCount() > 50) break;
 				try
 				{
-					BufferedImage thumb = ImageResizer.getScaledImageAspect(ImageIO.read(file), 128, 128, false, null);
+					BufferedImage thumb = ImageResizer.getScaledImageAspect(ImageIO.read(file), 256, 256, false, null);
 					model.addItem(new Item(model.getItemCount(), file.getName(), file.length(), file.lastModified(), thumb));
 				}
 				catch (Exception e)
@@ -60,12 +59,12 @@ public class Test
 
 			JToolBar toolBar = new JToolBar();
 			toolBar.add(new Button("Details", ()->listView.setHeaderRenderer(new ColumnHeaderRenderer()).setItemRenderer(new DetailItemRenderer())));
-			toolBar.add(new Button("V-Thumbnails", ()->listView.setHeaderRenderer(null).setItemRenderer(new ThumbnailItemRenderer(new Dimension(128, 128), Orientation.VERTICAL, 16))));
-			toolBar.add(new Button("H-Thumbnails", ()->listView.setHeaderRenderer(null).setItemRenderer(new ThumbnailItemRenderer(new Dimension(128, 128), Orientation.HORIZONTAL, 16))));
-			toolBar.add(new Button("V-Cards", ()->listView.setHeaderRenderer(null).setItemRenderer(new CardItemRenderer(new Dimension(200, 50), 128, Orientation.VERTICAL))));
-			toolBar.add(new Button("H-Cards", ()->listView.setHeaderRenderer(null).setItemRenderer(new CardItemRenderer(new Dimension(200, 50), 128, Orientation.HORIZONTAL))));
-			toolBar.add(new Button("V-Tile", ()->listView.setHeaderRenderer(null).setItemRenderer(new TileItemRenderer(new Dimension(300, 80), 128, Orientation.VERTICAL))));
-			toolBar.add(new Button("H-Tile", ()->listView.setHeaderRenderer(null).setItemRenderer(new TileItemRenderer(new Dimension(300, 80), 128, Orientation.HORIZONTAL))));
+			toolBar.add(new Button("V-Thumbnails", ()->listView.setHeaderRenderer(null).setItemRenderer(new ThumbnailItemRenderer(new Dimension(256, 256), Orientation.VERTICAL, 16))));
+			toolBar.add(new Button("H-Thumbnails", ()->listView.setHeaderRenderer(null).setItemRenderer(new ThumbnailItemRenderer(new Dimension(256, 256), Orientation.HORIZONTAL, 16))));
+			toolBar.add(new Button("V-Cards", ()->listView.setHeaderRenderer(null).setItemRenderer(new CardItemRenderer(new Dimension(200, 50), 60, Orientation.VERTICAL))));
+			toolBar.add(new Button("H-Cards", ()->listView.setHeaderRenderer(null).setItemRenderer(new CardItemRenderer(new Dimension(200, 50), 60, Orientation.HORIZONTAL))));
+			toolBar.add(new Button("V-Tile", ()->listView.setHeaderRenderer(null).setItemRenderer(new TileItemRenderer(new Dimension(600, 160), 256, Orientation.VERTICAL))));
+			toolBar.add(new Button("H-Tile", ()->listView.setHeaderRenderer(null).setItemRenderer(new TileItemRenderer(new Dimension(600, 160), 256, Orientation.HORIZONTAL))));
 
 			JFrame frame = new JFrame();
 			frame.add(toolBar, BorderLayout.NORTH);
