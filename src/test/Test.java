@@ -2,6 +2,7 @@ package test;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -11,6 +12,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import javax.imageio.ImageIO;
 import javax.swing.AbstractAction;
+import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 import javax.swing.JToolBar;
@@ -29,16 +31,22 @@ import org.terifan.ui.listview.util.Orientation;
 
 public class Test
 {
+	private static ListView<Item> mListView;
+
+
 	public static void main(String... args)
 	{
 		try
 		{
+			int dpiScale = 2;
+
 			ListViewModel<Item> model = new ListViewModel<>();
 			model.addColumn("Letter").setVisible(false);
-			model.addColumn("Name", 200).setIconWidth(16).setTitle(true);
-			model.addColumn("Length", 200);
-			model.addColumn("Modified", 200).setFormatter(e -> new SimpleDateFormat("yyyy-MM-dd HH:mm").format(e));
-			model.addColumn("Id", 50);
+			model.addColumn("Name", dpiScale * 300).setIconWidth(dpiScale * 16).setTitle(true);
+			model.addColumn("Length", dpiScale * 100);
+			model.addColumn("Modified", dpiScale * 100).setFormatter(e -> new SimpleDateFormat("yyyy-MM-dd HH:mm").format(e));
+			model.addColumn("Dimensions", dpiScale * 65);
+			model.addColumn("Id", dpiScale * 30);
 			model.addGroup(model.getColumn("Letter"));
 
 			ArrayList<File> files = new ArrayList<>(Arrays.asList(new File("d:\\temp\\thumbs").listFiles()));
@@ -55,21 +63,23 @@ public class Test
 				}
 			}
 
-			ListView<Item> listView = new ListView<>(model);
+			mListView = new ListView<>(model);
 
+			mListView.getStyles().scale(dpiScale);
+			
 			JToolBar toolBar = new JToolBar();
-			toolBar.add(new Button("Details", ()->listView.setHeaderRenderer(new ColumnHeaderRenderer()).setItemRenderer(new DetailItemRenderer())));
-			toolBar.add(new Button("V-Thumbnails", ()->listView.setHeaderRenderer(null).setItemRenderer(new ThumbnailItemRenderer(new Dimension(256, 256), Orientation.VERTICAL, 16))));
-			toolBar.add(new Button("H-Thumbnails", ()->listView.setHeaderRenderer(null).setItemRenderer(new ThumbnailItemRenderer(new Dimension(256, 256), Orientation.HORIZONTAL, 16))));
-			toolBar.add(new Button("V-Cards", ()->listView.setHeaderRenderer(null).setItemRenderer(new CardItemRenderer(new Dimension(200, 50), 60, Orientation.VERTICAL))));
-			toolBar.add(new Button("H-Cards", ()->listView.setHeaderRenderer(null).setItemRenderer(new CardItemRenderer(new Dimension(200, 50), 60, Orientation.HORIZONTAL))));
-			toolBar.add(new Button("V-Tile", ()->listView.setHeaderRenderer(null).setItemRenderer(new TileItemRenderer(new Dimension(600, 160), 256, Orientation.VERTICAL))));
-			toolBar.add(new Button("H-Tile", ()->listView.setHeaderRenderer(null).setItemRenderer(new TileItemRenderer(new Dimension(600, 160), 256, Orientation.HORIZONTAL))));
+			toolBar.add(new Button("Details", ()->mListView.setHeaderRenderer(new ColumnHeaderRenderer()).setItemRenderer(new DetailItemRenderer())));
+			toolBar.add(new Button("V-Thumbnails", ()->mListView.setHeaderRenderer(null).setItemRenderer(new ThumbnailItemRenderer(new Dimension(256, 256), Orientation.VERTICAL, dpiScale * 16))));
+			toolBar.add(new Button("H-Thumbnails", ()->mListView.setHeaderRenderer(null).setItemRenderer(new ThumbnailItemRenderer(new Dimension(256, 256), Orientation.HORIZONTAL, dpiScale * 16))));
+			toolBar.add(new Button("V-Cards", ()->mListView.setHeaderRenderer(null).setItemRenderer(new CardItemRenderer(new Dimension(dpiScale * 200, dpiScale * 75), dpiScale * 75, Orientation.VERTICAL, dpiScale * 16))));
+			toolBar.add(new Button("H-Cards", ()->mListView.setHeaderRenderer(null).setItemRenderer(new CardItemRenderer(new Dimension(dpiScale * 200, dpiScale * 75), dpiScale * 75, Orientation.HORIZONTAL, dpiScale * 16))));
+			toolBar.add(new Button("V-Tile", ()->mListView.setHeaderRenderer(null).setItemRenderer(new TileItemRenderer(new Dimension(600, 160), 256, Orientation.VERTICAL))));
+			toolBar.add(new Button("H-Tile", ()->mListView.setHeaderRenderer(null).setItemRenderer(new TileItemRenderer(new Dimension(600, 160), 256, Orientation.HORIZONTAL))));
 
 			JFrame frame = new JFrame();
 			frame.add(toolBar, BorderLayout.NORTH);
-			frame.add(new JScrollPane(listView), BorderLayout.CENTER);
-			frame.setSize(1024, 768);
+			frame.add(new JScrollPane(mListView), BorderLayout.CENTER);
+			frame.setSize(dpiScale * 1600, dpiScale * 950);
 			frame.setLocationRelativeTo(null);
 			frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 			frame.setVisible(true);
@@ -81,20 +91,23 @@ public class Test
 	}
 
 
-	private static class Button extends AbstractAction
+	private static class Button extends JButton
 	{
 		Runnable mOnClick;
 
 		public Button(String aName, Runnable aOnClick)
 		{
-			super(aName);
-			mOnClick = aOnClick;
-		}
-		
-		@Override
-		public void actionPerformed(ActionEvent aE)
-		{
-			mOnClick.run();
+			super(new AbstractAction(aName)
+			{
+				@Override
+				public void actionPerformed(ActionEvent aE)
+				{
+					aOnClick.run();
+					mListView.requestFocusInWindow();
+				}
+			});
+
+			super.setFont(new Font("Segoe UI", Font.PLAIN, 22));
 		}
 	}
 
@@ -143,6 +156,12 @@ public class Test
 		public long getModified()
 		{
 			return modified;
+		}
+
+
+		public String getDimensions()
+		{
+			return icon.getWidth()+"x"+icon.getHeight();
 		}
 
 

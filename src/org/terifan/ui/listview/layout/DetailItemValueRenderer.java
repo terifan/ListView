@@ -210,7 +210,7 @@ public class DetailItemValueRenderer extends JComponent implements ListViewCellR
 	protected void paintFocusRectangle(Graphics aGraphics, int x, int y, int w, int h)
 	{
 		aGraphics.setColor(mListView.getStyles().focusRect);
-		Utilities.drawDottedRect(aGraphics, x, y, w, h, false);
+		Utilities.drawFocusRect(aGraphics, x, y, w, h, false);
 	}
 
 

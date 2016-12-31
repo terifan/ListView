@@ -25,48 +25,50 @@ public final class Utilities
 	}
 
 
-	public static void drawDottedRect(Graphics aGraphics, int x, int y, int w, int h, boolean aAlign)
+	public static void drawFocusRect(Graphics aGraphics, int x, int y, int w, int h, boolean aAlign)
 	{
-		if (aAlign)
-		{
-			w |= 1;
-			h |= 1;
-		}
-
-		int j = 0;
-		for (int i = 0; i < w; i++, j++, x++)
-		{
-			if ((j & 1) == 0)
-			{
-				aGraphics.drawLine(x, y, x, y);
-			}
-		}
-		x--;
-		j++;
-		for (int i = 0; i < h; i++, j++, y++)
-		{
-			if ((j & 1) == 0)
-			{
-				aGraphics.drawLine(x, y, x, y);
-			}
-		}
-		y--;
-		j++;
-		for (int i = 0; i < w; i++, j++, x--)
-		{
-			if ((j & 1) == 0)
-			{
-				aGraphics.drawLine(x, y, x, y);
-			}
-		}
-		x++;
-		j++;
-		for (int i = 0; i < h; i++, j++, y--)
-		{
-			if ((j & 1) == 0)
-			{
-				aGraphics.drawLine(x, y, x, y);
-			}
-		}
+		aGraphics.drawRect(x, y, w - 1, h - 1);
+		
+//		if (aAlign)
+//		{
+//			w |= 1;
+//			h |= 1;
+//		}
+//
+//		int j = 0;
+//		for (int i = 0; i < w; i++, j++, x++)
+//		{
+//			if ((j & 1) == 0)
+//			{
+//				aGraphics.drawLine(x, y, x, y);
+//			}
+//		}
+//		x--;
+//		j++;
+//		for (int i = 0; i < h; i++, j++, y++)
+//		{
+//			if ((j & 1) == 0)
+//			{
+//				aGraphics.drawLine(x, y, x, y);
+//			}
+//		}
+//		y--;
+//		j++;
+//		for (int i = 0; i < w; i++, j++, x--)
+//		{
+//			if ((j & 1) == 0)
+//			{
+//				aGraphics.drawLine(x, y, x, y);
+//			}
+//		}
+//		x++;
+//		j++;
+//		for (int i = 0; i < h; i++, j++, y--)
+//		{
+//			if ((j & 1) == 0)
+//			{
+//				aGraphics.drawLine(x, y, x, y);
+//			}
+//		}
 	}
 }

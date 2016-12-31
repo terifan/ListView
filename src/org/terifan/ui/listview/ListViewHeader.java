@@ -68,11 +68,9 @@ public class ListViewHeader extends JComponent
 				int y = 0;
 				for (int i = 0; i < 100; i++)
 				{
-					boolean isSelected = false, isArmed = false, isRollover = false;
+					renderer.paintRowHeader(mListView, aGraphics, 0, y, getWidth(), mListView.getStyles().itemHeight, false, false, false);
 
-					renderer.paintRowHeader(mListView, aGraphics, 0, y, getWidth(), 19, isSelected, isArmed, isRollover);
-
-					y += 19;
+					y += mListView.getStyles().itemHeight;
 				}
 				break;
 			case COLUMN_HEADER:
@@ -145,21 +143,19 @@ public class ListViewHeader extends JComponent
 		{
 			return new Dimension(renderer.getRowHeaderWidth(), 1);
 		}
-		else
-		{
-			int w = 0;
-			ListViewModel model = mListView.getModel();
-			for (int i = 0; i < model.getColumnCount(); i++)
-			{
-				ListViewColumn column = model.getColumn(i);
-				if (column.isVisible())
-				{
-					w += column.getWidth();
-				}
-			}
 
-			return new Dimension(w, renderer.getColumnHeaderHeight(mListView));
+		int w = 0;
+		ListViewModel model = mListView.getModel();
+		for (int i = 0; i < model.getColumnCount(); i++)
+		{
+			ListViewColumn column = model.getColumn(i);
+			if (column.isVisible())
+			{
+				w += column.getWidth();
+			}
 		}
+
+		return new Dimension(w, renderer.getColumnHeaderHeight(mListView));
 	}
 
 

@@ -20,11 +20,9 @@ public class ListViewBar extends JComponent
 	@Override
 	protected void paintComponent(Graphics g)
 	{
-			System.out.println("+");
 		if (mListView.getBarRenderer() != null)
 		{
 			super.paintComponent(g);
-			System.out.println("#");
 			mListView.getBarRenderer().render(mListView, (Graphics2D)g, 0, 0, getWidth(), 27);
 		}
 	}

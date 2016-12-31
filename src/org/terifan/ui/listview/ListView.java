@@ -348,6 +348,7 @@ public class ListView<T extends ListViewItem> extends JComponent implements Scro
 
 			Graphics2D g = (Graphics2D)aGraphics;
 
+			g.setFont(mStyles.item);
 			g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_LCD_HRGB);
 			g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
 
@@ -369,8 +370,8 @@ public class ListView<T extends ListViewItem> extends JComponent implements Scro
 	{
 		if (mPlaceholder != null && !mPlaceholder.isEmpty())
 		{
-			aGraphics.setFont(new Font("arial", Font.ITALIC, 12));
-			aGraphics.setColor(Color.BLACK);
+			aGraphics.setFont(mStyles.placeholderFont);
+			aGraphics.setColor(mStyles.placeholderColor);
 			aGraphics.drawString(mPlaceholder, (getWidth() - aGraphics.getFontMetrics().stringWidth(mPlaceholder)) / 2, Math.min(50, getHeight() - 5));
 		}
 	}
@@ -419,10 +420,7 @@ public class ListView<T extends ListViewItem> extends JComponent implements Scro
 				columnHeaderView.add(new ListViewBar(this), BorderLayout.NORTH);
 				columnHeaderView.add(new ListViewHeader(this, ListViewHeader.COLUMN_HEADER), BorderLayout.SOUTH);
 
-				ListViewHeader rowHeaderView;
-				rowHeaderView = new ListViewHeader(this, ListViewHeader.ROW_HEADER);
-
-				scrollPane.setRowHeaderView(rowHeaderView);
+				scrollPane.setRowHeaderView(new ListViewHeader(this, ListViewHeader.ROW_HEADER));
 				scrollPane.setColumnHeaderView(columnHeaderView);
 				scrollPane.setCorner(ScrollPaneConstants.UPPER_LEFT_CORNER, new ListViewHeader(this, ListViewHeader.UPPER_LEFT_CORNER));
 				scrollPane.setCorner(ScrollPaneConstants.UPPER_RIGHT_CORNER, new ListViewHeader(this, ListViewHeader.UPPER_RIGHT_CORNER));

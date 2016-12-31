@@ -114,18 +114,18 @@ public class ImageResizer
 			{
 				currentHeight = Math.max((currentHeight + 1) / 2, aHeight);
 			}
-
+			
 			BufferedImage tmp = renderImage(aSource, currentWidth, currentHeight, aQuality);
 
 			if (flush)
 			{
 				aSource.flush();
 			}
-			
+
 			aSource = tmp;
 			flush = true;
 		}
-		while (currentWidth != aWidth || currentHeight != aHeight);
+		while (currentWidth > aWidth || currentHeight > aHeight);
 
 		return aSource;
 	}

@@ -23,6 +23,7 @@ import org.terifan.ui.listview.util.Utilities;
 
 public class CardItemRenderer implements ListViewItemRenderer
 {
+	protected final static int ROW_HEADER_PADDING = 5;
 	protected int PADDING = 13;
 
 	protected Dimension mItemSize;
@@ -36,12 +37,12 @@ public class CardItemRenderer implements ListViewItemRenderer
 	 * @param aItemHeight Preferred height of an item.
 	 * @param aOrientation The orientation
 	 */
-	public CardItemRenderer(Dimension aItemSize, int aLabelWidth, Orientation aOrientation)
+	public CardItemRenderer(Dimension aItemSize, int aLabelWidth, Orientation aOrientation, int aRowHeight)
 	{
 		mItemSize = aItemSize;
 		mLabelWidth = aLabelWidth;
 		mOrientation = aOrientation;
-		mRowHeight = 16;
+		mRowHeight = aRowHeight;
 	}
 
 
@@ -112,7 +113,7 @@ public class CardItemRenderer implements ListViewItemRenderer
 
 			if (j == 0)
 			{
-				h += 20;
+				h += mRowHeight + ROW_HEADER_PADDING;
 			}
 			else
 			{
@@ -145,17 +146,23 @@ public class CardItemRenderer implements ListViewItemRenderer
 		aOriginY += 6;
 		aWidth -= 6;
 		aHeight -= 6;
+		
+		int rh = mRowHeight + ROW_HEADER_PADDING;
 
-		BufferedImage scaledImage;
+		BufferedImage backgroundImage;
+		BufferedImage headerImage;
 		if (aListView.isItemSelected(aItem))
 		{
-			scaledImage = ImageResizer.getScaledImage(style.cardBackgroundSelected, aWidth, aHeight, 20, 2, 2, 2, false, aListView.getImageCache());
+			headerImage = ImageResizer.getScaledImage(style.cardHeaderSelected, aWidth, rh, 2, 2, 0, 2, false, aListView.getImageCache());
+			backgroundImage = ImageResizer.getScaledImage(style.cardBackgroundSelected, aWidth, aHeight - rh, 0, 2, 2, 2, false, aListView.getImageCache());
 		}
 		else
 		{
-			scaledImage = ImageResizer.getScaledImage(style.cardBackgroundNormal, aWidth, aHeight, 20, 2, 2, 2, false, aListView.getImageCache());
+			headerImage = ImageResizer.getScaledImage(style.cardHeaderNormal, aWidth, rh, 2, 2, 0, 2, false, aListView.getImageCache());
+			backgroundImage = ImageResizer.getScaledImage(style.cardBackgroundNormal, aWidth, aHeight - rh, 0, 2, 2, 2, false, aListView.getImageCache());
 		}
-		aGraphics.drawImage(scaledImage, aOriginX, aOriginY, null);
+		aGraphics.drawImage(headerImage, aOriginX, aOriginY, null);
+		aGraphics.drawImage(backgroundImage, aOriginX, aOriginY + headerImage.getHeight(), null);
 
 		int rowCount = Math.max(1, (aHeight - 4) / mRowHeight);
 
@@ -163,7 +170,8 @@ public class CardItemRenderer implements ListViewItemRenderer
 		int y = aOriginY;
 
 		Color foreground = style.itemForeground;
-		Font font = style.item;
+		Font plainFont = style.item;
+		Font boldFont = style.itemBold;
 
 		for (int col = 0, rowIndex = 0; col < model.getColumnCount() && rowIndex < rowCount; col++)
 		{
@@ -183,15 +191,15 @@ public class CardItemRenderer implements ListViewItemRenderer
 			{
 				if (rowIndex == 0)
 				{
-					aGraphics.setFont(font.deriveFont(Font.BOLD));
+					aGraphics.setFont(boldFont);
 
-					TextRenderer.drawString(aGraphics, value.toString(), x, y + 1, aWidth - 5 - 5, 20, Anchor.WEST, foreground, null, false);
+					TextRenderer.drawString(aGraphics, value.toString(), x, y + 1, aWidth - 5 - 5, rh, Anchor.WEST, foreground, null, false);
 
-					y += 20 + 2;
+					y += rh + 2;
 				}
 				else
 				{
-					aGraphics.setFont(font);
+					aGraphics.setFont(plainFont);
 
 					TextRenderer.drawString(aGraphics, column.getLabel(), x, y, mLabelWidth, mRowHeight, Anchor.NORTH_WEST, foreground, null, false);
 					TextRenderer.drawString(aGraphics, value.toString(), x + 5 + mLabelWidth, y, aWidth - 15 - 5 - mLabelWidth, mRowHeight, Anchor.NORTH_WEST, foreground, null, false);

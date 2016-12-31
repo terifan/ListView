@@ -201,7 +201,8 @@ public class TileItemRenderer implements ListViewItemRenderer
 
 		if (aListView.getFocusItem() == aItem)
 		{
-			Utilities.drawDottedRect(aGraphics, aOriginX + 1, aOriginY + 1, aWidth - 2, aHeight - 2, false);
+			aGraphics.setColor(aListView.getStyles().focusRect);
+			Utilities.drawFocusRect(aGraphics, aOriginX, aOriginY, aWidth, aHeight, false);
 		}
 	}
 

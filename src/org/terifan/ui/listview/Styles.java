@@ -35,7 +35,7 @@ public class Styles
 	public Color itemSortedRolloverForeground = new Color(0, 0, 0);
 	public Color itemSortedRolloverBackground = new Color(252, 252, 255);
 
-	public Color focusRect = new Color(89, 80, 54);
+	public Color focusRect = new Color(70, 100, 185);
 
 	public Color itemLabelForeground = new Color(0, 0, 0);
 	public Color itemLabelBackground = new Color(242, 248, 255);
@@ -75,6 +75,7 @@ public class Styles
 	public Color headerForegroundArmed = new Color(0, 0, 0);
 
 	public Font item = new Font("Segoe UI", Font.PLAIN, 11);
+	public Font itemBold = new Font("Segoe UI", Font.BOLD, 11);
 	public Font header = new Font("Segoe UI", Font.PLAIN, 11);
 	public Font label = new Font("Segoe UI", Font.BOLD, 11);
 
@@ -93,6 +94,8 @@ public class Styles
 
 	public BufferedImage cardBackgroundNormal = Utilities.loadImage(CardItemRenderer.class, "card_background_normal.png");
 	public BufferedImage cardBackgroundSelected = Utilities.loadImage(CardItemRenderer.class, "card_background_selected.png");
+	public BufferedImage cardHeaderNormal = Utilities.loadImage(CardItemRenderer.class, "card_header_normal.png");
+	public BufferedImage cardHeaderSelected = Utilities.loadImage(CardItemRenderer.class, "card_header_selected.png");
 
 	public BufferedImage thumbBorderSelected = Utilities.loadImage(ThumbnailItemRenderer.class, "thumb_border_2.png");
 	public BufferedImage thumbBorderNormal = Utilities.loadImage(ThumbnailItemRenderer.class, "thumb_border_2.png");
@@ -108,8 +111,30 @@ public class Styles
 
 	public Cursor cursorSplit = Toolkit.getDefaultToolkit().createCustomCursor(Utilities.loadImage(ListViewHeader.class, "cursor_split.png"), new Point(16,16), "split");
 	public Cursor cursorResize = Toolkit.getDefaultToolkit().createCustomCursor(Utilities.loadImage(ListViewHeader.class, "cursor_resize.png"), new Point(16,16), "resize");
+	
+	public Font placeholderFont = new Font("Segoe UI", Font.ITALIC, 12);
+	public Color placeholderColor = Color.BLACK;
 
 	public Styles()
 	{
+	}
+
+
+	public void scale(float aDpiScale)
+	{
+		itemHeight *= aDpiScale;
+		horizontalBarHeight *= aDpiScale;
+		headerColumnHeight *= aDpiScale;
+		columnDividerSpacing *= aDpiScale;
+		groupWidth *= aDpiScale;
+		groupHeight *= aDpiScale;
+
+		item = item.deriveFont(item.getSize() * aDpiScale);
+		itemBold = itemBold.deriveFont(itemBold.getSize() * aDpiScale);
+		header = header.deriveFont(header.getSize() * aDpiScale);
+		label = label.deriveFont(label.getSize() * aDpiScale);
+		barFont = barFont.deriveFont(barFont.getSize() * aDpiScale);
+		group = group.deriveFont(group.getSize() * aDpiScale);
+		groupCount = groupCount.deriveFont(groupCount.getSize() * aDpiScale);
 	}
 }

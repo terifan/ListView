@@ -180,7 +180,8 @@ public class ThumbnailItemRenderer<T extends ListViewItem> implements ListViewIt
 
 		if (aListView.getFocusItem() == aItem)
 		{
-			Utilities.drawDottedRect(aGraphics, sx + 1, sy + 1, sw - 2, sh - 2, false);
+			aGraphics.setColor(aListView.getStyles().focusRect);
+			Utilities.drawFocusRect(aGraphics, sx, sy, sw, sh, false);
 		}
 	}
 

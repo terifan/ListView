@@ -179,7 +179,7 @@ public class DetailItemRenderer implements ListViewItemRenderer
 		if (aListView.getFocusItem() == aItem && (aListView.getSelectionMode() == SelectionMode.ROW || aListView.getSelectionMode() == SelectionMode.SINGLE_ROW))
 		{
 			aGraphics.setColor(style.focusRect);
-			Utilities.drawDottedRect(aGraphics, aOriginX, aOriginY, aWidth, aHeight - 1, false);
+			Utilities.drawFocusRect(aGraphics, aOriginX, aOriginY, aWidth, aHeight - 1, false);
 		}
 	}
 
