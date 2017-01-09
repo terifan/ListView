@@ -35,7 +35,7 @@ public class Styles
 	public Color itemSortedRolloverForeground = new Color(0, 0, 0);
 	public Color itemSortedRolloverBackground = new Color(252, 252, 255);
 
-	public Color focusRect = new Color(70, 100, 185);
+	public Color focusRect = new Color(140, 200, 255);
 
 	public Color itemLabelForeground = new Color(0, 0, 0);
 	public Color itemLabelBackground = new Color(242, 248, 255);
@@ -97,10 +97,10 @@ public class Styles
 	public BufferedImage cardHeaderNormal = Utilities.loadImage(CardItemRenderer.class, "card_header_normal.png");
 	public BufferedImage cardHeaderSelected = Utilities.loadImage(CardItemRenderer.class, "card_header_selected.png");
 
-	public BufferedImage thumbBorderSelected = Utilities.loadImage(ThumbnailItemRenderer.class, "thumb_border_2.png");
-	public BufferedImage thumbBorderNormal = Utilities.loadImage(ThumbnailItemRenderer.class, "thumb_border_2.png");
-	public BufferedImage thumbBorderSelectedBackground = Utilities.loadImage(ThumbnailItemRenderer.class, "thumb_border_2_selected_background.png");
-	public BufferedImage thumbBorderSelectedUnfocusedBackground = Utilities.loadImage(ThumbnailItemRenderer.class, "thumb_border_2_background_nofocus.png");
+	public BufferedImage thumbBorderNormal = Utilities.loadImage(ThumbnailItemRenderer.class, "thumb_border_1_normal.png");
+	public BufferedImage thumbBorderSelected = Utilities.loadImage(ThumbnailItemRenderer.class, "thumb_border_1_selected.png");
+	public BufferedImage thumbBorderSelectedBackground = Utilities.loadImage(ThumbnailItemRenderer.class, "thumb_border_1_selected_background_focused.png");
+	public BufferedImage thumbBorderSelectedUnfocusedBackground = Utilities.loadImage(ThumbnailItemRenderer.class, "thumb_border_1_selected_background_unfocused.png");
 	public BufferedImage thumbPlaceholder = Utilities.loadImage(ThumbnailItemRenderer.class, "thumb_placeholder.png");
 
 	public BufferedImage barNormal = Utilities.loadImage(ListViewBarRenderer.class, "bar_normal.png");
@@ -114,6 +114,12 @@ public class Styles
 	
 	public Font placeholderFont = new Font("Segoe UI", Font.ITALIC, 12);
 	public Color placeholderColor = Color.BLACK;
+
+	public int ITEM_PAD_HOR = 20;
+	public int ITEM_PAD_VER = 20;
+	public int ITEM_SPACE_HOR = 4;
+	public int ITEM_SPACE_VER = 4;
+
 
 	public Styles()
 	{

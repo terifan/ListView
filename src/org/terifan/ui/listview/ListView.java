@@ -63,6 +63,7 @@ public class ListView<T extends ListViewItem> extends JComponent implements Scro
 	private Cache<ImageCacheKey,BufferedImage> mImageCache;
 	private final Rectangle mSelectionRectangle = new Rectangle();
 	private final HashSet<T> mSelectedItems;
+	private double mDPIScale;
 
 
 	public ListView()
@@ -77,6 +78,7 @@ public class ListView<T extends ListViewItem> extends JComponent implements Scro
 		mSelectedItems = new HashSet<>();
 		mEventListeners = new ArrayList<>();
 		mImageCache = new Cache<>(1 * 1024 * 1024);
+		mDPIScale = 1;
 
 		super.setOpaque(true);
 		super.setFocusable(true);

@@ -20,6 +20,7 @@ import org.terifan.ui.listview.ListViewLayout;
 import org.terifan.ui.listview.ListViewModel;
 import org.terifan.ui.listview.util.Orientation;
 import org.terifan.ui.listview.Styles;
+import org.terifan.ui.listview.util.ImageCacheKey;
 import org.terifan.ui.listview.util.ImageResizer;
 import org.terifan.ui.listview.util.Utilities;
 

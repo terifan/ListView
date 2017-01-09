@@ -13,6 +13,7 @@ import org.terifan.ui.listview.ListViewItemRenderer;
 import org.terifan.ui.listview.ListViewLayout;
 import org.terifan.ui.listview.Styles;
 import org.terifan.ui.listview.util.Anchor;
+import org.terifan.ui.listview.util.ImageCacheKey;
 import org.terifan.ui.listview.util.ImageResizer;
 import org.terifan.ui.listview.util.Orientation;
 import org.terifan.ui.listview.util.TextRenderer;
