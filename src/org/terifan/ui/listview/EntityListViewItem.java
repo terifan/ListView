@@ -28,29 +28,30 @@ public class EntityListViewItem implements ListViewItem
 	{
 		try
 		{
-			Method method = null;
-
-			for (Method tmp : mThisType.getDeclaredMethods())
+			for (Method method : mThisType.getDeclaredMethods())
 			{
-				String name = tmp.getName();
-				if (tmp.getParameterCount() == 0 && (name.startsWith("get") && name.substring(3).equalsIgnoreCase(aColumn.getKey())
+				String name = method.getName();
+				if (method.getParameterCount() == 0 && (name.startsWith("get") && name.substring(3).equalsIgnoreCase(aColumn.getKey())
 					|| name.startsWith("is") && name.substring(2).equalsIgnoreCase(aColumn.getKey())))
 				{
-					tmp.setAccessible(true);
-					method = tmp;
+					method.setAccessible(true);
 					aColumn.setUserObject(EntityListViewItem.class, method);
-					break;
+					return method.invoke(this);
 				}
 			}
 
-			if (method != null)
+			for (Field field : mThisType.getDeclaredFields())
 			{
-				return method.invoke(this);
+				String name = field.getName();
+				if (name.equalsIgnoreCase(aColumn.getKey()))
+				{
+					field.setAccessible(true);
+					aColumn.setUserObject(EntityListViewItem.class, field);
+					return field.get(this);
+				}
 			}
-			else
-			{
-				return "#missing";
-			}
+
+			return "#missing";
 		}
 		catch (IllegalAccessException | InvocationTargetException e)
 		{
@@ -92,7 +93,7 @@ public class EntityListViewItem implements ListViewItem
 			e.printStackTrace(System.out);
 		}
 
-		System.out.println("No icon provider specified in entity: " + mThisType);
+		System.err.println("No icon provider specified in entity: " + mThisType);
 
 		return null;
 	}

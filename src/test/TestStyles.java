@@ -29,7 +29,7 @@ import org.terifan.ui.listview.util.ImageResizer;
 import org.terifan.ui.listview.util.Orientation;
 
 
-public class Test
+public class TestStyles
 {
 	private static ListView<Item> mListView;
 
