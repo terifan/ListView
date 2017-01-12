@@ -99,8 +99,9 @@ public class Styles
 
 	public BufferedImage thumbBorderNormal = Utilities.loadImage(ThumbnailItemRenderer.class, "thumb_border_1_normal.png");
 	public BufferedImage thumbBorderSelected = Utilities.loadImage(ThumbnailItemRenderer.class, "thumb_border_1_selected.png");
-	public BufferedImage thumbBorderSelectedBackground = Utilities.loadImage(ThumbnailItemRenderer.class, "thumb_border_1_selected_background_focused.png");
-	public BufferedImage thumbBorderSelectedUnfocusedBackground = Utilities.loadImage(ThumbnailItemRenderer.class, "thumb_border_1_selected_background_unfocused.png");
+	public BufferedImage thumbBorderSelectedBackground = Utilities.loadImage(ThumbnailItemRenderer.class, "thumb_border_1_selected_background.png");
+	public BufferedImage thumbBorderSelectedBackgroundFocused = Utilities.loadImage(ThumbnailItemRenderer.class, "thumb_border_1_selected_background_focused.png");
+	public BufferedImage thumbBorderSelectedBackgroundUnfocused = Utilities.loadImage(ThumbnailItemRenderer.class, "thumb_border_1_selected_background_unfocused.png");
 	public BufferedImage thumbPlaceholder = Utilities.loadImage(ThumbnailItemRenderer.class, "thumb_placeholder.png");
 
 	public BufferedImage barNormal = Utilities.loadImage(ListViewBarRenderer.class, "bar_normal.png");

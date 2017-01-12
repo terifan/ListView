@@ -150,7 +150,7 @@ public class ThumbnailItemRenderer<T extends ListViewItem> implements ListViewIt
 
 		if (selected)
 		{
-			BufferedImage im = ImageResizer.getScaledImage(aListView.isFocusOwner() ? style.thumbBorderSelectedBackground : style.thumbBorderSelectedUnfocusedBackground, sw, sh, 3, 3, 3, 3, false, aListView.getImageCache());
+			BufferedImage im = ImageResizer.getScaledImage(aListView.isFocusOwner() ? aListView.getFocusItem() == aItem ? style.thumbBorderSelectedBackgroundFocused : style.thumbBorderSelectedBackground : style.thumbBorderSelectedBackgroundUnfocused, sw, sh, 3, 3, 3, 3, false, aListView.getImageCache());
 			aGraphics.drawImage(im, sx, sy, null);
 		}
 
@@ -179,7 +179,7 @@ public class ThumbnailItemRenderer<T extends ListViewItem> implements ListViewIt
 			TextRenderer.drawString(aGraphics, label, sx + 2, y + h - labelHeight - 2, sw - 4, labelHeight, Anchor.NORTH, style.itemForeground, null, false);
 		}
 
-		if (aListView.getFocusItem() == aItem)
+		if (!selected && aListView.getFocusItem() == aItem)
 		{
 			aGraphics.setColor(aListView.getStyles().focusRect);
 			Utilities.drawFocusRect(aGraphics, sx, sy, sw, sh, false);
