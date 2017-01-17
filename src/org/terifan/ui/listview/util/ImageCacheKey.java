@@ -1,39 +1,26 @@
 package org.terifan.ui.listview.util;
 
-import java.awt.image.BufferedImage;
 import java.util.Objects;
 
 
 public class ImageCacheKey
 {
-	private BufferedImage mImage;
+	private Object mObject;
 	private String mParameters;
 
 
-	public ImageCacheKey(BufferedImage aImage, int aWidth, int aHeight, boolean aQuality)
+	public ImageCacheKey(Object aObject, int aWidth, int aHeight, boolean aQuality)
 	{
-		mImage = aImage;
+		mObject = aObject;
 		mParameters = aWidth + "," + aHeight + "," + aQuality;
 	}
-
-
-	public BufferedImage getImage()
-	{
-		return mImage;
-	}
-
-
-	public String getParameters()
-	{
-		return mParameters;
-	}
-
+	
 
 	@Override
 	public int hashCode()
 	{
 		int hash = 7;
-		hash = 47 * hash + Objects.hashCode(this.mImage);
+		hash = 47 * hash + Objects.hashCode(this.mObject);
 		hash = 47 * hash + Objects.hashCode(this.mParameters);
 		return hash;
 	}
@@ -59,7 +46,7 @@ public class ImageCacheKey
 		{
 			return false;
 		}
-		if (!Objects.equals(this.mImage, other.mImage))
+		if (!Objects.equals(this.mObject, other.mObject))
 		{
 			return false;
 		}

@@ -4,6 +4,7 @@ import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import javax.swing.Icon;
+import org.terifan.ui.listview.util.ImageCacheKey;
 import org.terifan.ui.listview.util.ImageResizer;
 
 
