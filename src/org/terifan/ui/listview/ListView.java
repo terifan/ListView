@@ -124,6 +124,12 @@ public class ListView<T extends ListViewItem> extends JComponent implements Scro
 	}
 
 
+	public void setImageCache(Cache<ImageCacheKey, BufferedImage> aImageCache)
+	{
+		mImageCache = aImageCache;
+	}
+
+
 	public Styles getStyles()
 	{
 		return mStyles;
