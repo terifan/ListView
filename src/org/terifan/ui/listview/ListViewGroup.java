@@ -205,7 +205,7 @@ public class ListViewGroup<T extends ListViewItem>
 
 		if (siblingIndex == -1)
 		{
-			throw new RuntimeException();
+			throw new IllegalStateException();
 		}
 
 		ListViewGroup siblingGroup;

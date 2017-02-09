@@ -518,27 +518,27 @@ public class ListViewLayoutHorizontal<T extends ListViewItem> extends AbstractLi
 	@Override
 	public T getItemRelativeTo(T aItem, int aDiffX, int aDiffY)
 	{
-		throw new RuntimeException("not implemented");
+		throw new IllegalStateException("not implemented");
 	}
 
 
 	@Override
 	public ArrayList<T> getItemsIntersecting(T aFromItem, T aToItem)
 	{
-		throw new RuntimeException("not implemented");
+		throw new IllegalStateException("not implemented");
 	}
 
 
 	@Override
 	public ArrayList<T> getItemsIntersecting(int x1, int y1, int x2, int y2, ArrayList<T> aList)
 	{
-		throw new RuntimeException("not implemented");
+		throw new IllegalStateException("not implemented");
 	}
 
 
 	@Override
 	public boolean getItemBounds(T aItem, Rectangle aRectangle)
 	{
-		throw new RuntimeException("not implemented");
+		throw new IllegalStateException("not implemented");
 	}
 }

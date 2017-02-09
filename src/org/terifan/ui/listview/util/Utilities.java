@@ -20,7 +20,7 @@ public final class Utilities
 		}
 		catch (Exception e)
 		{
-			throw new RuntimeException(e);
+			throw new IllegalStateException(e);
 		}
 	}
 

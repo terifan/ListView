@@ -183,7 +183,7 @@ public class DetailItemValueRenderer extends JComponent implements ListViewCellR
 				x += Math.max(0, w - sw - column.getIconWidth() - computeIconTextSpacing(column) - 5);
 				break;
 			default:
-				throw new RuntimeException("Unsupported alignment: " + column.getAlignment());
+				throw new IllegalStateException("Unsupported alignment: " + column.getAlignment());
 		}
 
 		if (aIncludeIcon)
