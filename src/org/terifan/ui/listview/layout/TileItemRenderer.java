@@ -20,16 +20,14 @@ import org.terifan.ui.listview.ListViewLayout;
 import org.terifan.ui.listview.ListViewModel;
 import org.terifan.ui.listview.util.Orientation;
 import org.terifan.ui.listview.Styles;
-import org.terifan.ui.listview.util.ImageCacheKey;
 import org.terifan.ui.listview.util.ImageResizer;
 import org.terifan.ui.listview.util.Utilities;
 
 
 public class TileItemRenderer implements ListViewItemRenderer
 {
-	private final static FontRenderContext FRC = new FontRenderContext(new AffineTransform(), false, false);
+	protected final static FontRenderContext FRC = new FontRenderContext(new AffineTransform(), false, false);
 
-	public static final int MAX_ITEMS_PER_ROW = 100; // ??
 	
 	/**
 	 * Extra height added to each item
@@ -39,6 +37,7 @@ public class TileItemRenderer implements ListViewItemRenderer
 	private Dimension mItemSize;
 	private Orientation mOrientation;
 	private int mIconWidth;
+	private int mMaxItemsPerRow;
 	
 
 	/**
@@ -54,6 +53,19 @@ public class TileItemRenderer implements ListViewItemRenderer
 		mItemSize = aItemSize;
 		mOrientation = aOrientation;
 		mIconWidth = aIconWidth;
+		mMaxItemsPerRow = 100;
+	}
+
+
+	public int getMaxItemsPerRow()
+	{
+		return mMaxItemsPerRow;
+	}
+
+
+	public void setMaxItemsPerRow(int aMaxItemsPerRow)
+	{
+		this.mMaxItemsPerRow = aMaxItemsPerRow;
 	}
 
 
@@ -117,60 +129,52 @@ public class TileItemRenderer implements ListViewItemRenderer
 	public void paintItem(Graphics2D aGraphics, int aOriginX, int aOriginY, int aWidth, int aHeight, ListView aListView, ListViewItem aItem)
 	{
 		Styles style = aListView.getStyles();
-		ListViewModel model = aListView.getModel();
 		boolean selected = aListView.isItemSelected(aItem);
 
-		aOriginX += 1;
-		aOriginY += 1;
-		aWidth -= 2;
-		aHeight -= 2;
+		paintItemBackground(aGraphics, aListView, aItem, style, aOriginX, aOriginY, aWidth, aHeight, selected);
 
-		if (selected)
+		paintIcon(aGraphics, aListView, aItem, style, aOriginX, aOriginY, aWidth, aHeight, selected);
+
+		paintValues(aGraphics, aListView, aItem, style, aOriginX, aOriginY, aWidth, aHeight, selected);
+
+		if (aListView.getFocusItem() == aItem)
 		{
-			BufferedImage im = ImageResizer.getScaledImage(aListView.isFocusOwner() ? style.thumbBorderSelectedBackgroundFocused : style.thumbBorderSelectedBackgroundUnfocused, aWidth, aHeight, 3, 3, 3, 3, false, aListView.getImageCache());
+			paintFocusIndicator(aGraphics, aListView, aItem, style, aOriginX, aOriginY, aWidth, aHeight, selected);
+		}
+	}
+
+
+	protected void paintFocusIndicator(Graphics2D aGraphics, ListView aListView, ListViewItem aItem, Styles aStyle, int aOriginX, int aOriginY, int aWidth, int aHeight, boolean aSelected)
+	{
+		aGraphics.setColor(aListView.getStyles().focusRect);
+		Utilities.drawFocusRect(aGraphics, aOriginX, aOriginY, aWidth, aHeight, false);
+	}
+
+
+	protected void paintItemBackground(Graphics2D aGraphics, ListView aListView, ListViewItem aItem, Styles aStyle, int aOriginX, int aOriginY, int aWidth, int aHeight, boolean aSelected)
+	{
+		if (aSelected)
+		{
+			BufferedImage im = ImageResizer.getScaledImage(aListView.isFocusOwner() ? aStyle.thumbBorderSelectedBackgroundFocused : aStyle.thumbBorderSelectedBackgroundUnfocused, aWidth, aHeight, 3, 3, 3, 3, false, aListView.getImageCache());
 			aGraphics.drawImage(im, aOriginX, aOriginY, null);
 		}
+	}
 
-		{
-			int x = aOriginX + 3;
-			int y = aOriginY + 3;
-			int w = mIconWidth + 10;
-			int h = aHeight - 10;
 
-			BufferedImage icon = aItem.getIcon();
-			boolean drawBorder = aListView.isItemBorderPainted(aItem);
-
-			int tw = mIconWidth;
-			int th = mItemSize.height - PADDING_HEIGHT;
-
-			if (icon == null)
-			{
-				icon = ImageResizer.getScaledImageAspect(style.thumbPlaceholder, tw, th, true, aListView.getImageCache());
-			}
-
-			double f = Math.min(tw / (double)icon.getWidth(), th / (double)icon.getHeight());
-			tw = (int)(f * icon.getWidth());
-			th = (int)(f * icon.getHeight());
-
-			int tx = x + (w - tw) / 2;
-			int ty = y + 5;
-
-			if (drawBorder)
-			{
-				BufferedImage im = ImageResizer.getScaledImage(selected ? style.thumbBorderSelected : style.thumbBorderNormal, tw + 3 + 6, th + 3 + 7, 3, 3, 7, 6, false, aListView.getImageCache());
-				aGraphics.drawImage(im, tx - 3, ty - 3, null);
-			}
-
-			aGraphics.drawImage(icon, tx, ty, tw, th, null);
-		}
+	protected void paintValues(Graphics2D aGraphics, ListView aListView, ListViewItem aItem, Styles aStyle, int aOriginX, int aOriginY, int aWidth, int aHeight, boolean aSelected)
+	{
+		ListViewModel model = aListView.getModel();
 
 		LineMetrics lm = aGraphics.getFont().getLineMetrics("Adgj", FRC);
 		int lineHeight = (int)lm.getHeight() + 1;
-
 		int itemHeight = aHeight - 4;
-
-		int x = aOriginX + mIconWidth + 16;
+		int x = aOriginX;
 		int y = 3 + 5;
+
+		if (mIconWidth > 0)
+		{
+			x += mIconWidth + 16;
+		}
 
 		for (int col = 0; col < model.getColumnCount(); col++)
 		{
@@ -182,6 +186,7 @@ public class TileItemRenderer implements ListViewItemRenderer
 			}
 
 			Object label = aItem.getValue(column);
+
 			if (column.getFormatter() != null)
 			{
 				label = column.getFormatter().format(label);
@@ -189,7 +194,7 @@ public class TileItemRenderer implements ListViewItemRenderer
 
 			if (label != null && y + lineHeight < itemHeight && label.toString().length() > 0)
 			{
-				Rectangle dim = TextRenderer.drawString(aGraphics, label.toString(), x, aOriginY + y, aWidth - 5 - 16 - mIconWidth, itemHeight - y, Anchor.NORTH_WEST, col != 0 ? Color.GRAY : style.itemForeground, null, false);
+				Rectangle dim = TextRenderer.drawString(aGraphics, label.toString(), x, aOriginY + y, aWidth - 5 - 16 - mIconWidth, itemHeight - y, Anchor.NORTH_WEST, col != 0 ? Color.GRAY : aStyle.itemForeground, null, false);
 
 				y += 1 + dim.height;
 
@@ -199,12 +204,46 @@ public class TileItemRenderer implements ListViewItemRenderer
 				}
 			}
 		}
+	}
 
-		if (aListView.getFocusItem() == aItem)
+
+	protected void paintIcon(Graphics2D aGraphics, ListView aListView, ListViewItem aItem, Styles aStyle, int aOriginX, int aOriginY, int aWidth, int aHeight, boolean aSelected)
+	{
+		if (mIconWidth <= 0)
 		{
-			aGraphics.setColor(aListView.getStyles().focusRect);
-			Utilities.drawFocusRect(aGraphics, aOriginX, aOriginY, aWidth, aHeight, false);
+			return;
 		}
+
+		int x = aOriginX + 3;
+		int y = aOriginY + 3;
+		int w = mIconWidth + 10;
+		int h = aHeight - 10;
+
+		BufferedImage icon = aItem.getIcon();
+
+		boolean drawBorder = aListView.isItemBorderPainted(aItem);
+
+		int tw = mIconWidth;
+		int th = mItemSize.height - PADDING_HEIGHT;
+		if (icon == null)
+		{
+			icon = ImageResizer.getScaledImageAspect(aStyle.thumbPlaceholder, tw, th, true, aListView.getImageCache());
+		}
+
+		double f = Math.min(tw / (double)icon.getWidth(), th / (double)icon.getHeight());
+		tw = (int)(f * icon.getWidth());
+		th = (int)(f * icon.getHeight());
+
+		int tx = x + (w - tw) / 2;
+		int ty = y + 5;
+
+		if (drawBorder)
+		{
+			BufferedImage im = ImageResizer.getScaledImage(aSelected ? aStyle.thumbBorderSelected : aStyle.thumbBorderNormal, tw + 3 + 6, th + 3 + 7, 3, 3, 7, 6, false, aListView.getImageCache());
+			aGraphics.drawImage(im, tx - 3, ty - 3, null);
+		}
+
+		aGraphics.drawImage(icon, tx, ty, tw, th, null);
 	}
 
 
@@ -213,7 +252,7 @@ public class TileItemRenderer implements ListViewItemRenderer
 	{
 		if (mOrientation == Orientation.VERTICAL)
 		{
-			return new ListViewLayoutVertical(aListView, MAX_ITEMS_PER_ROW);
+			return new ListViewLayoutVertical(aListView, mMaxItemsPerRow);
 		}
 		else
 		{
