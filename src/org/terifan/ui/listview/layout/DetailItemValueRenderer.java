@@ -118,36 +118,40 @@ public class DetailItemValueRenderer extends JComponent implements ListViewCellR
 //			aGraphics.drawLine(rect.x, rect.y, rect.x+rect.width, rect.y);
 //			aGraphics.drawLine(rect.x, rect.y+rect.height-2, rect.x+rect.width, rect.y+rect.height-2);
 //		}
-		BufferedImage icon = mItem.getIcon();
 
-		if (icon != null && column.getIconWidth() > 0)
+		if (column.getIconWidth() > 0)
 		{
-			double f = Math.min(column.getIconWidth() / (double)icon.getWidth(), rh / (double)icon.getHeight());
-			int iw = (int)(f * icon.getWidth());
-			int ih = (int)(f * icon.getHeight());
+			BufferedImage icon = mItem.getIcon();
 
-			int ix = tr.x + 2 + (column.getIconWidth() - iw) / 2;
-			int iy = rect.y + (rect.height - ih) / 2;
-
-//			if (mIsSelected)
-//			{
-//				Image image;
-//
-//				if (mCachedHighlightedIcons.containsKey(icon))
-//				{
-//					image = mCachedHighlightedIcons.get(icon);
-//				}
-//				else
-//				{
-//					image = Utilities.filterHighlight(((ImageIcon)icon).getImage(), style.itemSelectedBackground);
-//					mCachedHighlightedIcons.put(icon, image, 1);
-//				}
-//
-//				aGraphics.drawImage(image, ix, iy, null);
-//			}
-//			else
+			if (icon != null)
 			{
-				aGraphics.drawImage(icon, ix, iy, iw, ih, null);
+				double f = Math.min(column.getIconWidth() / (double)icon.getWidth(), rh / (double)icon.getHeight());
+				int iw = (int)(f * icon.getWidth());
+				int ih = (int)(f * icon.getHeight());
+
+				int ix = tr.x + 2 + (column.getIconWidth() - iw) / 2;
+				int iy = rect.y + (rect.height - ih) / 2;
+
+	//			if (mIsSelected)
+	//			{
+	//				Image image;
+	//
+	//				if (mCachedHighlightedIcons.containsKey(icon))
+	//				{
+	//					image = mCachedHighlightedIcons.get(icon);
+	//				}
+	//				else
+	//				{
+	//					image = Utilities.filterHighlight(((ImageIcon)icon).getImage(), style.itemSelectedBackground);
+	//					mCachedHighlightedIcons.put(icon, image, 1);
+	//				}
+	//
+	//				aGraphics.drawImage(image, ix, iy, null);
+	//			}
+	//			else
+				{
+					aGraphics.drawImage(icon, ix, iy, iw, ih, null);
+				}
 			}
 		}
 
