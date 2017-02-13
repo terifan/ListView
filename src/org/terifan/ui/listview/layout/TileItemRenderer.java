@@ -28,7 +28,7 @@ public class TileItemRenderer implements ListViewItemRenderer
 {
 	protected final static FontRenderContext FRC = new FontRenderContext(new AffineTransform(), false, false);
 
-	
+
 	/**
 	 * Extra height added to each item
 	 */
@@ -38,7 +38,7 @@ public class TileItemRenderer implements ListViewItemRenderer
 	private Orientation mOrientation;
 	private int mIconWidth;
 	private int mMaxItemsPerRow;
-	
+
 
 	/**
 	 * @param aItemWidth
@@ -130,38 +130,40 @@ public class TileItemRenderer implements ListViewItemRenderer
 	{
 		Styles style = aListView.getStyles();
 		boolean selected = aListView.isItemSelected(aItem);
+		boolean focusOwner = aListView.isFocusOwner();
 
-		paintItemBackground(aGraphics, aListView, aItem, style, aOriginX, aOriginY, aWidth, aHeight, selected);
+		paintItemBackground(aGraphics, aListView, aItem, style, aOriginX, aOriginY, aWidth, aHeight, selected, focusOwner);
 
-		paintIcon(aGraphics, aListView, aItem, style, aOriginX, aOriginY, aWidth, aHeight, selected);
+		paintIcon(aGraphics, aListView, aItem, style, aOriginX, aOriginY, aWidth, aHeight, selected, focusOwner);
 
-		paintValues(aGraphics, aListView, aItem, style, aOriginX, aOriginY, aWidth, aHeight, selected);
+		paintValues(aGraphics, aListView, aItem, style, aOriginX, aOriginY, aWidth, aHeight, selected, focusOwner);
 
 		if (aListView.getFocusItem() == aItem)
 		{
-			paintFocusIndicator(aGraphics, aListView, aItem, style, aOriginX, aOriginY, aWidth, aHeight, selected);
+			paintFocusIndicator(aGraphics, aListView, aItem, style, aOriginX, aOriginY, aWidth, aHeight, selected, focusOwner);
 		}
 	}
 
 
-	protected void paintFocusIndicator(Graphics2D aGraphics, ListView aListView, ListViewItem aItem, Styles aStyle, int aOriginX, int aOriginY, int aWidth, int aHeight, boolean aSelected)
+	protected void paintFocusIndicator(Graphics2D aGraphics, ListView aListView, ListViewItem aItem, Styles aStyle, int aOriginX, int aOriginY, int aWidth, int aHeight, boolean aSelected, boolean aFocusOwner)
 	{
-		aGraphics.setColor(aListView.getStyles().focusRect);
+		aGraphics.setColor(aFocusOwner ? aListView.getStyles().focusRect : aListView.getStyles().focusRectUnfocused);
+
 		Utilities.drawFocusRect(aGraphics, aOriginX, aOriginY, aWidth, aHeight, false);
 	}
 
 
-	protected void paintItemBackground(Graphics2D aGraphics, ListView aListView, ListViewItem aItem, Styles aStyle, int aOriginX, int aOriginY, int aWidth, int aHeight, boolean aSelected)
+	protected void paintItemBackground(Graphics2D aGraphics, ListView aListView, ListViewItem aItem, Styles aStyle, int aOriginX, int aOriginY, int aWidth, int aHeight, boolean aSelected, boolean aFocusOwner)
 	{
 		if (aSelected)
 		{
-			BufferedImage im = ImageResizer.getScaledImage(aListView.isFocusOwner() ? aStyle.thumbBorderSelectedBackgroundFocused : aStyle.thumbBorderSelectedBackgroundUnfocused, aWidth, aHeight, 3, 3, 3, 3, false, aListView.getImageCache());
+			BufferedImage im = ImageResizer.getScaledImage(aFocusOwner ? aStyle.thumbBorderSelectedBackgroundFocused : aStyle.thumbBorderSelectedBackgroundUnfocused, aWidth, aHeight, 3, 3, 3, 3, false, aListView.getImageCache());
 			aGraphics.drawImage(im, aOriginX, aOriginY, null);
 		}
 	}
 
 
-	protected void paintValues(Graphics2D aGraphics, ListView aListView, ListViewItem aItem, Styles aStyle, int aOriginX, int aOriginY, int aWidth, int aHeight, boolean aSelected)
+	protected void paintValues(Graphics2D aGraphics, ListView aListView, ListViewItem aItem, Styles aStyle, int aOriginX, int aOriginY, int aWidth, int aHeight, boolean aSelected, boolean aFocusOwner)
 	{
 		ListViewModel model = aListView.getModel();
 
@@ -207,7 +209,7 @@ public class TileItemRenderer implements ListViewItemRenderer
 	}
 
 
-	protected void paintIcon(Graphics2D aGraphics, ListView aListView, ListViewItem aItem, Styles aStyle, int aOriginX, int aOriginY, int aWidth, int aHeight, boolean aSelected)
+	protected void paintIcon(Graphics2D aGraphics, ListView aListView, ListViewItem aItem, Styles aStyle, int aOriginX, int aOriginY, int aWidth, int aHeight, boolean aSelected, boolean aFocusOwner)
 	{
 		if (mIconWidth <= 0)
 		{

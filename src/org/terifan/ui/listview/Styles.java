@@ -36,6 +36,7 @@ public class Styles
 	public Color itemSortedRolloverBackground = new Color(252, 252, 255);
 
 	public Color focusRect = new Color(140, 200, 255);
+	public Color focusRectUnfocused = new Color(200, 200, 200);
 
 	public Color itemLabelForeground = new Color(0, 0, 0);
 	public Color itemLabelBackground = new Color(242, 248, 255);
@@ -86,7 +87,7 @@ public class Styles
 	public BufferedImage headerBackgroundSorted = Utilities.loadImage(ColumnHeaderRenderer.class, "column_header_background_sorted.png");
 	public BufferedImage headerSeparator = Utilities.loadImage(ColumnHeaderRenderer.class, "column_header_seperator_normal.png");
 	public BufferedImage headerSeparatorArmed = Utilities.loadImage(ColumnHeaderRenderer.class, "column_header_seperator_armed.png");
-	
+
 	public BufferedImage groupCollapseIcon = Utilities.loadImage(ListViewGroupRenderer.class, "group_collapse_icon.png");
 	public BufferedImage groupExpandIcon = Utilities.loadImage(ListViewGroupRenderer.class, "group_expand_icon.png");
 	public BufferedImage sortAscendingIcon = Utilities.loadImage(ColumnHeaderRenderer.class, "sort_ascending_icon.png");
@@ -112,7 +113,7 @@ public class Styles
 
 	public Cursor cursorSplit = Toolkit.getDefaultToolkit().createCustomCursor(Utilities.loadImage(ListViewHeader.class, "cursor_split.png"), new Point(16,16), "split");
 	public Cursor cursorResize = Toolkit.getDefaultToolkit().createCustomCursor(Utilities.loadImage(ListViewHeader.class, "cursor_resize.png"), new Point(16,16), "resize");
-	
+
 	public Font placeholderFont = new Font("Segoe UI", Font.ITALIC, 12);
 	public Color placeholderColor = Color.BLACK;
 
