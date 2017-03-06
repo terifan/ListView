@@ -82,8 +82,8 @@ public class ListView<T extends ListViewItem> extends JComponent implements Scro
 
 		super.setOpaque(true);
 		super.setFocusable(true);
-		super.setBackground(Color.WHITE);
-		super.setForeground(Color.BLACK);
+		super.setBackground(mStyles.itemBackground);
+		super.setForeground(mStyles.itemForeground);
 
 		mMouseListener = new ListViewMouseListener(this);
 		super.addMouseListener(mMouseListener);

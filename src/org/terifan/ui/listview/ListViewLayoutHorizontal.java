@@ -36,7 +36,7 @@ public class ListViewLayoutHorizontal<T extends ListViewItem> extends AbstractLi
 	{
 		Styles style = mListView.getStyles();
 
-		aGraphics.setColor(style.itemBackground);
+		aGraphics.setColor(mListView.getBackground());
 		aGraphics.fillRect(0, 0, mListView.getWidth(), mListView.getHeight());
 		aGraphics.setColor(style.itemForeground);
 

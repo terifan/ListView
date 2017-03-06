@@ -1,5 +1,6 @@
 package org.terifan.ui.listview;
 
+import java.awt.Color;
 import org.terifan.ui.listview.util.Orientation;
 import org.terifan.ui.listview.util.SortedMap;
 import java.awt.Dimension;
@@ -41,7 +42,7 @@ public class ListViewLayoutVertical<T extends ListViewItem> extends AbstractList
 
 		Styles style = mListView.getStyles();
 
-		aGraphics.setColor(style.itemBackground);
+		aGraphics.setColor(mListView.getBackground());
 		aGraphics.fillRect(0, 0, mListView.getWidth(), mListView.getHeight());
 		aGraphics.setColor(style.itemForeground);
 
