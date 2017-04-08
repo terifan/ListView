@@ -22,7 +22,7 @@ import org.terifan.ui.listview.util.ImageResizer;
 import org.terifan.ui.listview.util.Utilities;
 
 
-public class CardItemRenderer implements ListViewItemRenderer
+public class CardItemRenderer extends ListViewItemRenderer
 {
 	protected final static int ROW_HEADER_PADDING = 5;
 	protected int PADDING = 13;

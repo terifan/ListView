@@ -5,8 +5,10 @@ import org.terifan.ui.listview.ListViewLayoutHorizontal;
 import org.terifan.ui.listview.ListViewLayoutVertical;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
+import java.awt.Point;
 import java.awt.image.BufferedImage;
 import java.util.Objects;
+import java.util.Random;
 import org.terifan.ui.listview.ListView;
 import org.terifan.ui.listview.ListViewColumn;
 import org.terifan.ui.listview.ListViewItem;
@@ -17,10 +19,9 @@ import org.terifan.ui.listview.util.Anchor;
 import org.terifan.ui.listview.util.ImageResizer;
 import org.terifan.ui.listview.util.Orientation;
 import org.terifan.ui.listview.util.TextRenderer;
-import org.terifan.ui.listview.util.Utilities;
 
 
-public class ThumbnailItemRenderer1<T extends ListViewItem> implements ListViewItemRenderer<T>
+public class ThumbnailItemRenderer1<T extends ListViewItem> extends ListViewItemRenderer<T>
 {
 	public final static int DEFAULT_LABEL_HEIGHT = -1;
 
@@ -84,6 +85,15 @@ public class ThumbnailItemRenderer1<T extends ListViewItem> implements ListViewI
 		return mItemSize.height + mLabelHeight;
 	}
 
+	private Point mSpacing = new Point(9, 9);
+
+
+	@Override
+	public Point getItemSpacing(ListView<T> aListView)
+	{
+		return mSpacing;
+	}
+
 
 	@Override
 	public int getItemWidth(ListView<T> aListView, T aItem)
@@ -91,7 +101,7 @@ public class ThumbnailItemRenderer1<T extends ListViewItem> implements ListViewI
 		switch (getCategory(aItem))
 		{
 			case 0:
-				return aItem.getIcon() == null ? mItemSize.width : aItem.getIcon().getWidth()+32;
+				return aItem.getIcon() == null ? mItemSize.width : aItem.getIcon().getWidth() + 16;
 			case 1:
 			default:
 				return mItemSize.width;
@@ -105,7 +115,7 @@ public class ThumbnailItemRenderer1<T extends ListViewItem> implements ListViewI
 		switch (getCategory(aItem))
 		{
 			case 0:
-				return aItem.getIcon() == null ? mItemSize.height : aItem.getIcon().getHeight()+32;
+				return aItem.getIcon() == null ? mItemSize.height : aItem.getIcon().getHeight() + 32;
 			case 1:
 			default:
 				return mItemSize.height;
@@ -116,15 +126,17 @@ public class ThumbnailItemRenderer1<T extends ListViewItem> implements ListViewI
 	@Override
 	public void paintItem(Graphics2D aGraphics, int aOriginX, int aOriginY, int aWidth, int aHeight, ListView<T> aListView, T aItem)
 	{
-		switch (getCategory(aItem))
-		{
-			case 0:
-				paintRegularItem(aListView, aItem, aOriginX, aOriginY, aWidth, aHeight, aGraphics);
-				break;
-			case 1:
-				paintFolder(aListView, aItem, aOriginX, aOriginY, aWidth, aHeight, aGraphics);
-				break;
-		}
+//		switch (getCategory(aItem))
+//		{
+//			case 0: // back
+//			case 2: // image
+//			case 3: // unknown
+		paintRegularItem(aListView, aItem, aOriginX, aOriginY, aWidth, aHeight, aGraphics);
+//				break;
+//			case 1: // folder
+//				paintFolder(aListView, aItem, aOriginX, aOriginY, aWidth, aHeight, aGraphics);
+//				break;
+//		}
 	}
 
 
@@ -141,91 +153,176 @@ public class ThumbnailItemRenderer1<T extends ListViewItem> implements ListViewI
 
 	protected void paintRegularItem(ListView<T> aListView, T aItem, int aOriginX, int aOriginY, int aWidth, int aHeight, Graphics2D aGraphics)
 	{
-		Styles style = aListView.getStyles();
+		changeVisibleState(aListView, aItem, true);
+
 		boolean selected = aListView.isItemSelected(aItem);
 
-		int x = aOriginX + 16 + (aWidth-256-32)/2;
-		int y = aOriginY + 16;
-		int w = mItemSize.width - 32;
-		int h = aHeight - 32;
-		
+		int x = aOriginX;
+		int y = aOriginY;
+		int w = aWidth;
+		int h = aHeight;
+
 		int labelHeight = getLabelHeight(aItem);
-		
+
 		if (labelHeight < 0)
 		{
 			labelHeight = Math.abs(labelHeight * (aGraphics.getFontMetrics().getHeight() + 2));
 		}
-		
+
 		BufferedImage icon = aItem.getIcon();
 
-		aGraphics.setColor(new Color(40,40,40));
-		aGraphics.fillRect(x, y + h - Math.min(h, 256), w, Math.min(h, 256));
+		aGraphics.setColor(new Color(30, 30, 30));
+		aGraphics.fillRect(aOriginX, aOriginY, aWidth, aHeight);
 
 		if (icon != null)
 		{
+			int opacity = 0;
+
+			if (aItem instanceof ViewPortStateControl)
+			{
+				ViewPortStateControl item = (ViewPortStateControl)aItem;
+				long state = item.getViewPortState();
+
+				if (state == 0)
+				{
+					item.setViewPortState(state = System.currentTimeMillis());
+				}
+
+				opacity = (int)Math.max(0, 255 - 255 * (System.currentTimeMillis() - state) / 500);
+			}
+
 			int iw = icon.getWidth();
 			int ih = icon.getHeight();
-			aGraphics.drawImage(icon, x + (w - iw)/2, y + h - ih, iw, ih, null);
+//			aGraphics.drawImage(icon, x + (w - iw) / 2, y + h - ih, iw, ih, null);
+
+			int distance = opacity / 20;
+
+			int sss = Math.max(iw, ih);
+			double sx = aWidth / (double)sss;
+			double sy = aHeight / (double)sss;
+
+			int x0 = x + (w - (int)(sx * iw)) / 2;
+			int y0 = y + h - (int)(sy * ih);
+			aGraphics.drawImage(icon, x0, y0, x0 + (int)(sx * iw), y0 + (int)(sy * ih), distance, distance, iw - distance, ih - distance, null);
+
+			if (opacity > 0)
+			{
+				aGraphics.setColor(new Color(30, 30, 30, opacity));
+				aGraphics.fillRect(x0, y0, (int)(sx * iw), (int)(sy * ih));
+
+				requestRepaint(aListView);
+			}
 		}
 
 		String label = getLabel(aListView, aItem);
 
 		if (label != null && labelHeight > 0)
 		{
-			TextRenderer.drawString(aGraphics, label, x + 2, y + h - labelHeight - 2, w - 4, labelHeight, Anchor.NORTH, aListView.getForeground(), null, false);
+			aGraphics.setColor(new Color(0, 0, 0, 200));
+			aGraphics.fillRect(x, y + h - labelHeight, w, labelHeight);
+
+			TextRenderer.drawString(aGraphics, label, x + 2, y + h - labelHeight - 2, w - 4, labelHeight, Anchor.CENTER, aListView.getForeground(), null, false);
 		}
-		
+
 		if (selected)
 		{
-			aGraphics.setColor(new Color(255,255,255,64));
+			aGraphics.setColor(new Color(145, 206, 17, 64));
 			aGraphics.fillRect(aOriginX, aOriginY, aWidth, aHeight);
+
+			aGraphics.setColor(new Color(145, 206, 17));
+			for (int i = 0; i < 6; i++)
+			{
+				aGraphics.drawRect(aOriginX + i, aOriginY + i, aWidth - 2 * i, aHeight - 2 * i);
+			}
 		}
 	}
 
 
-	protected void paintFolder(ListView<T> aListView, T aItem, int aOriginX, int aOriginY, int aWidth, int aHeight, Graphics2D aGraphics)
-	{
-		Styles style = aListView.getStyles();
-		boolean selected = aListView.isItemSelected(aItem);
-
-		int x = aOriginX + 16;
-		int y = aOriginY + 16;
-		int w = aWidth - 32;
-		int h = aHeight - 32;
-
-		BufferedImage icon = aItem.getIcon();
-		if (icon == null)
-		{
-			icon = ImageResizer.getScaledImageAspect(style.thumbPlaceholder, w, w, true, aListView.getImageCache());
-		}
-
-		int labelHeight = getLabelHeight(aItem);
-		
-		if (labelHeight < 0)
-		{
-			labelHeight = Math.abs(labelHeight * (aGraphics.getFontMetrics().getHeight() + 2));
-		}
-
-		aGraphics.drawImage(icon, x, y, w, w, null);
-
-		aGraphics.setColor(new Color(40,40,40));
-		aGraphics.fillRect(x, y + w, w,		h - w);
-
-		String label = getLabel(aListView, aItem);
-		
-		if (label != null && labelHeight > 0)
-		{
-			TextRenderer.drawString(aGraphics, label, x + 2, y + w + 10, w - 4, h - w - 20, Anchor.NORTH, aListView.getForeground(), null, true);
-		}
-		
-		if (selected)
-		{
-			aGraphics.setColor(new Color(255,255,255,64));
-			aGraphics.fillRect(aOriginX, aOriginY, aWidth, aHeight);
-		}
-	}
-
-
+//	protected void paintFolder(ListView<T> aListView, T aItem, int aOriginX, int aOriginY, int aWidth, int aHeight, Graphics2D aGraphics)
+//	{
+//		changeVisibleState(aListView, aItem, true);
+//
+//		boolean selected = aListView.isItemSelected(aItem);
+//
+//		int x = aOriginX;
+//		int y = aOriginY;
+//		int w = aWidth;
+//		int h = aHeight;
+//
+//		int labelHeight = getLabelHeight(aItem);
+//
+//		if (labelHeight < 0)
+//		{
+//			labelHeight = Math.abs(labelHeight * (aGraphics.getFontMetrics().getHeight() + 2));
+//		}
+//
+//		BufferedImage icon = aItem.getIcon();
+//
+//		aGraphics.setColor(new Color(30, 30, 30));
+//		aGraphics.fillRect(aOriginX, aOriginY, aWidth, aHeight);
+//
+//		if (icon != null)
+//		{
+//			int opacity = 0;
+//
+//			if (aItem instanceof ViewPortStateControl)
+//			{
+//				ViewPortStateControl item = (ViewPortStateControl)aItem;
+//				long state = item.getViewPortState();
+//
+//				if (state == 0)
+//				{
+//					item.setViewPortState(state = System.currentTimeMillis());
+//				}
+//
+//				opacity = (int)Math.max(0, 255 - 255 * (System.currentTimeMillis() - state) / 500);
+//			}
+//
+//			int iw = icon.getWidth();
+//			int ih = icon.getHeight();
+////			aGraphics.drawImage(icon, x + (w - iw) / 2, y + h - ih, iw, ih, null);
+//
+//			int distance = opacity / 20;
+//
+//			int sss = Math.max(iw, ih);
+//			double sx = aWidth / (double)sss;
+//			double sy = aHeight / (double)sss;
+//
+//			int x0 = x + (w - (int)(sx * iw)) / 2;
+//			int y0 = y + h - (int)(sy * ih);
+//			aGraphics.drawImage(icon, x0, y0, x0 + (int)(sx * iw), y0 + (int)(sy * ih), distance, distance, iw - distance, ih - distance, null);
+//
+//			if (opacity > 0)
+//			{
+//				aGraphics.setColor(new Color(30, 30, 30, opacity));
+//				aGraphics.fillRect(x0, y0, (int)(sx * iw), (int)(sy * ih));
+//
+//				requestRepaint(aListView);
+//			}
+//		}
+//
+//		String label = getLabel(aListView, aItem);
+//
+//		if (label != null && labelHeight > 0)
+//		{
+//			aGraphics.setColor(new Color(0,0,0,128));
+//			aGraphics.fillRect(x, y+h-labelHeight, w, labelHeight);
+//			
+//			TextRenderer.drawString(aGraphics, label, x + 2, y + h - labelHeight - 2, w - 4, labelHeight, Anchor.NORTH, aListView.getForeground(), null, false);
+//		}
+//
+//		if (selected)
+//		{
+//			aGraphics.setColor(new Color(145, 206, 17, 64));
+//			aGraphics.fillRect(aOriginX, aOriginY, aWidth, aHeight);
+//
+//			aGraphics.setColor(new Color(145, 206, 17));
+//			for (int i = 0; i < 6; i++)
+//			{
+//				aGraphics.drawRect(aOriginX + i, aOriginY + i, aWidth - 2 * i, aHeight - 2 * i);
+//			}
+//		}
+//	}
 	protected String getLabel(ListView<T> aListView, T aItem)
 	{
 		String label = null;

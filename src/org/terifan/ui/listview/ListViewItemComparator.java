@@ -18,6 +18,11 @@ public class ListViewItemComparator<T extends ListViewItem> implements Comparato
 	public int compare(T o1, T o2)
 	{
 		ListViewColumn sci = mListView.getModel().getSortedColumn();
+		
+		if (sci == null)
+		{
+			throw new IllegalStateException("Sorted column is null");
+		}
 
 		if (o1.getValue(sci) instanceof Number)
 		{

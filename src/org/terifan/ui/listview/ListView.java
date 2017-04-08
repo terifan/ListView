@@ -6,7 +6,6 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Container;
 import java.awt.Dimension;
-import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.MouseInfo;
@@ -24,7 +23,9 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map.Entry;
 import javax.swing.AbstractAction;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
@@ -39,10 +40,14 @@ import javax.swing.SwingUtilities;
 import org.terifan.ui.listview.layout.DetailItemRenderer;
 import org.terifan.ui.listview.util.Cache;
 import org.terifan.ui.listview.util.ImageCacheKey;
+import org.terifan.ui.listview.layout.ViewPortStateControl;
 
 
 public class ListView<T extends ListViewItem> extends JComponent implements Scrollable
 {
+	private final HashMap<T, Object> mVisibleItems;
+	private final Rectangle mSelectionRectangle;
+	private final HashSet<T> mSelectedItems;
 	private ListViewModel<T> mModel;
 	private LocationInfo<T> mRolloverInfo;
 	private T mFocusItem;
@@ -60,10 +65,10 @@ public class ListView<T extends ListViewItem> extends JComponent implements Scro
 	private String mPlaceholder;
 	private ListViewMouseListener mMouseListener;
 	private PopupFactory<ListView> mPopupFactory;
-	private Cache<ImageCacheKey,BufferedImage> mImageCache;
-	private final Rectangle mSelectionRectangle = new Rectangle();
-	private final HashSet<T> mSelectedItems;
+	private Cache<ImageCacheKey, BufferedImage> mImageCache;
 	private double mDPIScale;
+	private boolean mRequestRepaint;
+	private Object mRenderKey;
 
 
 	public ListView()
@@ -78,6 +83,8 @@ public class ListView<T extends ListViewItem> extends JComponent implements Scro
 		mSelectedItems = new HashSet<>();
 		mEventListeners = new ArrayList<>();
 		mImageCache = new Cache<>(1 * 1024 * 1024);
+		mSelectionRectangle = new Rectangle();
+		mVisibleItems = new HashMap<>();
 		mDPIScale = 1;
 
 		super.setOpaque(true);
@@ -348,10 +355,13 @@ public class ListView<T extends ListViewItem> extends JComponent implements Scro
 
 
 	@Override
-	public void paintComponent(Graphics aGraphics)
+	public synchronized void paintComponent(Graphics aGraphics)
 	{
 		try
 		{
+			mRenderKey = System.currentTimeMillis();
+			mRequestRepaint = false;
+
 			super.paintComponent(aGraphics);
 
 			Graphics2D g = (Graphics2D)aGraphics;
@@ -360,16 +370,41 @@ public class ListView<T extends ListViewItem> extends JComponent implements Scro
 			g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_LCD_HRGB);
 			g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
 
+			JScrollPane scrollPane = getEnclosingScrollPane();
+			if (scrollPane != null)
+			{
+				Rectangle viewport = scrollPane.getViewport().getViewRect();
+				g.setClip(viewport.x, viewport.y, viewport.width, viewport.height);
+			}
+
 			mLayout.paint(g);
 
 			if (mModel.getItemCount() == 0)
 			{
 				paintPlaceHolder(g);
 			}
+
+			ArrayList<T> hidden = new ArrayList<>();
+			for (Entry<T, Object> item : mVisibleItems.entrySet())
+			{
+				if (item.getValue() != mRenderKey) // object comparison
+				{
+					hidden.add(item.getKey());
+				}
+			}
+			for (T item : hidden)
+			{
+				changeVisibleState(item, false);
+			}
 		}
 		catch (Exception e)
 		{
 			e.printStackTrace(System.err);
+		}
+
+		if (mRequestRepaint)
+		{
+			repaint();
 		}
 	}
 
@@ -393,48 +428,48 @@ public class ListView<T extends ListViewItem> extends JComponent implements Scro
 	}
 
 
-	protected void configureEnclosingScrollPane()
+	public void configureEnclosingScrollPane()
 	{
 		mIsConfigured = true;
 
-		Container p = getParent();
+		JScrollPane scrollPane = getEnclosingScrollPane();
 
-		if (p instanceof JViewport)
+		if (scrollPane != null)
 		{
-			Container gp = p.getParent();
+			JViewport viewport = scrollPane.getViewport();
 
-			if (gp instanceof JScrollPane)
+			if (viewport == null || viewport.getView() != this)
 			{
-				JScrollPane scrollPane = (JScrollPane)gp;
-				JViewport viewport = scrollPane.getViewport();
-
-				if (viewport == null || viewport.getView() != this)
-				{
-					return;
-				}
-
-				viewport.addChangeListener(e
-					-> 
-					{
-						if (mRolloverEnabled)
-						{
-							Point p1 = MouseInfo.getPointerInfo().getLocation();
-							SwingUtilities.convertPointFromScreen(p1, ListView.this);
-							updateRollover(p1);
-						}
-				});
-
-				JPanel columnHeaderView = new JPanel(new BorderLayout());
-				columnHeaderView.add(new ListViewBar(this), BorderLayout.NORTH);
-				columnHeaderView.add(new ListViewHeader(this, ListViewHeader.COLUMN_HEADER), BorderLayout.SOUTH);
-
-				scrollPane.setRowHeaderView(new ListViewHeader(this, ListViewHeader.ROW_HEADER));
-				scrollPane.setColumnHeaderView(columnHeaderView);
-				scrollPane.setCorner(ScrollPaneConstants.UPPER_LEFT_CORNER, new ListViewHeader(this, ListViewHeader.UPPER_LEFT_CORNER));
-				scrollPane.setCorner(ScrollPaneConstants.UPPER_RIGHT_CORNER, new ListViewHeader(this, ListViewHeader.UPPER_RIGHT_CORNER));
-				scrollPane.setBorder(null);
+				return;
 			}
+
+			viewport.addChangeListener(e
+				->
+			{
+				if (mRolloverEnabled)
+				{
+					Point p1 = MouseInfo.getPointerInfo().getLocation();
+					SwingUtilities.convertPointFromScreen(p1, ListView.this);
+					updateRollover(p1);
+				}
+			});
+
+			JPanel columnHeaderView = new JPanel(new BorderLayout());
+			columnHeaderView.add(new ListViewBar(this), BorderLayout.NORTH);
+			columnHeaderView.add(new ListViewHeader(this, ListViewHeader.COLUMN_HEADER), BorderLayout.SOUTH);
+
+			scrollPane.setRowHeaderView(new ListViewHeader(this, ListViewHeader.ROW_HEADER));
+			scrollPane.setColumnHeaderView(columnHeaderView);
+			scrollPane.setCorner(ScrollPaneConstants.UPPER_LEFT_CORNER, new ListViewHeader(this, ListViewHeader.UPPER_LEFT_CORNER));
+			scrollPane.setCorner(ScrollPaneConstants.UPPER_RIGHT_CORNER, new ListViewHeader(this, ListViewHeader.UPPER_RIGHT_CORNER));
+			scrollPane.setBorder(null);
 		}
+	}
+
+
+	protected JScrollPane getEnclosingScrollPane()
+	{
+		return (JScrollPane)SwingUtilities.getAncestorOfClass(JScrollPane.class, this);
 	}
 
 
@@ -742,13 +777,13 @@ public class ListView<T extends ListViewItem> extends JComponent implements Scro
 		ArrayList<T> list = new ArrayList<>(mSelectedItems.size());
 
 		ItemVisitor<T> visitor = (T aItem)
-			-> 
+			->
+		{
+			if (mSelectedItems.contains(aItem))
 			{
-				if (mSelectedItems.contains(aItem))
-				{
-					list.add(aItem);
-				}
-				return null;
+				list.add(aItem);
+			}
+			return null;
 		};
 
 		mModel.visitItems(true, visitor);
@@ -769,10 +804,10 @@ public class ListView<T extends ListViewItem> extends JComponent implements Scro
 		final ArrayList<T> list = new ArrayList<>(mModel.getItemCount());
 
 		ItemVisitor<T> visitor = aItem
-			-> 
-			{
-				list.add(aItem);
-				return null;
+			->
+		{
+			list.add(aItem);
+			return null;
 		};
 
 		mModel.visitItems(true, visitor);
@@ -910,11 +945,6 @@ public class ListView<T extends ListViewItem> extends JComponent implements Scro
 	}
 
 
-	protected void loadState(T aItem)
-	{
-	}
-
-
 	public T getItemAt(Point aPoint)
 	{
 		LocationInfo<T> info = mLayout.getLocationInfo(aPoint.x, aPoint.y);
@@ -942,7 +972,6 @@ public class ListView<T extends ListViewItem> extends JComponent implements Scro
 		return aItem.getIcon() != null;
 	}
 
-
 	private FocusListener mFocusListener = new FocusAdapter()
 	{
 		@Override
@@ -951,10 +980,66 @@ public class ListView<T extends ListViewItem> extends JComponent implements Scro
 			repaint();
 		}
 
+
 		@Override
 		public void focusLost(FocusEvent aE)
 		{
 			repaint();
 		}
 	};
+
+
+	protected void requestRepaint()
+	{
+		mRequestRepaint = true;
+	}
+
+
+	public ArrayList<T> getVisibleItems()
+	{
+		return getVisibleItems(0, 0);
+
+//		ArrayList<T> list = new ArrayList<>();
+//		list.addAll(mVisibleItems.keySet());
+//		return list;
+	}
+
+
+	public ArrayList<T> getVisibleItems(int aExtraHor, int aExtraVer)
+	{
+		JScrollPane scrollPane = getEnclosingScrollPane();
+		ArrayList<T> list = new ArrayList<>();
+
+		if (scrollPane != null)
+		{
+			Rectangle viewRect = scrollPane.getViewport().getViewRect();
+			viewRect.grow(aExtraHor, aExtraVer);
+			mLayout.getItemsIntersecting(viewRect, list);
+		}
+		else
+		{
+			mLayout.getItemsIntersecting(new Rectangle(0, 0, getWidth(), getHeight()), list);
+		}
+
+		return list;
+	}
+
+
+	protected void changeVisibleState(T aItem, boolean aState)
+	{
+		if (aState)
+		{
+			mVisibleItems.put(aItem, mRenderKey);
+		}
+		else
+		{
+			mVisibleItems.remove(aItem);
+
+			if (aItem instanceof ViewPortStateControl)
+			{
+				ViewPortStateControl item = (ViewPortStateControl)aItem;
+//				item.setViewPortState(0);
+			}
+		}
+	}
 }

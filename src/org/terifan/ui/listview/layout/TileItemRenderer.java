@@ -24,7 +24,7 @@ import org.terifan.ui.listview.util.ImageResizer;
 import org.terifan.ui.listview.util.Utilities;
 
 
-public class TileItemRenderer implements ListViewItemRenderer
+public class TileItemRenderer extends ListViewItemRenderer
 {
 	protected final static FontRenderContext FRC = new FontRenderContext(new AffineTransform(), false, false);
 
@@ -227,25 +227,32 @@ public class TileItemRenderer implements ListViewItemRenderer
 
 		int tw = mIconWidth;
 		int th = mItemSize.height - PADDING_HEIGHT;
+
 		if (icon == null)
 		{
-			icon = ImageResizer.getScaledImageAspect(aStyle.thumbPlaceholder, tw, th, true, aListView.getImageCache());
+			if (aStyle.thumbPlaceholder != null)
+			{
+				icon = ImageResizer.getScaledImageAspect(aStyle.thumbPlaceholder, tw, th, true, aListView.getImageCache());
+			}
 		}
 
-		double f = Math.min(tw / (double)icon.getWidth(), th / (double)icon.getHeight());
-		tw = (int)(f * icon.getWidth());
-		th = (int)(f * icon.getHeight());
-
-		int tx = x + (w - tw) / 2;
-		int ty = y + 5;
-
-		if (drawBorder)
+		if (icon != null)
 		{
-			BufferedImage im = ImageResizer.getScaledImage(aSelected ? aStyle.thumbBorderSelected : aStyle.thumbBorderNormal, tw + 3 + 6, th + 3 + 7, 3, 3, 7, 6, false, aListView.getImageCache());
-			aGraphics.drawImage(im, tx - 3, ty - 3, null);
-		}
+			double f = Math.min(tw / (double)icon.getWidth(), th / (double)icon.getHeight());
+			tw = (int)(f * icon.getWidth());
+			th = (int)(f * icon.getHeight());
 
-		aGraphics.drawImage(icon, tx, ty, tw, th, null);
+			int tx = x + (w - tw) / 2;
+			int ty = y + 5;
+
+			if (drawBorder)
+			{
+				BufferedImage im = ImageResizer.getScaledImage(aSelected ? aStyle.thumbBorderSelected : aStyle.thumbBorderNormal, tw + 3 + 6, th + 3 + 7, 3, 3, 7, 6, false, aListView.getImageCache());
+				aGraphics.drawImage(im, tx - 3, ty - 3, null);
+			}
+
+			aGraphics.drawImage(icon, tx, ty, tw, th, null);
+		}
 	}
 
 

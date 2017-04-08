@@ -4,6 +4,7 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 import java.util.HashSet;
 import javax.swing.SwingUtilities;
 
@@ -244,7 +245,7 @@ class ListViewMouseListener<T extends ListViewItem> extends MouseAdapter
 
 		mListView.setItemsSelected(mSelectedItemsClone, true);
 
-		for (T item : layout.getItemsIntersecting(mDragStart.x, mDragStart.y, x, y, null))
+		for (T item : layout.getItemsIntersecting(new Rectangle(Math.min(mDragStart.x, x), Math.min(mDragStart.y, y), Math.max(mDragStart.x, x)-Math.min(mDragStart.x, x), Math.max(mDragStart.y, y)-Math.min(mDragStart.y, y)), new ArrayList<>()))
 		{
 			mListView.setItemSelected(item, !mSelectedItemsClone.contains(item));
 		}

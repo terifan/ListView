@@ -17,7 +17,7 @@ import org.terifan.ui.listview.Styles;
 import org.terifan.ui.listview.util.Utilities;
 
 
-public class DetailItemRenderer implements ListViewItemRenderer
+public class DetailItemRenderer extends ListViewItemRenderer
 {
 	protected boolean mExtendLastItem;
 

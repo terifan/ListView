@@ -21,13 +21,11 @@ public interface ListViewLayout<T extends ListViewItem>
 
 	Dimension getMinimumSize();
 
-	int getItemsPerRun();
-
 	T getItemRelativeTo(T aItem, int aDiffX, int aDiffY);
 
 	ArrayList<T> getItemsIntersecting(T aFromItem, T aToItem);
 
-	ArrayList<T> getItemsIntersecting(int x1, int y1, int x2, int y2, ArrayList<T> aList);
+	ArrayList<T> getItemsIntersecting(Rectangle aRectangle, ArrayList<T> aList);
 
 	boolean getItemBounds(T aItem, Rectangle aRectangle);
 

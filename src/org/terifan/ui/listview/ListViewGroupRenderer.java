@@ -21,7 +21,7 @@ public class ListViewGroupRenderer<T extends ListViewItem>
 		}
 		else
 		{
-			aGraphics.setColor(style.groupBackground);
+			aGraphics.setColor(style.groupBarBackground);
 			aGraphics.fillRect(aOriginX, aOriginY, aWidth, aHeight);
 			aGraphics.setColor(style.groupForeground);
 		}

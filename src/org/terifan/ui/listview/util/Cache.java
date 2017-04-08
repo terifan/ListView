@@ -170,7 +170,13 @@ public class Cache<K,V> implements Iterable<K>
 	{
 		while (mUsedSize > mCapacity && mKeyValueMap.size() > 0)
 		{
-			removeImpl(mCacheOrder.getLast(), true);
+			K last = mCacheOrder.getLast();
+			if (removeImpl(last, true) == null)
+			{
+				System.err.println("Cache: internal error, element not found on shrink, clearing cache");
+				clearQuiet();
+				return;
+			}
 		}
 
 		if (mExpireTime < Integer.MAX_VALUE)

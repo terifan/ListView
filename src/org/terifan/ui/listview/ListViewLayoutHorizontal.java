@@ -131,7 +131,7 @@ public class ListViewLayoutHorizontal<T extends ListViewItem> extends AbstractLi
 		}
 		else
 		{
-			aGraphics.setColor(style.groupBackground);
+			aGraphics.setColor(style.groupBarBackground);
 			aGraphics.fillRect(aOriginX, aOriginY, aWidth, aHeight);
 			aGraphics.setColor(style.groupForeground);
 		}
@@ -208,8 +208,6 @@ public class ListViewLayoutHorizontal<T extends ListViewItem> extends AbstractLi
 				for (; itemIndex < lastIndex; itemIndex++)
 				{
 					T item = items.get(itemIndex);
-
-					mListView.loadState(item);
 
 					int itemHeight = renderer.getItemHeight(mListView, item);
 
@@ -452,8 +450,7 @@ public class ListViewLayoutHorizontal<T extends ListViewItem> extends AbstractLi
 	}
 
 
-	@Override
-	public int getItemsPerRun()
+	private int getItemsPerRun()
 	{
 		int horizontalBarHeight = mListView.getStyles().horizontalBarHeight;
 
@@ -530,7 +527,7 @@ public class ListViewLayoutHorizontal<T extends ListViewItem> extends AbstractLi
 
 
 	@Override
-	public ArrayList<T> getItemsIntersecting(int x1, int y1, int x2, int y2, ArrayList<T> aList)
+	public ArrayList<T> getItemsIntersecting(Rectangle aRectangle, ArrayList<T> aList)
 	{
 		throw new IllegalStateException("not implemented");
 	}

@@ -19,7 +19,7 @@ import org.terifan.ui.listview.util.TextRenderer;
 import org.terifan.ui.listview.util.Utilities;
 
 
-public class ThumbnailItemRenderer<T extends ListViewItem> implements ListViewItemRenderer<T>
+public class ThumbnailItemRenderer<T extends ListViewItem> extends ListViewItemRenderer<T>
 {
 	public final static int DEFAULT_LABEL_HEIGHT = -1;
 	public final static int ITEM_PAD_HOR = 20;
@@ -107,7 +107,7 @@ public class ThumbnailItemRenderer<T extends ListViewItem> implements ListViewIt
 	{
 //		aGraphics.setColor(new Color(new Random().nextInt(0xff),new Random().nextInt(0xff),new Random().nextInt(0xff),16));
 //		aGraphics.fillRect(aOriginX, aOriginY, aWidth, aHeight);
-		
+
 		Styles style = aListView.getStyles();
 		boolean selected = aListView.isItemSelected(aItem);
 
@@ -131,35 +131,39 @@ public class ThumbnailItemRenderer<T extends ListViewItem> implements ListViewIt
 		int sy = y + h - sh;
 
 		BufferedImage icon = aItem.getIcon();
-		BufferedImage scaledIcon;
 
-		if (icon == null)
+		if (icon != null || style.thumbPlaceholder != null)
 		{
-			scaledIcon = ImageResizer.getScaledImageAspect(style.thumbPlaceholder, mItemSize.width, itemHeight, true, aListView.getImageCache());
-		}
-		else
-		{
-			scaledIcon = ImageResizer.getScaledImageAspect(icon, mItemSize.width, itemHeight, true, aListView.getImageCache());
-		}
+			BufferedImage scaledIcon;
 
-		int tw = scaledIcon.getWidth();
-		int th = scaledIcon.getHeight();
-		int tx = x + (w - tw) / 2;
-		int ty = y + h - 8 - th - labelHeight;
+			if (icon != null)
+			{
+				scaledIcon = ImageResizer.getScaledImageAspect(icon, mItemSize.width, itemHeight, true, aListView.getImageCache());
+			}
+			else
+			{
+				scaledIcon = ImageResizer.getScaledImageAspect(style.thumbPlaceholder, mItemSize.width, itemHeight, true, aListView.getImageCache());
+			}
 
-		if (selected)
-		{
-			BufferedImage im = ImageResizer.getScaledImage(aListView.isFocusOwner() ? aListView.getFocusItem() == aItem ? style.thumbBorderSelectedBackgroundFocused : style.thumbBorderSelectedBackground : style.thumbBorderSelectedBackgroundUnfocused, sw, sh, 3, 3, 3, 3, false, aListView.getImageCache());
-			aGraphics.drawImage(im, sx, sy, null);
+			int tw = scaledIcon.getWidth();
+			int th = scaledIcon.getHeight();
+			int tx = x + (w - tw) / 2;
+			int ty = y + h - 8 - th - labelHeight;
+
+			if (selected)
+			{
+				BufferedImage im = ImageResizer.getScaledImage(aListView.isFocusOwner() ? aListView.getFocusItem() == aItem ? style.thumbBorderSelectedBackgroundFocused : style.thumbBorderSelectedBackground : style.thumbBorderSelectedBackgroundUnfocused, sw, sh, 3, 3, 3, 3, false, aListView.getImageCache());
+				aGraphics.drawImage(im, sx, sy, null);
+			}
+
+			if (aListView.isItemBorderPainted(aItem))
+			{
+				BufferedImage im = ImageResizer.getScaledImage(selected ? style.thumbBorderSelected : style.thumbBorderNormal, tw + 3 + 6, th + 3 + 7, 3, 3, 7, 6, false, aListView.getImageCache());
+				aGraphics.drawImage(im, tx - 3, ty - 3, null);
+			}
+
+			aGraphics.drawImage(scaledIcon, tx, ty, null);
 		}
-
-		if (aListView.isItemBorderPainted(aItem))
-		{
-			BufferedImage im = ImageResizer.getScaledImage(selected ? style.thumbBorderSelected : style.thumbBorderNormal, tw + 3 + 6, th + 3 + 7, 3, 3, 7, 6, false, aListView.getImageCache());
-			aGraphics.drawImage(im, tx - 3, ty - 3, null);
-		}
-
-		aGraphics.drawImage(scaledIcon, tx, ty, null);
 
 		String label = null;
 

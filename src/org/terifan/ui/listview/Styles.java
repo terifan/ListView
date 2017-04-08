@@ -46,13 +46,13 @@ public class Styles
 	public Color itemLabelBackgroundSelected = new Color(242, 248, 255);
 
 	public int groupWidth = 50;
-	public int groupHeight = 50;
+	public int groupBarHeight = 50;
 	public int groupLineThickness = 2;
 	public Font group = new Font("Segoe UI light", Font.PLAIN, 26);
 	public Font groupCount = new Font("Segoe UI", Font.PLAIN, 11);
 	public Color groupForeground = new Color(53, 90, 180);
 	public Color groupCountForeground = new Color(110, 110, 110);
-	public Color groupBackground = new Color(255, 255, 255);
+	public Color groupBarBackground = new Color(255, 255, 255);
 	public Color groupRolloverForeground = new Color(55, 100, 160);
 	public Color groupRolloverBackground = new Color(230, 240, 250);
 	public Color groupSelectedForeground = new Color(0, 0, 0);
@@ -103,7 +103,7 @@ public class Styles
 	public BufferedImage thumbBorderSelectedBackground = Utilities.loadImage(ThumbnailItemRenderer.class, "thumb_border_1_selected_background.png");
 	public BufferedImage thumbBorderSelectedBackgroundFocused = Utilities.loadImage(ThumbnailItemRenderer.class, "thumb_border_1_selected_background_focused.png");
 	public BufferedImage thumbBorderSelectedBackgroundUnfocused = Utilities.loadImage(ThumbnailItemRenderer.class, "thumb_border_1_selected_background_unfocused.png");
-	public BufferedImage thumbPlaceholder = Utilities.loadImage(ThumbnailItemRenderer.class, "thumb_placeholder.png");
+	public BufferedImage thumbPlaceholder;
 
 	public BufferedImage barNormal = Utilities.loadImage(ListViewBarRenderer.class, "bar_normal.png");
 	public BufferedImage barSelected = Utilities.loadImage(ListViewBarRenderer.class, "bar_selected.png");
@@ -135,7 +135,7 @@ public class Styles
 		headerColumnHeight *= aDpiScale;
 		columnDividerSpacing *= aDpiScale;
 		groupWidth *= aDpiScale;
-		groupHeight *= aDpiScale;
+		groupBarHeight *= aDpiScale;
 
 		item = item.deriveFont(item.getSize() * aDpiScale);
 		itemBold = itemBold.deriveFont(itemBold.getSize() * aDpiScale);

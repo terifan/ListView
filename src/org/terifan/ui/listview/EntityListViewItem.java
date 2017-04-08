@@ -28,11 +28,22 @@ public class EntityListViewItem implements ListViewItem
 	{
 		try
 		{
+			if (aColumn == null)
+			{
+				throw new IllegalArgumentException("Column is null");
+			}
+
+			String key = aColumn.getKey();
+			if (key == null)
+			{
+				throw new IllegalArgumentException("Column key is null");
+			}
+
 			for (Method method : mThisType.getDeclaredMethods())
 			{
 				String name = method.getName();
-				if (method.getParameterCount() == 0 && (name.startsWith("get") && name.substring(3).equalsIgnoreCase(aColumn.getKey())
-					|| name.startsWith("is") && name.substring(2).equalsIgnoreCase(aColumn.getKey())))
+				if (method.getParameterCount() == 0 && (name.startsWith("get") && name.substring(3).equalsIgnoreCase(key)
+					|| name.startsWith("is") && name.substring(2).equalsIgnoreCase(key)))
 				{
 					method.setAccessible(true);
 					aColumn.setUserObject(EntityListViewItem.class, method);
@@ -43,7 +54,7 @@ public class EntityListViewItem implements ListViewItem
 			for (Field field : mThisType.getDeclaredFields())
 			{
 				String name = field.getName();
-				if (name.equalsIgnoreCase(aColumn.getKey()))
+				if (name.equalsIgnoreCase(key))
 				{
 					field.setAccessible(true);
 					aColumn.setUserObject(EntityListViewItem.class, field);
