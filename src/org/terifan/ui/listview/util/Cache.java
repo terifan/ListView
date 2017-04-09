@@ -215,7 +215,13 @@ public class Cache<K,V> implements Iterable<K>
 	 *   The value to which this map maps the specified key, or null if the
 	 *   map contains no mapping for this key.
 	 */
-	public synchronized V get(K aKey)
+	public V get(K aKey)
+	{
+		return getOrDefault(aKey, null);
+	}
+
+
+	public synchronized V getOrDefault(K aKey, V aValue)
 	{
 		Entry<K, V> entry = mKeyValueMap.get(aKey);
 
@@ -227,7 +233,7 @@ public class Cache<K,V> implements Iterable<K>
 			return entry.value;
 		}
 
-		return null;
+		return aValue;
 	}
 
 
