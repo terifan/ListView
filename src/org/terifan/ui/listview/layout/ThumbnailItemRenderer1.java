@@ -8,16 +8,13 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.image.BufferedImage;
 import java.util.Objects;
-import java.util.Random;
 import org.terifan.ui.listview.ListView;
 import org.terifan.ui.listview.ListViewColumn;
 import org.terifan.ui.listview.ListViewItem;
 import org.terifan.ui.listview.ListViewItemRenderer;
 import org.terifan.ui.listview.ListViewLayout;
 import org.terifan.ui.listview.ListViewModel;
-import org.terifan.ui.listview.Styles;
 import org.terifan.ui.listview.util.Anchor;
-import org.terifan.ui.listview.util.ImageResizer;
 import org.terifan.ui.listview.util.Orientation;
 import org.terifan.ui.listview.util.TextRenderer;
 
@@ -158,7 +155,7 @@ public class ThumbnailItemRenderer1<T extends ListViewItem> extends ListViewItem
 
 	protected void paintRegularItem(ListView<T> aListView, T aItem, int aOriginX, int aOriginY, int aWidth, int aHeight, Graphics2D aGraphics)
 	{
-		changeVisibleState(aListView, aItem, true);
+		changeVisibleState(aListView, aItem);
 
 		boolean selected = aListView.isItemSelected(aItem);
 
@@ -186,7 +183,7 @@ public class ThumbnailItemRenderer1<T extends ListViewItem> extends ListViewItem
 					item.setViewPortState(state = System.currentTimeMillis());
 				}
 
-				opacity = (int)Math.max(0, 255 - 255 * (System.currentTimeMillis() - state) / 500);
+				opacity = (int)Math.max(0, 255 - 255 * (System.currentTimeMillis() - state) / 250);
 			}
 
 			int iw = icon.getWidth();

@@ -39,9 +39,9 @@ public abstract class ListViewItemRenderer<T extends ListViewItem>
 //		aDimension.height = getItemHeight(aListView, aItem);
 //	}
 
-	protected void changeVisibleState(ListView<T> aListView, T aItem, boolean aState)
+	protected void changeVisibleState(ListView<T> aListView, T aItem)
 	{
-		aListView.changeVisibleState(aItem, aState);
+		aListView.changeVisibleState(aItem);
 	}
 	
 	

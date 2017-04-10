@@ -15,6 +15,7 @@ import java.awt.RenderingHints;
 import java.awt.dnd.DropTarget;
 import java.awt.dnd.DropTargetListener;
 import java.awt.event.ActionEvent;
+import java.awt.event.AdjustmentListener;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
@@ -46,6 +47,7 @@ import org.terifan.ui.listview.layout.ViewPortStateControl;
 public class ListView<T extends ListViewItem> extends JComponent implements Scrollable
 {
 	private final HashMap<T, Object> mVisibleItems;
+	private final ArrayList<T> mWasMadeVisible;
 	private final Rectangle mSelectionRectangle;
 	private final HashSet<T> mSelectedItems;
 	private ListViewModel<T> mModel;
@@ -69,6 +71,7 @@ public class ListView<T extends ListViewItem> extends JComponent implements Scro
 	private double mDPIScale;
 	private boolean mRequestRepaint;
 	private Object mRenderKey;
+	private ArrayList<ViewAdjustmentListener> mAdjustmentListeners;
 
 
 	public ListView()
@@ -85,6 +88,8 @@ public class ListView<T extends ListViewItem> extends JComponent implements Scro
 		mImageCache = new Cache<>(1 * 1024 * 1024);
 		mSelectionRectangle = new Rectangle();
 		mVisibleItems = new HashMap<>();
+		mAdjustmentListeners = new ArrayList<>();
+		mWasMadeVisible = new ArrayList<>();
 		mDPIScale = 1;
 
 		super.setOpaque(true);
@@ -377,6 +382,8 @@ public class ListView<T extends ListViewItem> extends JComponent implements Scro
 				g.setClip(viewport.x, viewport.y, viewport.width, viewport.height);
 			}
 
+			mWasMadeVisible.clear();
+
 			mLayout.paint(g);
 
 			if (mModel.getItemCount() == 0)
@@ -384,17 +391,25 @@ public class ListView<T extends ListViewItem> extends JComponent implements Scro
 				paintPlaceHolder(g);
 			}
 
-			ArrayList<T> hidden = new ArrayList<>();
+			ArrayList<T> wasMadeHidden = new ArrayList<>();
 			for (Entry<T, Object> item : mVisibleItems.entrySet())
 			{
 				if (item.getValue() != mRenderKey) // object comparison
 				{
-					hidden.add(item.getKey());
+					wasMadeHidden.add(item.getKey());
 				}
 			}
-			for (T item : hidden)
+			for (T item : wasMadeHidden)
 			{
-				changeVisibleState(item, false);
+				mVisibleItems.remove(item);
+			}
+
+			if (!wasMadeHidden.isEmpty() || !mWasMadeVisible.isEmpty())
+			{
+				for (ViewAdjustmentListener listener : mAdjustmentListeners)
+				{
+					listener.viewChanged(wasMadeHidden, mWasMadeVisible);
+				}
 			}
 		}
 		catch (Exception e)
@@ -1025,21 +1040,18 @@ public class ListView<T extends ListViewItem> extends JComponent implements Scro
 	}
 
 
-	protected void changeVisibleState(T aItem, boolean aState)
+	protected void changeVisibleState(T aItem)
 	{
-		if (aState)
+		Object t = mVisibleItems.put(aItem, mRenderKey);
+		if (t == null)
 		{
-			mVisibleItems.put(aItem, mRenderKey);
+			mWasMadeVisible.add(aItem);
 		}
-		else
-		{
-			mVisibleItems.remove(aItem);
-
-			if (aItem instanceof ViewPortStateControl)
-			{
-				ViewPortStateControl item = (ViewPortStateControl)aItem;
-//				item.setViewPortState(0);
-			}
-		}
+	}
+	
+	
+	public void addAdjustmentListener(ViewAdjustmentListener aAdjustmentListener)
+	{
+		mAdjustmentListeners.add(aAdjustmentListener);
 	}
 }
