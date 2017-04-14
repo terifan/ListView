@@ -38,7 +38,7 @@ public class ThumbnailItemRenderer1<T extends ListViewItem> extends ListViewItem
 	{
 		mItemSize = aItemSize;
 		mOrientation = aOrientation;
-		mLabelHeight = aLabelHeight;
+		mLabelHeight = -1+0*aLabelHeight;
 	}
 
 
@@ -80,7 +80,7 @@ public class ThumbnailItemRenderer1<T extends ListViewItem> extends ListViewItem
 	@Override
 	public int getItemPreferredHeight(ListView<T> aListView)
 	{
-		return mItemSize.height + mLabelHeight;
+		return mItemSize.height;
 	}
 
 	private Point mSpacing = new Point(9, 9);
@@ -96,45 +96,37 @@ public class ThumbnailItemRenderer1<T extends ListViewItem> extends ListViewItem
 	@Override
 	public int getItemWidth(ListView<T> aListView, T aItem)
 	{
-		switch (getCategory(aItem))
-		{
-			case 0:
-				return aItem.getIcon() == null ? mItemSize.width : aItem.getIcon().getWidth() + 16;
-			case 1:
-			default:
-				return mItemSize.width;
-		}
+		return mItemSize.width;
+//		switch (getCategory(aItem))
+//		{
+//			case 0:
+//				return aItem.getIcon() == null ? mItemSize.width : aItem.getIcon().getWidth() + 16;
+//			case 1:
+//			default:
+//				return mItemSize.width;
+//		}
 	}
 
 
 	@Override
 	public int getItemHeight(ListView<T> aListView, T aItem)
 	{
-		switch (getCategory(aItem))
-		{
-			case 0:
-				return aItem.getIcon() == null ? mItemSize.height : aItem.getIcon().getHeight() + 32;
-			case 1:
-			default:
-				return mItemSize.height;
-		}
+		return mItemSize.height;
+//		switch (getCategory(aItem))
+//		{
+//			case 0:
+//				return aItem.getIcon() == null ? mItemSize.height : aItem.getIcon().getHeight() + 32;
+//			case 1:
+//			default:
+//				return mItemSize.height;
+//		}
 	}
 
 
 	@Override
 	public void paintItem(Graphics2D aGraphics, int aOriginX, int aOriginY, int aWidth, int aHeight, ListView<T> aListView, T aItem)
 	{
-//		switch (getCategory(aItem))
-//		{
-//			case 0: // back
-//			case 2: // image
-//			case 3: // unknown
 		paintRegularItem(aListView, aItem, aOriginX, aOriginY, aWidth, aHeight, aGraphics);
-//				break;
-//			case 1: // folder
-//				paintFolder(aListView, aItem, aOriginX, aOriginY, aWidth, aHeight, aGraphics);
-//				break;
-//		}
 	}
 
 
@@ -147,6 +139,7 @@ public class ThumbnailItemRenderer1<T extends ListViewItem> extends ListViewItem
 		}
 		return cat;
 	}
+
 
 	protected static final Color SELECTION_INNER_BORDER_COLOR = new Color(0,0,0,200);
 	protected static final Color SELECTION_OUTER_BORDER_COLOR = new Color(255,255,255);
@@ -222,7 +215,7 @@ public class ThumbnailItemRenderer1<T extends ListViewItem> extends ListViewItem
 		{
 			if (labelHeight < 0)
 			{
-				labelHeight = Math.abs(labelHeight * (aGraphics.getFontMetrics().getHeight() + 2));
+				labelHeight = Math.abs(labelHeight * (aGraphics.getFontMetrics().getHeight() * 120 / 100));
 			}
 
 			String label = getLabel(aListView, aItem);
