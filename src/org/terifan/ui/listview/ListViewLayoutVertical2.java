@@ -7,14 +7,18 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.util.ArrayList;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
+import org.terifan.ui.listview.util.Cache;
 
 
 public class ListViewLayoutVertical2<T extends ListViewItem> extends AbstractListViewLayout<T>
 {
+	private Cache<Tuple<Integer,ListViewGroup<T>>, LayoutInfoGroup> mLayoutCache = new Cache<>(1000);
+
 	protected Dimension mPreferredSize;
 	protected Dimension mMinimumSize;
 	protected int mMaxItemsPerRow;
+	protected Orientation mOrientation;
 
 
 	public ListViewLayoutVertical2(ListView<T> aListView, int aMaxItemsPerRow)
@@ -22,25 +26,14 @@ public class ListViewLayoutVertical2<T extends ListViewItem> extends AbstractLis
 		mListView = aListView;
 		mMaxItemsPerRow = aMaxItemsPerRow;
 		mPreferredSize = new Dimension(1, 1);
+		mOrientation = Orientation.VERTICAL;
 	}
 
 
 	@Override
 	public Orientation getLayoutOrientation()
 	{
-		return Orientation.VERTICAL;
-	}
-
-
-	private void paintVerticalBar(Graphics2D aGraphics, int aOriginX, int aOriginY, int aWidth, int aHeight)
-	{
-		Styles style = mListView.getStyles();
-
-		aGraphics.setColor(style.indent);
-		aGraphics.fillRect(aOriginX, aOriginY, aWidth, aHeight);
-		aGraphics.setColor(style.indentLine);
-		aGraphics.drawLine(aOriginX + aWidth - 1, aOriginY, aOriginX + aWidth - 1, aOriginY + aHeight - 1);
-		aGraphics.drawLine(aOriginX, aOriginY + aHeight - 1, aOriginX + aWidth - 1, aOriginY + aHeight - 1);
+		return mOrientation;
 	}
 
 
@@ -51,193 +44,195 @@ public class ListViewLayoutVertical2<T extends ListViewItem> extends AbstractLis
 		{
 			throw new IllegalStateException("ListView has no model");
 		}
-		
+
 		aGraphics.setColor(mListView.getBackground());
 		aGraphics.fillRect(0, 0, mListView.getWidth(), mListView.getHeight());
+
+		Rectangle clip = aGraphics.getClipBounds();
 
 		ListViewItemRenderer<T> renderer = mListView.getItemRenderer();
 
 		visit(new Visitor<T>()
 		{
 			@Override
-			public boolean item(int aX, int aY, int aWidth, int aHeight, T aItem)
+			public boolean group(Point aPosition, LayoutInfoGroup aGroup)
 			{
-				if (aGraphics.getClip().contains(aX, aY, aWidth, aHeight))
+				return clip.intersects(aPosition.x, aPosition.y, aGroup.mDimension.width, aGroup.mDimension.height);
+			}
+
+			@Override
+			public boolean array(Point aPosition, LayoutInfoArray aArray)
+			{
+				return clip.intersects(aPosition.x, aPosition.y, aArray.mDimension.width, aArray.mDimension.height);
+			}
+
+			@Override
+			public Object item(int aX, int aY, int aWidth, int aHeight, T aItem)
+			{
+				if (clip.intersects(aX, aY, aWidth, aHeight))
 				{
 					renderer.paintItem(aGraphics, aX, aY, aWidth, aHeight, mListView, aItem);
 				}
-				return true;
+				return null;
 			}
 		});
 	}
-//		ListViewGroup root = mListView.getModel().getRoot();
-//		SortedMap<Object, ListViewGroup> children = root.getChildren();
-//		int y = 0;
+
+
+	private Object visit(Visitor<T> aVisitor)
+	{
+//		Point position = new Point();
+		int width = mListView.getWidth();
+		int height = mListView.getHeight();
+
+		if (width == 0 || height == 0)
+		{
+			return null;
+		}
+
+		return visitGroup(mListView.getModel().getRoot(), 0, new Point(), width, height, aVisitor);
+
+//		ListViewGroup<T> root = mListView.getModel().getRoot();
+//		SortedMap<Object, ListViewGroup<T>> children = root.getChildren();
 //
 //		if (children != null)
 //		{
-//			int groupBarHeight = mListView.getStyles().groupHeight;
-//
 //			for (Object key : children.getKeys())
 //			{
-//				ListViewGroup group = children.get(key);
-//
-//				if (!group.isCollapsed())
+//				Object result = visitGroup(children.get(key), 0, position, width, height, aVisitor);
+//				if (result != null)
 //				{
-//					y = paintGroup(aGraphics, group, 0, y, width);
+//					return result;
 //				}
-//
-//				y += groupBarHeight;
 //			}
+//
+//			return null;
+//		}
+//
+//		if (mOrientation == Orientation.VERTICAL)
+//		{
+//			LayoutInfoGroup layout = prepareVerticalLayout(root, width);
+//
+//			return visitVerticalItemList(root, position, width, aVisitor, layout);
 //		}
 //		else
 //		{
-//			paintItemList(aGraphics, root, 0, y, width);
+//			return null;
 //		}
-//	}
-//
-//
-//	private int paintGroup(Graphics2D aGraphics, ListViewGroup<T> aGroup, int aLevel, int aOriginY, int aWidth)
-//	{
-//		int groupBarHeight = mListView.getStyles().groupHeight;
-//		int verticalBarWidth = mListView.getStyles().verticalBarWidth;
-//
-//		Rectangle clip = aGraphics.getClipBounds();
-//
-//		int height = getGroupHeight(aGroup);
-//
-//		if (clip.y <= aOriginY + height + groupBarHeight && clip.y + clip.height >= aOriginY)
-//		{
-//			mListView.getGroupRenderer().paintGroup(mListView, aGraphics, verticalBarWidth * aLevel, aOriginY, mListView.getWidth() - verticalBarWidth * aLevel, groupBarHeight, aGroup);
-//
-//			if (!aGroup.isCollapsed())
-//			{
-//				SortedMap<Object, ListViewGroup<T>> children = aGroup.getChildren();
-//
-//				if (children != null)
-//				{
-//					paintVerticalBar(aGraphics, verticalBarWidth * aLevel, aOriginY + groupBarHeight, verticalBarWidth, height);
-//
-//					int y = aOriginY;
-//
-//					for (Object key : children.getKeys())
-//					{
-//						ListViewGroup group = children.get(key);
-//
-//						y = paintGroup(aGraphics, group, aLevel + 1, y + groupBarHeight, aWidth);
-//					}
-//				}
-//				else
-//				{
-//					paintItemList(aGraphics, aGroup, aLevel, aOriginY + groupBarHeight, aWidth);
-//				}
-//			}
-//		}
-//
-//		return aOriginY + height;
-//	}
-//
-//
-//	private void paintItemList(Graphics2D aGraphics, ListViewGroup<T> aGroup, int aLevel, int aOriginY, int aWidth)
-//	{
-//		int verticalBarWidth = mListView.getStyles().verticalBarWidth;
-//
-//		ArrayList<T> items = aGroup.getItems();
-//		int y = aOriginY;
-//
-//		Rectangle clip = aGraphics.getClipBounds();
-//		ListViewItemRenderer<T> renderer = mListView.getItemRenderer();
-//		Point itemSpacing = renderer.getItemSpacing(mListView);
-//
-//		for (int itemIndex = 0, itemCount = items.size(); itemIndex < itemCount && y < clip.y + clip.height;)
-//		{
-//			int itemsPerRow = 0;
-//			int rowWidth = 0;
-//			int rowHeight = 0;
-//
-//			for (int i = itemIndex; i < itemCount && rowWidth < aWidth; i++)
-//			{
-//				T item = items.get(i);
-//
-//				rowWidth += renderer.getItemWidth(mListView, item) + itemSpacing.x;
-//				rowHeight = Math.max(rowHeight, renderer.getItemHeight(mListView, item) + itemSpacing.y);
-//				itemsPerRow++;
-//			}
-//
-//			boolean fullRow = rowWidth >= aWidth;
-//			rowWidth -= itemSpacing.x;
-//
-//			if (y >= clip.y - rowHeight)
-//			{
-//				int x = verticalBarWidth * aLevel;
-//
-//				double error = 0;
-//				double scale = (aWidth - (itemsPerRow - 1) * itemSpacing.x) / (double)(rowWidth - (itemsPerRow - 1) * itemSpacing.x);
-//
-//				for (int i = 0; itemIndex + i < itemCount && i < itemsPerRow; i++)
-//				{
-//					T item = items.get(itemIndex + i);
-//
-//					int itemWidth;
-//					if (i == itemsPerRow - 1 && fullRow)
-//					{
-//						itemWidth = aWidth - x;
-//					}
-//					else
-//					{
-//						double iw = renderer.getItemWidth(mListView, item) * scale + error;
-//						itemWidth = (int)iw;
-//						error = iw - itemWidth;
-//					}
-//
-//					renderer.paintItem(aGraphics, x, y, itemWidth, rowHeight - itemSpacing.y, mListView, item);
-//
-//					x += itemWidth + itemSpacing.x;
-//				}
-//			}
-//
-//			itemIndex += itemsPerRow;
-//			y += rowHeight;
-//		}
-//	}
-
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	private Point visit(Visitor aVisitor)
-	{
-		Point position = new Point();
-		int width = mListView.getWidth();
-		int height = mListView.getHeight();
-		boolean vertical = getLayoutOrientation() == Orientation.VERTICAL;
-
-		ListViewGroup root = mListView.getModel().getRoot();
-		SortedMap<Object, ListViewGroup> children = root.getChildren();
-
-		if (children != null)
-		{
-			for (Object key : children.getKeys())
-			{
-				visitGroup(children.get(key), 0, position, width, height, vertical, aVisitor);
-			}
-		}
-		else
-		{
-			visitItemList(root, 0, position, width, height, vertical, aVisitor);
-		}
-
-		return position;
 	}
 
 
-	private void visitGroup(ListViewGroup<T> aGroup, int aLevel, Point aPosition, int aWidth, int aHeight, boolean aVertical, Visitor aVisitor)
+	private Object visitGroup(ListViewGroup<T> aGroup, int aLevel, Point aPosition, int aWidth, int aHeight, Visitor<T> aVisitor)
+	{
+		if (!aGroup.isCollapsed())
+		{
+			SortedMap<Object, ListViewGroup<T>> children = aGroup.getChildren();
+
+			if (children != null)
+			{
+//				mListView.getGroupRenderer().paintGroup(mListView, aGraphics, verticalBarWidth * aLevel, aOriginY, mListView.getWidth() - verticalBarWidth * aLevel, groupBarHeight, aGroup);
+//				paintVerticalBar(aGraphics, verticalBarWidth * aLevel, aOriginY + groupBarHeight, verticalBarWidth, height);
+//				mListView.getStyles().verticalBarWidth
+
+				for (Object key : children.getKeys())
+				{
+					ListViewGroup group = children.get(key);
+
+					Object result = visitGroup(group, aLevel + 1, aPosition, aWidth, aHeight, aVisitor);
+
+					if (result != null)
+					{
+						return result;
+					}
+				}
+			}
+			else
+			{
+				if (mOrientation == Orientation.VERTICAL)
+				{
+					LayoutInfoGroup layout = prepareVerticalLayout(aGroup, aWidth);
+
+					if (aVisitor.group(aPosition, layout))
+					{
+						return visitVerticalList(aGroup, aPosition, aWidth, aVisitor, layout);
+					}
+					else
+					{
+						aPosition.y += layout.mDimension.height;
+					}
+				}
+				else
+				{
+//					return visitItemList(aGroup, aLevel, aPosition, aWidth, aHeight, aVisitor);
+				}
+			}
+		}
+
+		return null;
+	}
+
+
+	private Object visitVerticalList(ListViewGroup<T> aGroup, Point aPosition, int aWidth, Visitor<T> aVisitor, LayoutInfoGroup aLayoutInfoGroup)
+	{
+		aWidth -= 4;
+
+		ListViewItemRenderer<T> renderer = mListView.getItemRenderer();
+		Point itemSpacing = renderer.getItemSpacing(mListView);
+		int itemIndex = 0;
+		Dimension itemDim = new Dimension();
+
+		ArrayList<T> items = aGroup.getItems();
+		int size = items.size();
+
+		for (LayoutInfoArray array : aLayoutInfoGroup.mArrays)
+		{
+			if (aVisitor.array(aPosition, array))
+			{
+				boolean fullRow = array.mDimension.width > aWidth - 10;
+				double error = 0;
+				double scale = fullRow ? (aWidth - itemSpacing.x * (array.mItemCount - 1)) / (double)array.mDimension.width : 1.0;
+				int x = aPosition.x;
+
+				for (int arrayIndex = 0; itemIndex < size && arrayIndex < array.mItemCount; arrayIndex++, itemIndex++)
+				{
+					T item = items.get(itemIndex);
+
+					renderer.getItemSize(mListView, item, itemDim);
+
+					int itemWidth;
+					if (arrayIndex == array.mItemCount - 1 && fullRow)
+					{
+						itemWidth = aWidth - x;
+					}
+					else
+					{
+						double tmp = itemDim.width * 448 / itemDim.height * scale + error;
+						itemWidth = (int)tmp;
+						error = tmp - itemWidth;
+					}
+
+					Object result = aVisitor.item(x, aPosition.y, itemWidth, array.mDimension.height - itemSpacing.y, item);
+					if (result != null)
+					{
+						return result;
+					}
+
+					x += itemWidth + itemSpacing.x;
+				}
+			}
+			else
+			{
+				itemIndex += array.mItemCount;
+			}
+
+			aPosition.y += array.mDimension.height;
+		}
+
+		return null;
+	}
+
+
+	private Object visitGroupX(ListViewGroup<T> aGroup, int aWidth, Visitor<T> aVisitor)
 	{
 		if (!aGroup.isCollapsed())
 		{
@@ -249,27 +244,65 @@ public class ListViewLayoutVertical2<T extends ListViewItem> extends AbstractLis
 				{
 					ListViewGroup group = children.get(key);
 
-					visitGroup(group, aLevel + 1, aPosition, aWidth, aHeight, aVertical, aVisitor);
+					Object result = visitGroupX(group, aWidth, aVisitor);
+					if (result != null)
+					{
+						return result;
+					}
 				}
 			}
 			else
 			{
-				visitItemList(aGroup, aLevel, aPosition, aWidth, aHeight, aVertical, aVisitor);
+				if (mOrientation == Orientation.VERTICAL)
+				{
+					LayoutInfoGroup layout = prepareVerticalLayout(aGroup, aWidth);
+
+					if (aVisitor.group(null, layout))
+					{
+						return visitVerticalListX(aGroup, aVisitor, layout);
+					}
+				}
 			}
 		}
+
+		return null;
 	}
 
 
-	private void visitItemList(ListViewGroup<T> aGroup, int aLevel, Point aPosition, int aWidth, int aHeight, boolean aVertical, Visitor aVisitor)
+	private Object visitVerticalListX(ListViewGroup<T> aGroup, Visitor<T> aVisitor, LayoutInfoGroup aLayoutInfoGroup)
 	{
-		int barSize;
-		if (aVertical)
+		ArrayList<T> items = aGroup.getItems();
+		int itemIndex = 0;
+
+		for (LayoutInfoArray array : aLayoutInfoGroup.mArrays)
 		{
-			barSize = mListView.getStyles().verticalBarWidth;
+			if (aVisitor.array(null, array))
+			{
+				for (int arrayIndex = 0; itemIndex < items.size() && arrayIndex < array.mItemCount; arrayIndex++, itemIndex++)
+				{
+					Object result = aVisitor.item(0, 0, 0, 0, items.get(itemIndex));
+					if (result != null)
+					{
+						return result;
+					}
+				}
+			}
+			else
+			{
+				itemIndex += array.mItemCount;
+			}
 		}
-		else
+
+		return null;
+	}
+
+
+	private LayoutInfoGroup prepareVerticalLayout(ListViewGroup<T> aGroup, int aWidth)
+	{
+		LayoutInfoGroup grp = mLayoutCache.get(new Tuple<>(aWidth,aGroup));
+		if (grp != null)
 		{
-			barSize = mListView.getStyles().horizontalBarHeight;
+			return grp;
 		}
 
 		ArrayList<T> items = aGroup.getItems();
@@ -277,295 +310,68 @@ public class ListViewLayoutVertical2<T extends ListViewItem> extends AbstractLis
 		ListViewItemRenderer<T> renderer = mListView.getItemRenderer();
 		Point itemSpacing = renderer.getItemSpacing(mListView);
 
+		ArrayList<LayoutInfoArray> layout = new ArrayList<>();
+		Dimension itemDim = new Dimension();
+		Dimension groupDimension = new Dimension(aWidth, 0);
+
 		for (int itemIndex = 0, itemCount = items.size(); itemIndex < itemCount;)
 		{
-			Point pos = new Point();
+			Dimension arrayDim = new Dimension();
+			int arrayLength = 0;
 
-			ArrayList<Dimension> dimensions = new ArrayList<>();
-			
-			for (int i = itemIndex; i < itemCount && (aVertical ? pos.x < aWidth : pos.y < aHeight); i++)
-			{
-				T item = items.get(i);
-				
-				Dimension dim = new Dimension();
-				dimensions.add(dim);
-
-//				renderer.getItemSize(mListView, item, dim);
-				
-				dim.width += itemSpacing.x;
-				dim.height += itemSpacing.y;
-
-				pos.x += aVertical ? dim.width : dim.height;
-				pos.y = Math.max(pos.y, aVertical ? dim.height : dim.width);
-			}
-
-			boolean fullRow = pos.x >= aWidth;
-			pos.x -= itemSpacing.x;
-
-			double error = 0;
-			double scale = (aWidth - (dimensions.size() - 1) * itemSpacing.x) / (double)(pos.x - (dimensions.size() - 1) * itemSpacing.x);
-
-			int stridePos = aVertical ? aPosition.x : aPosition.y;
-
-			for (int i = 0; itemIndex < itemCount && i < dimensions.size(); i++, itemIndex++)
+			for (; itemIndex < itemCount && arrayDim.width < aWidth; arrayLength++, itemIndex++)
 			{
 				T item = items.get(itemIndex);
 
-				int step;
-				if (i == dimensions.size() - 1 && fullRow)
-				{
-					step = aWidth - stridePos;
-				}
-				else
-				{
-					double iw = dimensions.get(i).width * scale + error;
-					step = (int)iw;
-					error = iw - step;
-				}
+				renderer.getItemSize(mListView, item, itemDim);
 
-				aVisitor.item(stridePos, aPosition.y, step, pos.y - itemSpacing.y, item);
+				itemDim.width = itemDim.width * 448 / itemDim.height;
 
-				stridePos += step + itemSpacing.x;
+				arrayDim.width += itemDim.width;
+				arrayDim.height = Math.max(arrayDim.height, itemDim.height + itemSpacing.y);
 			}
 
-			if (aVertical)
-			{
-				aPosition.y += pos.y;
-			}
-			else
-			{
-				aPosition.x += pos.x;
-			}
+			arrayDim.height = 448;
+
+			layout.add(new LayoutInfoArray(arrayLength, arrayDim));
+			groupDimension.height += arrayDim.height;
 		}
+
+		grp = new LayoutInfoGroup(layout, groupDimension);
+		mLayoutCache.put(new Tuple<>(aWidth,aGroup), grp, 1);
+
+		return grp;
 	}
-	
-	
-	private interface Visitor<T>
-	{
-		boolean item(int x, int y, int aWidth, int aHeight, T aItem);
-	}
-
-
-
-
 
 
 	@Override
-	public LocationInfo getLocationInfo(int aLocationX, int aLocationY)
+	public LocationInfo getLocationInfo(Point aLocation)
 	{
-//		SortedMap<Object, ListViewGroup<T>> children = mListView.getModel().getRoot().getChildren();
-//
-//		if (children != null)
-//		{
-//			int groupHeight = mListView.getStyles().groupHeight;
-//			AtomicInteger y = new AtomicInteger(0);
-//
-//			for (Object key : children.getKeys())
-//			{
-//				ListViewGroup group = children.get(key);
-//
-//				LocationInfo result = getComponentAtImpl(aLocationX, aLocationY, y, group, 0);
-//
-//				if (result != null)
-//				{
-//					return result;
-//				}
-//				if (y.get() > aLocationY + groupHeight)
-//				{
-//					break;
-//				}
-//			}
-//
-			return null;
-//		}
-//		else
-//		{
-//			return getComponentAtImplPoint(mListView.getModel().getRoot(), 0, 0, aLocationX, aLocationY);
-//		}
+		return (LocationInfo)visit(new Visitor<T>()
+		{
+			@Override
+			public boolean group(Point aPosition, LayoutInfoGroup aGroup)
+			{
+				return new Rectangle(aPosition.x, aPosition.y, aGroup.mDimension.width, aGroup.mDimension.height).contains(aLocation);
+			}
+
+			@Override
+			public boolean array(Point aPosition, LayoutInfoArray aArray)
+			{
+				return new Rectangle(aPosition.x, aPosition.y, aArray.mDimension.width, aArray.mDimension.height).contains(aLocation);
+			}
+
+			@Override
+			public Object item(int aX, int aY, int aWidth, int aHeight, T aItem)
+			{
+				if (new Rectangle(aX, aY, aWidth, aHeight).contains(aLocation.x, aLocation.y))
+				{
+					return new LocationInfo<>().setItem(aItem);
+				}
+				return null;
+			}
+		});
 	}
-
-
-//	private LocationInfo getComponentAtImpl(int aLocationX, int aLocationY, AtomicInteger aOriginY, ListViewGroup<T> aGroup, int aLevel)
-//	{
-//		int groupHeight = mListView.getStyles().groupHeight;
-//		int verticalBarWidth = mListView.getStyles().verticalBarWidth;
-//		int height = aGroup.isCollapsed() ? 0 : getGroupHeight(aGroup, getItemsPerRun());
-//
-//		if (aLocationX > aGroup.getLevel() * verticalBarWidth && aLocationX < mListView.getWidth())
-//		{
-//			if (aLocationY >= aOriginY.get() && aLocationY < aOriginY.get() + groupHeight)
-//			{
-//				LocationInfo info = new LocationInfo();
-//				info.setGroup(aGroup);
-//				info.setGroupButton(aLocationX >= aGroup.getLevel() * verticalBarWidth + 3 && aLocationX < aGroup.getLevel() * verticalBarWidth + 3 + 11);
-//				return info;
-//			}
-//			else
-//			{
-//				aOriginY.addAndGet(groupHeight);
-//
-//				if (aLocationY >= aOriginY.get() && aLocationY < aOriginY.get() + height)
-//				{
-//					SortedMap<Object, ListViewGroup<T>> children = aGroup.getChildren();
-//
-//					if (!aGroup.isCollapsed())
-//					{
-//						if (children != null)
-//						{
-//							for (Object key : children.getKeys())
-//							{
-//								ListViewGroup group = children.get(key);
-//								LocationInfo info = getComponentAtImpl(aLocationX, aLocationY, aOriginY, group, aLevel + 1);
-//
-//								if (info != null)
-//								{
-//									return info;
-//								}
-//							}
-//						}
-//						else
-//						{
-//							LocationInfo info = getComponentAtImplPoint(aGroup, aLevel, aOriginY.get(), aLocationX, aLocationY);
-//
-//							if (info != null)
-//							{
-//								return info;
-//							}
-//						}
-//					}
-//				}
-//			}
-//		}
-//
-//		aOriginY.addAndGet(height);
-//
-//		return null;
-//	}
-
-
-//	private LocationInfo getComponentAtImplPoint(ListViewGroup<T> aGroup, int aLevel, int aOriginY, int aLocationX, int aLocationY)
-//	{
-//		if (aLocationX < 0 || aLocationX >= mListView.getWidth())
-//		{
-//			return null;
-//		}
-//
-//		int verticalBarWidth = mListView.getStyles().verticalBarWidth;
-//
-//		double x = aLocationX - verticalBarWidth * aLevel;
-//		int y = aLocationY - aOriginY;
-//
-//		if (y < 0)
-//		{
-//			return null;
-//		}
-//
-//		ListViewItemRenderer<T> renderer = mListView.getItemRenderer();
-//		int itemSpacingY = renderer.getItemSpacing(mListView).y;
-//		ArrayList<T> items = aGroup.getItems();
-//		double itemWidth = getItemWidth();
-//		int itemsPerRow = getItemsPerRun();
-//		int tempHeight = 0;
-//		int itemX = 0;
-//		int row = 0;
-//		int col = -1;
-//
-//		for (int i = 0, sz = items.size(); i < sz; i++)
-//		{
-//			tempHeight = Math.max(tempHeight, renderer.getItemHeight(mListView, items.get(i)) + itemSpacingY);
-//
-//			if (++itemX == itemsPerRow || i + 1 == sz)
-//			{
-//				y -= tempHeight;
-//
-//				if (y < 0)
-//				{
-//					i -= itemX - 1;
-//					for (int j = 0; j < itemX; j++, i++)
-//					{
-//						x -= itemWidth;
-//						if (x < 0)
-//						{
-//							if (renderer.getItemHeight(mListView, items.get(i)) + itemSpacingY >= y + tempHeight)
-//							{
-//								col = j;
-//							}
-//							break;
-//						}
-//					}
-//
-//					break;
-//				}
-//
-//				tempHeight = 0;
-//				itemX = 0;
-//				row++;
-//			}
-//		}
-//
-//		int index = row * itemsPerRow + col;
-//
-//		if (col > -1 && col < itemsPerRow && index >= 0 && index < aGroup.getItems().size())
-//		{
-//			LocationInfo<T> info = new LocationInfo<>();
-//			info.setItem(aGroup.getItems().get(index));
-//			return info;
-//		}
-//
-//		return null;
-//	}
-
-
-//	private int getGroupHeight(ListViewGroup<T> aGroup, int aItemsPerRow)
-//	{
-//		SortedMap<Object, ListViewGroup<T>> children = aGroup.getChildren();
-//
-//		if (children != null)
-//		{
-//			int groupBarHeight = mListView.getStyles().groupHeight;
-//			int height = 0;
-//
-//			for (Object key : children.getKeys())
-//			{
-//				ListViewGroup<T> group = children.get(key);
-//
-//				if (group.isCollapsed())
-//				{
-//					height += groupBarHeight;
-//				}
-//				else
-//				{
-//					height += groupBarHeight + getGroupHeight(group, aItemsPerRow);
-//				}
-//			}
-//
-//			return height;
-//		}
-//		else
-//		{
-//			ListViewItemRenderer<T> renderer = mListView.getItemRenderer();
-//			ArrayList<T> items = aGroup.getItems();
-//			int height = 0;
-//			int tempHeight = 0;
-//			int itemX = 0;
-//			int itemSpacingY = renderer.getItemSpacing(mListView).y;
-//
-//			for (T item : items)
-//			{
-//				tempHeight = Math.max(tempHeight, renderer.getItemHeight(mListView, item) + itemSpacingY);
-//
-//				if (++itemX == aItemsPerRow)
-//				{
-//					height += tempHeight;
-//					tempHeight = 0;
-//					itemX = 0;
-//				}
-//			}
-//			height += tempHeight;
-//
-//			return height;
-//		}
-//	}
 
 
 	@Override
@@ -580,15 +386,24 @@ public class ListViewLayoutVertical2<T extends ListViewItem> extends AbstractLis
 	@Override
 	public Dimension getPreferredSize()
 	{
-		ListViewGroup root = mListView.getModel().getRoot();
+		if (mListView.getWidth() == 0 || mListView.getModel().getItemCount() == 0)
+		{
+			return new Dimension(100,100);
+		}
 
-//		int height = getGroupHeight(root, getItemsPerRun());
-//
-//		mPreferredSize = new Dimension(mListView.getItemRenderer().getItemMinimumWidth(mListView), height + 10);
+		Rectangle bounds = new Rectangle();
 
-		mPreferredSize = new Dimension(1000,10000);
+		visit(new Visitor<T>()
+		{
+			@Override
+			public boolean group(Point aPosition, LayoutInfoGroup aLayout)
+			{
+				bounds.add(aPosition.x + aLayout.mDimension.width, aPosition.y + aLayout.mDimension.height);
+				return false;
+			}
+		});
 
-		return mPreferredSize;
+		return bounds.getSize();
 	}
 
 
@@ -604,78 +419,6 @@ public class ListViewLayoutVertical2<T extends ListViewItem> extends AbstractLis
 	@Override
 	public T getItemRelativeTo(T aItem, int aDiffX, int aDiffY)
 	{
-		if (aItem == null)
-		{
-			throw new IllegalArgumentException("aItem is null");
-		}
-		if (aDiffX != 0 && aDiffY != 0)
-		{
-			throw new IllegalArgumentException("Motion only in one direction allowed.");
-		}
-
-//		ListViewGroup<T> containingGroup = mListView.getModel().getRoot().findContainingGroup(aItem);
-//
-//		if (containingGroup == null)
-//		{
-//			return null;
-//		}
-//
-//		int itemsPerRun = getItemsPerRun();
-//
-//		int oldIndex = containingGroup.getItems().indexOf(aItem);
-//
-//		int newIndexTmp = (oldIndex - (oldIndex % itemsPerRun)) + Math.max(0, Math.min(itemsPerRun - 1, (oldIndex % itemsPerRun) + aDiffX));
-//
-//		int newIndex = aDiffY * itemsPerRun + newIndexTmp;
-//
-//		if (aDiffX != 0 || containingGroup == mListView.getModel().getRoot())
-//		{
-//			if (newIndex < 0 || newIndex >= containingGroup.getItems().size())
-//			{
-//				return null;
-//			}
-//		}
-//		else
-//		{
-//			if (newIndex < 0)
-//			{
-//				ListViewGroup siblingGroup = containingGroup.getSiblingGroup(-1, true);
-//
-//				if (siblingGroup == null)
-//				{
-//					return null;
-//				}
-//
-//				int ic = siblingGroup.getItemCount();
-//
-//				newIndex = (ic == itemsPerRun ? 0 : (ic - (ic % itemsPerRun))) + (oldIndex % itemsPerRun);
-//
-//				if (newIndex >= ic && ic > itemsPerRun)
-//				{
-//					newIndex -= itemsPerRun;
-//				}
-//
-//				newIndex = Math.min(newIndex, ic - 1);
-//
-//				containingGroup = siblingGroup;
-//			}
-//			else if (newIndex >= containingGroup.getItems().size())
-//			{
-//				ListViewGroup siblingGroup = containingGroup.getSiblingGroup(+1, true);
-//
-//				if (siblingGroup == null)
-//				{
-//					return null;
-//				}
-//
-//				newIndex = Math.min(oldIndex % itemsPerRun, siblingGroup.getItemCount() - 1);
-//
-//				containingGroup = siblingGroup;
-//			}
-//		}
-//
-//		return containingGroup.getItems().get(newIndex);
-
 		return null;
 	}
 
@@ -694,7 +437,7 @@ public class ListViewLayoutVertical2<T extends ListViewItem> extends AbstractLis
 			{
 				r1.add(r2);
 
-//				getItemsIntersectingImpl(r1.x + 1, r1.y + 1, r1.x + r1.width - 2, r1.y + r1.height - 2, list, mListView.getModel().getRoot(), 0);
+				getItemsIntersecting(new Rectangle(r1.x + 1, r1.y + 1, r1.x + r1.width - 2, r1.y + r1.height - 2), list);
 			}
 		}
 
@@ -705,196 +448,167 @@ public class ListViewLayoutVertical2<T extends ListViewItem> extends AbstractLis
 	@Override
 	public ArrayList<T> getItemsIntersecting(Rectangle aRectangle, ArrayList<T> aList)
 	{
-		if (aList == null)
-		{
-			aList = new ArrayList<>();
-		}
-
-//		getItemsIntersectingImpl(x1, y1, x2, y2, aList, mListView.getModel().getRoot(), 0);
-
-		return aList;
-	}
-
-
-//	private void getItemsIntersectingImpl(int x1, int y1, int x2, int y2, ArrayList<T> aList, ListViewGroup aGroup, int aOffsetY)
-//	{
-//		SortedMap<Object, ListViewGroup> children = aGroup.getChildren();
-//
-//		if (children != null)
-//		{
-//			int groupHeight = mListView.getStyles().groupHeight;
-//
-//			for (Object key : children.getKeys())
-//			{
-//				ListViewGroup group = children.get(key);
-//
-//				int height = getGroupHeight(group, getItemsPerRun());
-//
-//				aOffsetY += groupHeight;
-//
-//				if (!group.isCollapsed())
-//				{
-//					if (y2 > aOffsetY && y1 < aOffsetY + height)
-//					{
-//						getItemsIntersectingImpl(x1, y1, x2, y2, aList, group, aOffsetY);
-//					}
-//
-//					aOffsetY += height;
-//				}
-//			}
-//		}
-//		else
-//		{
-//			int itemsPerRun = getItemsPerRun();
-//
-//			int verticalBarWidth = mListView.getStyles().verticalBarWidth;
-//			int verticalIndent = verticalBarWidth * Math.max(0, mListView.getModel().getGroupCount() - 1);
-//			double itemWidth = getItemWidth();
-//
-//			x1 = Math.max(0, Math.min(itemsPerRun - 1, (int)((x1 - verticalIndent) / itemWidth)));
-//			x2 = Math.max(0, Math.min(itemsPerRun - 1, (int)((x2 - verticalIndent) / itemWidth)));
-//
-//			ListViewItemRenderer<T> renderer = mListView.getItemRenderer();
-//			ArrayList<T> items = aGroup.getItems();
-//			int localY = 0;
-//			int rowHeight = 0;
-//			int itemX = 0;
-//			int itemY = 0;
-//			int itemSpacingY = renderer.getItemSpacing(mListView).y;
-//
-//			for (int i = 0; i < items.size(); i++)
-//			{
-//				rowHeight = Math.max(rowHeight, renderer.getItemHeight(mListView, items.get(i)) + itemSpacingY);
-//
-//				if (++itemX == itemsPerRun || i == items.size() - 1)
-//				{
-//					if (y2 >= (aOffsetY + localY) && y1 < (aOffsetY + localY + rowHeight))
-//					{
-//						int min = itemY * itemsPerRun + x1;
-//						int max = itemY * itemsPerRun + x2;
-//
-//						if (min > max)
-//						{
-//							int t = max;
-//							max = min;
-//							min = t;
-//						}
-//						max = Math.min(max, items.size() - 1);
-//
-//						for (int j = min; j <= max; j++)
-//						{
-//							aList.add(items.get(j));
-//						}
-//					}
-//
-//					localY += rowHeight;
-//					rowHeight = 0;
-//					itemX = 0;
-//					itemY++;
-//				}
-//			}
-//		}
-//	}
-
-
-	@Override
-	public boolean getItemBounds(T aItem, Rectangle aRectangle)
-	{
 		visit(new Visitor<T>()
 		{
 			@Override
-			public boolean item(int aX, int aY, int aWidth, int aHeight, T aTmpItem)
+			public boolean group(Point aPosition, LayoutInfoGroup aGroup)
 			{
-				if (aItem == aTmpItem)
+				return aRectangle.intersects(aPosition.x, aPosition.y, aGroup.mDimension.width, aGroup.mDimension.height);
+			}
+
+			@Override
+			public boolean array(Point aPosition, LayoutInfoArray aArray)
+			{
+				return aRectangle.intersects(aPosition.x, aPosition.y, aArray.mDimension.width, aArray.mDimension.height);
+			}
+
+			@Override
+			public Object item(int aX, int aY, int aWidth, int aHeight, T aItem)
+			{
+				if (aRectangle.intersects(aX, aY, aWidth, aHeight))
 				{
-					aRectangle.setBounds(aX, aY, aWidth, aHeight);
-					return false;
+					aList.add(aItem);
 				}
-				return true;
+
+				return null;
 			}
 		});
 
-//		return getItemBoundsImpl(aItem, aRectangle, mListView.getModel().getRoot(), 0);
-		return false;
+		return aList;
+	}
+	
+	
+	private Tuple findHierarchicalItemLocation(T aTargetItem)
+	{
+		Tuple tuple = new Tuple(null,null);
+
+		visitGroupX(mListView.getModel().getRoot(), mListView.getWidth(), new Visitor<T>()
+		{
+			@Override
+			public boolean group(Point aPosition, LayoutInfoGroup aLayout)
+			{
+				tuple.setFirst(aLayout);
+				return true;
+			}
+
+			@Override
+			public boolean array(Point aPosition, LayoutInfoArray aArray)
+			{
+				tuple.setSecond(aArray);
+				return true;
+			}
+
+			@Override
+			public Object item(int aX, int aY, int aWidth, int aHeight, T aItem)
+			{
+				if (aTargetItem == aItem)
+				{
+					return Boolean.TRUE;
+				}
+				return null;
+			}
+		});
+		
+		return tuple;
 	}
 
 
-//	private boolean getItemBoundsImpl(T aItem, Rectangle aRectangle, ListViewGroup aGroup, int aOffsetY)
-//	{
-//		SortedMap<Object, ListViewGroup> children = aGroup.getChildren();
-//
-//		if (children != null)
-//		{
-//			int groupHeight = mListView.getStyles().groupHeight;
-//
-//			for (Object key : children.getKeys())
-//			{
-//				ListViewGroup group = children.get(key);
-//
-//				aOffsetY += groupHeight;
-//
-//				if (!group.isCollapsed())
-//				{
-//					if (getItemBoundsImpl(aItem, aRectangle, group, aOffsetY))
-//					{
-//						return true;
-//					}
-//
-//					aOffsetY += getGroupHeight(group, getItemsPerRun());
-//				}
-//			}
-//
-//			return false;
-//		}
-//		else
-//		{
-//			int itemIndex = aGroup.getItems().indexOf(aItem);
-//
-//			if (itemIndex == -1)
-//			{
-//				return false;
-//			}
-//
-//			int itemsPerRun = getItemsPerRun();
-//
-//			int verticalBarWidth = mListView.getStyles().verticalBarWidth;
-//			int verticalIndent = verticalBarWidth * Math.max(0, mListView.getModel().getGroupCount() - 1);
-//			double itemWidth = getItemWidth();
-//
-//			int row = itemIndex / itemsPerRun;
-//
-//			int y = 0;
-//			int height = 0;
-//
-//			for (int i = 0; i <= row; i++)
-//			{
-//				y += height;
-//				height = getRowHeight(aGroup, i * itemsPerRun);
-//			}
-//
-//			aRectangle.x = (int)(itemWidth * (itemIndex % itemsPerRun)) + verticalIndent;
-//			aRectangle.y = aOffsetY + y;
-//			aRectangle.width = (int)itemWidth;
-//			aRectangle.height = height;
-//
-//			return true;
-//		}
-//	}
-//
-//
-//	private int getRowHeight(ListViewGroup<T> aGroup, int aItemIndex)
-//	{
-//		ListViewItemRenderer<T> renderer = mListView.getItemRenderer();
-//		int itemSpacingY = renderer.getItemSpacing(mListView).y;
-//		int itemsPerRun = getItemsPerRun();
-//		ArrayList<T> items = aGroup.getItems();
-//		int height = 0;
-//
-//		for (int i = aItemIndex - (aItemIndex % itemsPerRun), j = i; j < i + itemsPerRun; j++)
-//		{
-//			height = Math.max(height, renderer.getItemHeight(mListView, items.get(i)) + itemSpacingY);
-//		}
-//
-//		return height;
-//	}
+	@Override
+	public boolean getItemBounds(T aTargetItem, Rectangle aRectangle)
+	{
+		if (mListView.getWidth() == 0)
+		{
+			return false;
+		}
+
+		Tuple t = findHierarchicalItemLocation(aTargetItem);
+
+		Boolean result = (Boolean)visit(new Visitor<T>()
+		{
+			@Override
+			public boolean group(Point aPosition, LayoutInfoGroup aLayout)
+			{
+				return aLayout.equals(t.getFirst());
+			}
+
+			@Override
+			public boolean array(Point aPosition, LayoutInfoArray aArray)
+			{
+				return aArray.equals(t.getSecond());
+			}
+
+			@Override
+			public Object item(int aX, int aY, int aWidth, int aHeight, T aItem)
+			{
+				if (aTargetItem == aItem)
+				{
+					aRectangle.setBounds(aX, aY, aWidth, aHeight);
+					return Boolean.TRUE;
+				}
+				return null;
+			}
+		});
+
+		return result != null && result;
+	}
+
+
+	private void paintVerticalBar(Graphics2D aGraphics, int aOriginX, int aOriginY, int aWidth, int aHeight)
+	{
+		Styles style = mListView.getStyles();
+
+		aGraphics.setColor(style.indent);
+		aGraphics.fillRect(aOriginX, aOriginY, aWidth, aHeight);
+
+		aGraphics.setColor(style.indentLine);
+		aGraphics.drawLine(aOriginX + aWidth - 1, aOriginY, aOriginX + aWidth - 1, aOriginY + aHeight - 1);
+		aGraphics.drawLine(aOriginX, aOriginY + aHeight - 1, aOriginX + aWidth - 1, aOriginY + aHeight - 1);
+	}
+
+
+	private interface Visitor<T>
+	{
+		default boolean group(Point aPosition, LayoutInfoGroup aLayout)
+		{
+			return true;
+		}
+
+		default boolean array(Point aPosition, LayoutInfoArray aArray)
+		{
+			return true;
+		}
+
+		default Object item(int x, int y, int aWidth, int aHeight, T aItem)
+		{
+			return null;
+		}
+	}
+
+
+	static class LayoutInfoGroup
+	{
+		ArrayList<LayoutInfoArray> mArrays;
+		Dimension mDimension;
+
+
+		public LayoutInfoGroup(ArrayList<LayoutInfoArray> aArrays, Dimension aDimension)
+		{
+			mArrays = aArrays;
+			mDimension = aDimension;
+		}
+	}
+
+
+	static class LayoutInfoArray
+	{
+		int mItemCount;
+		Dimension mDimension;
+
+
+		public LayoutInfoArray(int aItems, Dimension aDimension)
+		{
+			mItemCount = aItems;
+			mDimension = aDimension;
+		}
+	}
 }

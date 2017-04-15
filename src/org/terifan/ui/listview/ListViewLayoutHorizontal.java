@@ -6,6 +6,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics2D;
+import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
@@ -144,7 +145,7 @@ public class ListViewLayoutHorizontal<T extends ListViewItem> extends AbstractLi
 		int ty = aOriginY + 25;
 		AffineTransform tr = aGraphics.getTransform();
 		aGraphics.transform(AffineTransform.getQuadrantRotateInstance(1, tx, ty));
-		aGraphics.drawString(mListView.getModel().getColumn(mListView.getModel().getGroup(aGroup.getLevel())).getLabel() + ": " + aGroup.getGroupValue() + " (" + cnt + " item" + (cnt != 1 ? "s" : "") + ")", tx, ty);
+		aGraphics.drawString(mListView.getModel().getColumn(mListView.getModel().getGroup(aGroup.getLevel())).getLabel() + ": " + aGroup.getGroupKey() + " (" + cnt + " item" + (cnt != 1 ? "s" : "") + ")", tx, ty);
 		aGraphics.setTransform(tr);
 
 		aGraphics.setColor(style.verticalLine);
@@ -243,7 +244,7 @@ public class ListViewLayoutHorizontal<T extends ListViewItem> extends AbstractLi
 
 
 	@Override
-	public LocationInfo getLocationInfo(int aLocationX, int aLocationY)
+	public LocationInfo getLocationInfo(Point aLocation)
 	{
 		SortedMap<Object, ListViewGroup<T>> children = mListView.getModel().getRoot().getChildren();
 
@@ -257,7 +258,7 @@ public class ListViewLayoutHorizontal<T extends ListViewItem> extends AbstractLi
 			{
 				ListViewGroup group = children.get(key);
 
-				LocationInfo info = getComponentAtImpl(aLocationX, aLocationY, x, group, 0);
+				LocationInfo info = getComponentAtImpl(aLocation.x, aLocation.y, x, group, 0);
 
 				if (info != null)
 				{
@@ -269,7 +270,7 @@ public class ListViewLayoutHorizontal<T extends ListViewItem> extends AbstractLi
 		}
 		else
 		{
-			return getComponentAtImplPoint(mListView.getModel().getRoot(), 0, 0, aLocationX, aLocationY);
+			return getComponentAtImplPoint(mListView.getModel().getRoot(), 0, 0, aLocation.x, aLocation.y);
 		}
 
 		return null;

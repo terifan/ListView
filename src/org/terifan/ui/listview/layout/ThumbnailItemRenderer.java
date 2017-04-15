@@ -103,6 +103,13 @@ public class ThumbnailItemRenderer<T extends ListViewItem> extends ListViewItemR
 
 
 	@Override
+	protected void getItemSize(ListView<T> aListView, T aItem, Dimension aDimension)
+	{
+		aDimension.setSize(getItemWidth(aListView, aItem), getItemHeight(aListView, aItem));
+	}
+
+
+	@Override
 	public void paintItem(Graphics2D aGraphics, int aOriginX, int aOriginY, int aWidth, int aHeight, ListView<T> aListView, T aItem)
 	{
 //		aGraphics.setColor(new Color(new Random().nextInt(0xff),new Random().nextInt(0xff),new Random().nextInt(0xff),16));

@@ -13,9 +13,10 @@ public class LocationInfo<T extends ListViewItem>
 	}
 
 
-	public void setGroup(ListViewGroup<T> aGroup)
+	public LocationInfo<T> setGroup(ListViewGroup<T> aGroup)
 	{
 		mGroup = aGroup;
+		return this;
 	}
 
 
@@ -25,9 +26,10 @@ public class LocationInfo<T extends ListViewItem>
 	}
 
 
-	public void setItem(T aItem)
+	public LocationInfo<T> setItem(T aItem)
 	{
 		mItem = aItem;
+		return this;
 	}
 
 
@@ -37,9 +39,10 @@ public class LocationInfo<T extends ListViewItem>
 	}
 
 
-	public void setGroupButton(boolean aGroupButton)
+	public LocationInfo<T> setGroupButton(boolean aGroupButton)
 	{
 		mGroupButton = aGroupButton;
+		return this;
 	}
 
 

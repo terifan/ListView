@@ -24,7 +24,7 @@ import org.terifan.ui.listview.util.ImageResizer;
 import org.terifan.ui.listview.util.Utilities;
 
 
-public class TileItemRenderer extends ListViewItemRenderer
+public class TileItemRenderer<T extends ListViewItem> extends ListViewItemRenderer<T>
 {
 	protected final static FontRenderContext FRC = new FontRenderContext(new AffineTransform(), false, false);
 
@@ -122,6 +122,13 @@ public class TileItemRenderer extends ListViewItemRenderer
 	public int getItemHeight(ListView aListView, ListViewItem aItem)
 	{
 		return mItemSize.height;
+	}
+
+
+	@Override
+	protected void getItemSize(ListView<T> aListView, T aItem, Dimension aDimension)
+	{
+		aDimension.setSize(mItemSize);
 	}
 
 

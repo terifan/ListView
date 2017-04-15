@@ -31,7 +31,7 @@ public class ListViewGroupRenderer<T extends ListViewItem>
 		int textY = aOriginY + aHeight - 12;
 
 		ListViewColumn column = aListView.getModel().getColumn(aListView.getModel().getGroup(aGroup.getLevel()));
-		Object value = aGroup.getGroupValue();
+		Object value = aGroup.getGroupKey();
 		String count = "(" + cnt + " item" + (cnt != 1 ? "s" : "") + ")";
 
 		if (column.getGroupFormatter() == null && column.getFormatter() != null)

@@ -2,17 +2,18 @@ package org.terifan.ui.listview.layout;
 
 import java.awt.Color;
 import org.terifan.ui.listview.ListViewLayoutHorizontal;
-import org.terifan.ui.listview.ListViewLayoutVertical;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.image.BufferedImage;
 import java.util.Objects;
+import java.util.Random;
 import org.terifan.ui.listview.ListView;
 import org.terifan.ui.listview.ListViewColumn;
 import org.terifan.ui.listview.ListViewItem;
 import org.terifan.ui.listview.ListViewItemRenderer;
 import org.terifan.ui.listview.ListViewLayout;
+import org.terifan.ui.listview.ListViewLayoutVertical2;
 import org.terifan.ui.listview.ListViewModel;
 import org.terifan.ui.listview.util.Anchor;
 import org.terifan.ui.listview.util.Orientation;
@@ -96,30 +97,39 @@ public class ThumbnailItemRenderer1<T extends ListViewItem> extends ListViewItem
 	@Override
 	public int getItemWidth(ListView<T> aListView, T aItem)
 	{
+		Dimension dim = aItem.getLayoutDimension();
+		if (dim != null)
+		{
+			return dim.width;
+		}
 		return mItemSize.width;
-//		switch (getCategory(aItem))
-//		{
-//			case 0:
-//				return aItem.getIcon() == null ? mItemSize.width : aItem.getIcon().getWidth() + 16;
-//			case 1:
-//			default:
-//				return mItemSize.width;
-//		}
 	}
 
 
 	@Override
 	public int getItemHeight(ListView<T> aListView, T aItem)
 	{
+		Dimension dim = aItem.getLayoutDimension();
+		if (dim != null)
+		{
+			return dim.height;
+		}
 		return mItemSize.height;
-//		switch (getCategory(aItem))
-//		{
-//			case 0:
-//				return aItem.getIcon() == null ? mItemSize.height : aItem.getIcon().getHeight() + 32;
-//			case 1:
-//			default:
-//				return mItemSize.height;
-//		}
+	}
+
+
+	@Override
+	protected void getItemSize(ListView<T> aListView, T aItem, Dimension aDimension)
+	{
+		Dimension dim = aItem.getLayoutDimension();
+		if (dim != null)
+		{
+			aDimension.setSize(dim);
+		}
+		else
+		{
+			aDimension.setSize(mItemSize);
+		}
 	}
 
 
@@ -144,12 +154,17 @@ public class ThumbnailItemRenderer1<T extends ListViewItem> extends ListViewItem
 	protected static final Color SELECTION_INNER_BORDER_COLOR = new Color(0,0,0,200);
 	protected static final Color SELECTION_OUTER_BORDER_COLOR = new Color(255,255,255);
 	protected static final Color LABEL_BACKGROUND_COLOR = new Color(0, 0, 0, 200);
-	protected static final Color THUMB_BACKGROUND_COLOR = new Color(30,30,30);
+	protected static final Color[] THUMB_BACKGROUND_COLOR = new Color[10];
+	static
+	{
+		for (int i = 0; i < THUMB_BACKGROUND_COLOR.length; i++)
+		{
+			THUMB_BACKGROUND_COLOR[i] = new Color(50+i,50+i,50+i);
+		}
+	}
 
 	protected void paintRegularItem(ListView<T> aListView, T aItem, int aOriginX, int aOriginY, int aWidth, int aHeight, Graphics2D aGraphics)
 	{
-		changeVisibleState(aListView, aItem);
-
 		boolean selected = aListView.isItemSelected(aItem);
 
 		int x = aOriginX;
@@ -159,21 +174,32 @@ public class ThumbnailItemRenderer1<T extends ListViewItem> extends ListViewItem
 
 		BufferedImage icon = aItem.getIcon();
 
-		aGraphics.setColor(THUMB_BACKGROUND_COLOR);
-		aGraphics.fillRect(aOriginX, aOriginY, aWidth, aHeight);
+		if (icon == null)
+		{
+			aGraphics.setColor(THUMB_BACKGROUND_COLOR[new Random(aItem.hashCode()).nextInt(THUMB_BACKGROUND_COLOR.length)]);
+			aGraphics.fillRect(aOriginX, aOriginY, aWidth, aHeight);
+
+			if (aItem instanceof ItemFadeController)
+			{
+				ItemFadeController item = (ItemFadeController)aItem;
+				item.setItemFadeValue(0);
+			}
+
+			aListView.fireLoadResources(aItem);
+		}
 
 		if (icon != null)
 		{
 			int opacity = 0;
 
-			if (aItem instanceof ViewPortStateControl)
+			if (aItem instanceof ItemFadeController)
 			{
-				ViewPortStateControl item = (ViewPortStateControl)aItem;
-				long state = item.getViewPortState();
+				ItemFadeController item = (ItemFadeController)aItem;
+				long state = item.getItemFadeValue();
 
 				if (state == 0)
 				{
-					item.setViewPortState(state = System.currentTimeMillis());
+					item.setItemFadeValue(state = System.currentTimeMillis());
 				}
 
 				opacity = (int)Math.max(0, 255 - 255 * (System.currentTimeMillis() - state) / 250);
@@ -181,31 +207,23 @@ public class ThumbnailItemRenderer1<T extends ListViewItem> extends ListViewItem
 
 			int iw = icon.getWidth();
 			int ih = icon.getHeight();
-
-			int sss = Math.max(iw, ih);
-			double sx = aWidth / (double)sss;
-			double sy = aHeight / (double)sss;
-
-			int x0 = x + (w - (int)(sx * iw)) / 2;
-			int y0 = y + h - (int)(sy * ih);
-
-			int distance = opacity / 20;
+			int distance = opacity / 10;
 
 			if (distance > 0)
 			{
-				aGraphics.drawImage(icon, x0, y0, x0 + (int)(sx * iw), y0 + (int)(sy * ih), distance, distance, iw - distance, ih - distance, null);
+				aGraphics.drawImage(icon, x, y, x + w, y + h, distance, distance, iw - distance, ih - distance, null);
 
 				if (opacity > 0)
 				{
 					aGraphics.setColor(new Color(30, 30, 30, opacity));
-					aGraphics.fillRect(x0, y0, (int)(sx * iw), (int)(sy * ih));
+					aGraphics.fillRect(x, y, w, h);
 
 					requestRepaint(aListView);
 				}
 			}
 			else
 			{
-				aGraphics.drawImage(icon, x0, y0, (int)(sx * iw), (int)(sy * ih), null);
+				aGraphics.drawImage(icon, x, y, w, h, null);
 			}
 		}
 
@@ -267,7 +285,7 @@ public class ThumbnailItemRenderer1<T extends ListViewItem> extends ListViewItem
 	{
 		if (mOrientation == Orientation.VERTICAL)
 		{
-			return new ListViewLayoutVertical(aListView, 100);
+			return new ListViewLayoutVertical2(aListView, 100);
 		}
 		else
 		{

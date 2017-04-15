@@ -143,9 +143,9 @@ public class ListViewLayoutVertical<T extends ListViewItem> extends AbstractList
 		for (int itemIndex = 0, itemCount = items.size(); itemIndex < itemCount && y < clip.y + clip.height;)
 		{
 			int rowHeight = 0;
-			for (int itemRowIndex = 0, _itemIndex = itemIndex; _itemIndex < itemCount && itemRowIndex < itemsPerRow; _itemIndex++, itemRowIndex++)
+			for (int itemRowIndex = 0, arrayIndex = itemIndex; arrayIndex < itemCount && itemRowIndex < itemsPerRow; arrayIndex++, itemRowIndex++)
 			{
-				T item = items.get(_itemIndex);
+				T item = items.get(arrayIndex);
 				rowHeight = Math.max(rowHeight, renderer.getItemHeight(mListView, item) + itemSpacing.y);
 			}
 
@@ -177,7 +177,7 @@ public class ListViewLayoutVertical<T extends ListViewItem> extends AbstractList
 
 
 	@Override
-	public LocationInfo getLocationInfo(int aLocationX, int aLocationY)
+	public LocationInfo getLocationInfo(Point aLocation)
 	{
 		SortedMap<Object, ListViewGroup<T>> children = mListView.getModel().getRoot().getChildren();
 
@@ -190,13 +190,13 @@ public class ListViewLayoutVertical<T extends ListViewItem> extends AbstractList
 			{
 				ListViewGroup group = children.get(key);
 
-				LocationInfo result = getComponentAtImpl(aLocationX, aLocationY, y, group, 0);
+				LocationInfo result = getComponentAtImpl(aLocation.x, aLocation.y, y, group, 0);
 
 				if (result != null)
 				{
 					return result;
 				}
-				if (y.get() > aLocationY + groupHeight)
+				if (y.get() > aLocation.y + groupHeight)
 				{
 					break;
 				}
@@ -206,7 +206,7 @@ public class ListViewLayoutVertical<T extends ListViewItem> extends AbstractList
 		}
 		else
 		{
-			return getComponentAtImplPoint(mListView.getModel().getRoot(), 0, 0, aLocationX, aLocationY);
+			return getComponentAtImplPoint(mListView.getModel().getRoot(), 0, 0, aLocation.x, aLocation.y);
 		}
 	}
 

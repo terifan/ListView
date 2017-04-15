@@ -18,7 +18,7 @@ import org.terifan.ui.listview.Styles;
 import org.terifan.ui.listview.util.Utilities;
 
 
-public class DetailItemValueRenderer extends JComponent implements ListViewCellRenderer
+public class DetailItemValueRenderer<T extends ListViewItem> extends JComponent implements ListViewCellRenderer
 {
 	private Rectangle mTempRectangle = new Rectangle();
 

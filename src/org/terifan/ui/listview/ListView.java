@@ -15,7 +15,6 @@ import java.awt.RenderingHints;
 import java.awt.dnd.DropTarget;
 import java.awt.dnd.DropTargetListener;
 import java.awt.event.ActionEvent;
-import java.awt.event.AdjustmentListener;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
@@ -41,13 +40,12 @@ import javax.swing.SwingUtilities;
 import org.terifan.ui.listview.layout.DetailItemRenderer;
 import org.terifan.ui.listview.util.Cache;
 import org.terifan.ui.listview.util.ImageCacheKey;
-import org.terifan.ui.listview.layout.ViewPortStateControl;
 
 
 public class ListView<T extends ListViewItem> extends JComponent implements Scrollable
 {
 	private final HashMap<T, Object> mVisibleItems;
-	private final ArrayList<T> mWasMadeVisible;
+	private final ArrayList<T> mFireLoadResource;
 	private final Rectangle mSelectionRectangle;
 	private final HashSet<T> mSelectedItems;
 	private ListViewModel<T> mModel;
@@ -70,7 +68,6 @@ public class ListView<T extends ListViewItem> extends JComponent implements Scro
 	private Cache<ImageCacheKey, BufferedImage> mImageCache;
 	private double mDPIScale;
 	private boolean mRequestRepaint;
-	private Object mRenderKey;
 	private ArrayList<ViewAdjustmentListener> mAdjustmentListeners;
 
 
@@ -89,7 +86,7 @@ public class ListView<T extends ListViewItem> extends JComponent implements Scro
 		mSelectionRectangle = new Rectangle();
 		mVisibleItems = new HashMap<>();
 		mAdjustmentListeners = new ArrayList<>();
-		mWasMadeVisible = new ArrayList<>();
+		mFireLoadResource = new ArrayList<>();
 		mDPIScale = 1;
 
 		super.setOpaque(true);
@@ -326,7 +323,7 @@ public class ListView<T extends ListViewItem> extends JComponent implements Scro
 	{
 		if (mRolloverEnabled)
 		{
-			LocationInfo<T> info = mLayout.getLocationInfo(aPoint.x, aPoint.y);
+			LocationInfo<T> info = mLayout.getLocationInfo(aPoint);
 
 			if (info == null && mRolloverInfo != null || info != null && !info.equals(mRolloverInfo))
 			{
@@ -364,7 +361,6 @@ public class ListView<T extends ListViewItem> extends JComponent implements Scro
 	{
 		try
 		{
-			mRenderKey = System.currentTimeMillis();
 			mRequestRepaint = false;
 
 			super.paintComponent(aGraphics);
@@ -382,7 +378,7 @@ public class ListView<T extends ListViewItem> extends JComponent implements Scro
 				g.setClip(viewport.x, viewport.y, viewport.width, viewport.height);
 			}
 
-			mWasMadeVisible.clear();
+			mFireLoadResource.clear();
 
 			mLayout.paint(g);
 
@@ -391,24 +387,11 @@ public class ListView<T extends ListViewItem> extends JComponent implements Scro
 				paintPlaceHolder(g);
 			}
 
-			ArrayList<T> wasMadeHidden = new ArrayList<>();
-			for (Entry<T, Object> item : mVisibleItems.entrySet())
-			{
-				if (item.getValue() != mRenderKey) // object comparison
-				{
-					wasMadeHidden.add(item.getKey());
-				}
-			}
-			for (T item : wasMadeHidden)
-			{
-				mVisibleItems.remove(item);
-			}
-
-			if (!wasMadeHidden.isEmpty() || !mWasMadeVisible.isEmpty())
+			if (!mFireLoadResource.isEmpty())
 			{
 				for (ViewAdjustmentListener listener : mAdjustmentListeners)
 				{
-					listener.viewChanged(wasMadeHidden, mWasMadeVisible);
+					listener.requestResources(mFireLoadResource);
 				}
 			}
 		}
@@ -945,10 +928,6 @@ public class ListView<T extends ListViewItem> extends JComponent implements Scro
 	}
 
 
-//	protected HashSet<T> getSelectedItemsClone()
-//	{
-//		return mSelectedItemsClone;
-//	}
 	public void setRowHeaderRenderer()
 	{
 	}
@@ -962,7 +941,7 @@ public class ListView<T extends ListViewItem> extends JComponent implements Scro
 
 	public T getItemAt(Point aPoint)
 	{
-		LocationInfo<T> info = mLayout.getLocationInfo(aPoint.x, aPoint.y);
+		LocationInfo<T> info = mLayout.getLocationInfo(aPoint);
 
 		if (info != null && info.isItem())
 		{
@@ -1013,10 +992,6 @@ public class ListView<T extends ListViewItem> extends JComponent implements Scro
 	public ArrayList<T> getVisibleItems()
 	{
 		return getVisibleItems(0, 0);
-
-//		ArrayList<T> list = new ArrayList<>();
-//		list.addAll(mVisibleItems.keySet());
-//		return list;
 	}
 
 
@@ -1040,13 +1015,9 @@ public class ListView<T extends ListViewItem> extends JComponent implements Scro
 	}
 
 
-	protected void changeVisibleState(T aItem)
+	public void fireLoadResources(T aItem)
 	{
-		Object t = mVisibleItems.put(aItem, mRenderKey);
-		if (t == null)
-		{
-			mWasMadeVisible.add(aItem);
-		}
+		mFireLoadResource.add(aItem);
 	}
 	
 	

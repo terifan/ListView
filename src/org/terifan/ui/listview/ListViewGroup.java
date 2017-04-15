@@ -8,7 +8,7 @@ public class ListViewGroup<T extends ListViewItem>
 {
 	protected final ListViewModel<T> mModel;
 	protected final ListViewGroup<T> mParent;
-	protected final Object mGroupValue;
+	protected final Object mGroupKey;
 	protected final int mLevel;
 	protected SortedMap<Object,ListViewGroup<T>> mChildren;
 	protected ArrayList<T> mItems;
@@ -16,11 +16,11 @@ public class ListViewGroup<T extends ListViewItem>
 	protected int mGroupCount;
 
 
-	protected ListViewGroup(ListViewModel<T> aModel, ListViewGroup<T> aParent, int aLevel, Object aGroupValue)
+	protected ListViewGroup(ListViewModel<T> aModel, ListViewGroup<T> aParent, int aLevel, Object aGroupKey)
 	{
 		mParent = aParent;
 		mLevel = aLevel;
-		mGroupValue = aGroupValue;
+		mGroupKey = aGroupKey;
 		mModel = aModel;
 	}
 
@@ -112,13 +112,13 @@ public class ListViewGroup<T extends ListViewItem>
 	@Override
 	public String toString()
 	{
-		return "ListViewGroup[GroupValue="+getGroupValue()+", GroupCount="+getGroupCount()+", ItemCount="+getItemCount()+", Level="+getLevel()+"]";
+		return "ListViewGroup[GroupKey="+getGroupKey()+", GroupCount="+getGroupCount()+", ItemCount="+getItemCount()+", Level="+getLevel()+"]";
 	}
 
 
-	public Object getGroupValue()
+	public Object getGroupKey()
 	{
-		return mGroupValue;
+		return mGroupKey;
 	}
 
 

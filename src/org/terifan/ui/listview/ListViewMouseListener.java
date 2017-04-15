@@ -47,8 +47,8 @@ class ListViewMouseListener<T extends ListViewItem> extends MouseAdapter
 			mIsDragDrop = false;
 
 			ListViewLayout<T> layout = mListView.getListViewLayout();
-			LocationInfo<T> info = layout.getLocationInfo(aEvent.getX(), aEvent.getY());
-			boolean itemSelected = info != null && info.getItem() != null && mListView.isItemSelected(info.getItem());
+			LocationInfo<T> info = layout.getLocationInfo(aEvent.getPoint());
+			boolean itemSelected = info != null && info.isItem() && mListView.isItemSelected(info.getItem());
 
 			if (!itemSelected)
 			{
@@ -99,7 +99,7 @@ class ListViewMouseListener<T extends ListViewItem> extends MouseAdapter
 		if (!mDragRectStarted && !mDragStarted && !mIsControlDown && !mIsShiftDown && !mIsDragDrop)
 		{
 			mListView.setItemsSelected(false);
-			LocationInfo<T> info = mListView.getListViewLayout().getLocationInfo(aEvent.getX(), aEvent.getY());
+			LocationInfo<T> info = mListView.getListViewLayout().getLocationInfo(aEvent.getPoint());
 			if (info != null && info.getItem() != null)
 			{
 				mListView.setFocusItem(info.getItem());
@@ -142,16 +142,15 @@ class ListViewMouseListener<T extends ListViewItem> extends MouseAdapter
 
 	private void process(MouseEvent aEvent, boolean aMouseDragged)
 	{
-		int x = aEvent.getX();
-		int y = aEvent.getY();
+		Point point = aEvent.getPoint();
 
 		ListViewLayout<T> layout = mListView.getListViewLayout();
-		LocationInfo<T> info = layout.getLocationInfo(aEvent.getX(), aEvent.getY());
+		LocationInfo<T> info = layout.getLocationInfo(point);
 
 		if (aMouseDragged)
 		{
-			int width = Math.abs(mDragStart.x - x);
-			int height = Math.abs(mDragStart.y - y);
+			int width = Math.abs(mDragStart.x - point.x);
+			int height = Math.abs(mDragStart.y - point.y);
 
 			if (Math.abs(width) < 4 || Math.abs(height) < 4)
 			{
@@ -178,7 +177,7 @@ class ListViewMouseListener<T extends ListViewItem> extends MouseAdapter
 				mDragStarted = true;
 			}
 
-			mListView.getSelectionRectangle().setLocation(Math.min(mDragStart.x, x), Math.min(mDragStart.y, y));
+			mListView.getSelectionRectangle().setLocation(Math.min(mDragStart.x, point.x), Math.min(mDragStart.y, point.y));
 			mListView.getSelectionRectangle().setSize(width, height);
 		}
 		else if (!mDragRectStarted)
@@ -245,7 +244,12 @@ class ListViewMouseListener<T extends ListViewItem> extends MouseAdapter
 
 		mListView.setItemsSelected(mSelectedItemsClone, true);
 
-		for (T item : layout.getItemsIntersecting(new Rectangle(Math.min(mDragStart.x, x), Math.min(mDragStart.y, y), Math.max(mDragStart.x, x)-Math.min(mDragStart.x, x), Math.max(mDragStart.y, y)-Math.min(mDragStart.y, y)), new ArrayList<>()))
+		Rectangle r = new Rectangle(mDragStart);
+		r.add(point);
+		r.width++;
+		r.height++;
+
+		for (T item : layout.getItemsIntersecting(r, new ArrayList<>()))
 		{
 			mListView.setItemSelected(item, !mSelectedItemsClone.contains(item));
 		}
@@ -257,7 +261,7 @@ class ListViewMouseListener<T extends ListViewItem> extends MouseAdapter
 
 		if (aMouseDragged)
 		{
-			mTempScrollRect.setBounds(x - 25, y - 25, 50, 50);
+			mTempScrollRect.setBounds(point.x - 25, point.y - 25, 50, 50);
 			mListView.scrollRectToVisible(mTempScrollRect);
 		}
 		else if (isItem)

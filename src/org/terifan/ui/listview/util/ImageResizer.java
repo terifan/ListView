@@ -1,5 +1,6 @@
 package org.terifan.ui.listview.util;
 
+import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
@@ -49,6 +50,30 @@ public class ImageResizer
 		}
 
 		return getScaledImage(aSource, dw, dh, aQuality, aCache);
+	}
+	
+	
+	public static Dimension getAspectScaledSize(int aSourceWidth, int aSourceHeight, int aTargetWidth, int aTargetHeight)
+	{
+		double scale = Math.min(aTargetWidth / (double)aSourceWidth, aTargetHeight / (double)aSourceHeight);
+
+		int dw = (int)Math.round(aSourceWidth * scale);
+		int dh = (int)Math.round(aSourceHeight * scale);
+
+		// make sure one direction has specified dimension
+		if (dw != aTargetWidth && dh != aTargetHeight)
+		{
+			if (Math.abs(aTargetWidth - dw) < Math.abs(aTargetHeight - dh))
+			{
+				dw = aTargetWidth;
+			}
+			else
+			{
+				dh = aTargetHeight;
+			}
+		}
+
+		return new Dimension(dw, dh);
 	}
 
 

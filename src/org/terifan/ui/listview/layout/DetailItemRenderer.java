@@ -2,6 +2,7 @@ package org.terifan.ui.listview.layout;
 
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.Graphics2D;
 import javax.swing.JComponent;
 import org.terifan.ui.listview.ListView;
@@ -17,7 +18,7 @@ import org.terifan.ui.listview.Styles;
 import org.terifan.ui.listview.util.Utilities;
 
 
-public class DetailItemRenderer extends ListViewItemRenderer
+public class DetailItemRenderer<T extends ListViewItem> extends ListViewItemRenderer<T>
 {
 	protected boolean mExtendLastItem;
 
@@ -97,6 +98,13 @@ public class DetailItemRenderer extends ListViewItemRenderer
 	public int getItemHeight(ListView aListView, ListViewItem aItem)
 	{
 		return aListView.getStyles().itemHeight;
+	}
+
+
+	@Override
+	protected void getItemSize(ListView<T> aListView, T aItem, Dimension aDimension)
+	{
+		aDimension.setSize(getItemWidth(aListView, aItem), getItemHeight(aListView, aItem));
 	}
 
 

@@ -701,7 +701,7 @@ public class ListViewModel<T extends ListViewItem> implements Iterable<T>
 
 	public boolean isGroupCollapsed(ListViewGroup<T> aGroup)
 	{
-		return mCollapsedGroups.contains(aGroup.getGroupValue());
+		return mCollapsedGroups.contains(aGroup.getGroupKey());
 	}
 
 
@@ -709,11 +709,11 @@ public class ListViewModel<T extends ListViewItem> implements Iterable<T>
 	{
 		if (aCollapse)
 		{
-			mCollapsedGroups.add(aGroup.getGroupValue());
+			mCollapsedGroups.add(aGroup.getGroupKey());
 		}
 		else
 		{
-			mCollapsedGroups.remove(aGroup.getGroupValue());
+			mCollapsedGroups.remove(aGroup.getGroupKey());
 		}
 	}
 }

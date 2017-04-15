@@ -1,5 +1,6 @@
 package org.terifan.ui.listview;
 
+import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Point;
 
@@ -33,17 +34,7 @@ public abstract class ListViewItemRenderer<T extends ListViewItem>
 
 	abstract protected ListViewLayout<T> createListViewLayout(ListView<T> aListView);
 
-//	default void getItemSize(ListView<T> aListView, T aItem, Dimension aDimension)
-//	{
-//		aDimension.width = getItemWidth(aListView, aItem);
-//		aDimension.height = getItemHeight(aListView, aItem);
-//	}
-
-	protected void changeVisibleState(ListView<T> aListView, T aItem)
-	{
-		aListView.changeVisibleState(aItem);
-	}
-	
+	abstract protected void getItemSize(ListView<T> aListView, T aItem, Dimension aDimension);
 	
 	protected void requestRepaint(ListView<T> aListView)
 	{

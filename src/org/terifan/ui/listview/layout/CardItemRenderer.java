@@ -22,7 +22,7 @@ import org.terifan.ui.listview.util.ImageResizer;
 import org.terifan.ui.listview.util.Utilities;
 
 
-public class CardItemRenderer extends ListViewItemRenderer
+public class CardItemRenderer<T extends ListViewItem> extends ListViewItemRenderer<T>
 {
 	protected final static int ROW_HEADER_PADDING = 5;
 	protected int PADDING = 13;
@@ -93,6 +93,13 @@ public class CardItemRenderer extends ListViewItemRenderer
 	public int getItemWidth(ListView aListView, ListViewItem aItem)
 	{
 		return mItemSize.width;
+	}
+
+
+	@Override
+	protected void getItemSize(ListView<T> aListView, T aItem, Dimension aDimension)
+	{
+		aDimension.setSize(getItemWidth(aListView, aItem), getItemHeight(aListView, aItem));
 	}
 
 
