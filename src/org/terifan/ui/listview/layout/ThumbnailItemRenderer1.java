@@ -24,9 +24,23 @@ public class ThumbnailItemRenderer1<T extends ListViewItem> extends ListViewItem
 {
 	public final static int DEFAULT_LABEL_HEIGHT = -1;
 
+	private final static Color SELECTION_INNER_BORDER_COLOR = new Color(0,0,0,200);
+	private final static Color SELECTION_OUTER_BORDER_COLOR = new Color(255,255,255);
+	private final static Color LABEL_BACKGROUND_COLOR = new Color(0, 0, 0, 200);
+	private final static Color[] THUMB_BACKGROUND_COLOR = new Color[10];
+
+	static
+	{
+		for (int i = 0; i < THUMB_BACKGROUND_COLOR.length; i++)
+		{
+			THUMB_BACKGROUND_COLOR[i] = new Color(50+i,50+i,50+i);
+		}
+	}
+	
 	private Dimension mItemSize;
 	private Orientation mOrientation;
 	private int mLabelHeight;
+	private Point mSpacing = new Point(9, 9);
 
 
 	public ThumbnailItemRenderer1(Dimension aItemSize, Orientation aOrientation)
@@ -84,8 +98,6 @@ public class ThumbnailItemRenderer1<T extends ListViewItem> extends ListViewItem
 		return mItemSize.height;
 	}
 
-	private Point mSpacing = new Point(9, 9);
-
 
 	@Override
 	public Point getItemSpacing(ListView<T> aListView)
@@ -97,7 +109,7 @@ public class ThumbnailItemRenderer1<T extends ListViewItem> extends ListViewItem
 	@Override
 	public int getItemWidth(ListView<T> aListView, T aItem)
 	{
-		Dimension dim = aItem.getLayoutDimension();
+		Dimension dim = aItem.getDimension();
 		if (dim != null)
 		{
 			return dim.width;
@@ -109,7 +121,7 @@ public class ThumbnailItemRenderer1<T extends ListViewItem> extends ListViewItem
 	@Override
 	public int getItemHeight(ListView<T> aListView, T aItem)
 	{
-		Dimension dim = aItem.getLayoutDimension();
+		Dimension dim = aItem.getDimension();
 		if (dim != null)
 		{
 			return dim.height;
@@ -119,16 +131,16 @@ public class ThumbnailItemRenderer1<T extends ListViewItem> extends ListViewItem
 
 
 	@Override
-	protected void getItemSize(ListView<T> aListView, T aItem, Dimension aDimension)
+	protected void getItemSize(ListView<T> aListView, T aItem, Dimension oDimension)
 	{
-		Dimension dim = aItem.getLayoutDimension();
+		Dimension dim = aItem.getDimension();
 		if (dim != null)
 		{
-			aDimension.setSize(dim);
+			oDimension.setSize(dim);
 		}
 		else
 		{
-			aDimension.setSize(mItemSize);
+			oDimension.setSize(mItemSize);
 		}
 	}
 
@@ -151,18 +163,6 @@ public class ThumbnailItemRenderer1<T extends ListViewItem> extends ListViewItem
 	}
 
 
-	protected static final Color SELECTION_INNER_BORDER_COLOR = new Color(0,0,0,200);
-	protected static final Color SELECTION_OUTER_BORDER_COLOR = new Color(255,255,255);
-	protected static final Color LABEL_BACKGROUND_COLOR = new Color(0, 0, 0, 200);
-	protected static final Color[] THUMB_BACKGROUND_COLOR = new Color[10];
-	static
-	{
-		for (int i = 0; i < THUMB_BACKGROUND_COLOR.length; i++)
-		{
-			THUMB_BACKGROUND_COLOR[i] = new Color(50+i,50+i,50+i);
-		}
-	}
-
 	protected void paintRegularItem(ListView<T> aListView, T aItem, int aOriginX, int aOriginY, int aWidth, int aHeight, Graphics2D aGraphics)
 	{
 		boolean selected = aListView.isItemSelected(aItem);
@@ -182,7 +182,7 @@ public class ThumbnailItemRenderer1<T extends ListViewItem> extends ListViewItem
 			if (aItem instanceof ItemFadeController)
 			{
 				ItemFadeController item = (ItemFadeController)aItem;
-				item.setItemFadeValue(0);
+				item.setItemFadeValue(-1);
 			}
 
 			aListView.fireLoadResources(aItem);
@@ -197,7 +197,7 @@ public class ThumbnailItemRenderer1<T extends ListViewItem> extends ListViewItem
 				ItemFadeController item = (ItemFadeController)aItem;
 				long state = item.getItemFadeValue();
 
-				if (state == 0)
+				if (state == -1)
 				{
 					item.setItemFadeValue(state = System.currentTimeMillis());
 				}
@@ -227,19 +227,21 @@ public class ThumbnailItemRenderer1<T extends ListViewItem> extends ListViewItem
 			}
 		}
 
-		int labelHeight = getLabelHeight(aItem);
+		int labelHeight = -1;//getLabelHeight(aItem);
 
 		if (labelHeight != 0)
 		{
-			if (labelHeight < 0)
-			{
-				labelHeight = Math.abs(labelHeight * (aGraphics.getFontMetrics().getHeight() * 120 / 100));
-			}
-
 			String label = getLabel(aListView, aItem);
+
+			label = aWidth + " x " + aHeight;
 
 			if (label != null)
 			{
+				if (labelHeight < 0)
+				{
+					labelHeight = Math.abs(labelHeight * (aGraphics.getFontMetrics().getHeight() * 120 / 100));
+				}
+
 				aGraphics.setColor(LABEL_BACKGROUND_COLOR);
 				aGraphics.fillRect(x, y + h - labelHeight, w, labelHeight);
 

@@ -10,7 +10,7 @@ public interface ListViewItem
 
 	BufferedImage getIcon();
 	
-	default Dimension getLayoutDimension()
+	default Dimension getDimension()
 	{
 		return null;
 	}

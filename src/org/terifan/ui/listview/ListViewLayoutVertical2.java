@@ -89,7 +89,7 @@ public class ListViewLayoutVertical2<T extends ListViewItem> extends AbstractLis
 		{
 			return null;
 		}
-
+		
 		return visitGroup(mListView.getModel().getRoot(), 0, new Point(), width, height, aVisitor);
 
 //		ListViewGroup<T> root = mListView.getModel().getRoot();
@@ -206,12 +206,12 @@ public class ListViewLayoutVertical2<T extends ListViewItem> extends AbstractLis
 					}
 					else
 					{
-						double tmp = itemDim.width * 448 / itemDim.height * scale + error;
+						double tmp = itemDim.width * array.mDimension.height / itemDim.height * scale + error;
 						itemWidth = (int)tmp;
 						error = tmp - itemWidth;
 					}
 
-					Object result = aVisitor.item(x, aPosition.y, itemWidth, array.mDimension.height - itemSpacing.y, item);
+					Object result = aVisitor.item(x, aPosition.y, itemWidth, array.mDimension.height, item);
 					if (result != null)
 					{
 						return result;
@@ -225,7 +225,7 @@ public class ListViewLayoutVertical2<T extends ListViewItem> extends AbstractLis
 				itemIndex += array.mItemCount;
 			}
 
-			aPosition.y += array.mDimension.height;
+			aPosition.y += array.mDimension.height + itemSpacing.y;
 		}
 
 		return null;
@@ -328,13 +328,11 @@ public class ListViewLayoutVertical2<T extends ListViewItem> extends AbstractLis
 				itemDim.width = itemDim.width * 448 / itemDim.height;
 
 				arrayDim.width += itemDim.width;
-				arrayDim.height = Math.max(arrayDim.height, itemDim.height + itemSpacing.y);
+				arrayDim.height = Math.max(arrayDim.height, itemDim.height);
 			}
 
-			arrayDim.height = 448;
-
 			layout.add(new LayoutInfoArray(arrayLength, arrayDim));
-			groupDimension.height += arrayDim.height;
+			groupDimension.height += arrayDim.height + itemSpacing.y;
 		}
 
 		grp = new LayoutInfoGroup(layout, groupDimension);
@@ -402,7 +400,7 @@ public class ListViewLayoutVertical2<T extends ListViewItem> extends AbstractLis
 				return false;
 			}
 		});
-
+		
 		return bounds.getSize();
 	}
 
@@ -419,6 +417,37 @@ public class ListViewLayoutVertical2<T extends ListViewItem> extends AbstractLis
 	@Override
 	public T getItemRelativeTo(T aItem, int aDiffX, int aDiffY)
 	{
+		Rectangle rect = new Rectangle();
+
+		if (getItemBounds(aItem, rect))
+		{
+			ArrayList<T> items = new ArrayList<>();
+
+			if (aDiffX < 0)
+			{
+				rect.x += -20;
+				rect.y += rect.height / 2;
+			}
+			if (aDiffX > 0)
+			{
+				rect.x += rect.width + 20;
+				rect.y += rect.height / 2;
+			}
+			if (aDiffY < 0)
+			{
+				rect.x += rect.width / 2;
+				rect.y += -20;
+			}
+			if (aDiffY > 0)
+			{
+				rect.x += rect.width / 2;
+				rect.y += rect.height + 20;
+			}
+			rect.width = 1;
+			rect.height = 1;
+			getItemsIntersecting(rect, items);
+		}
+		
 		return null;
 	}
 

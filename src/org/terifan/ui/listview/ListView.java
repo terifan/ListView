@@ -15,6 +15,7 @@ import java.awt.RenderingHints;
 import java.awt.dnd.DropTarget;
 import java.awt.dnd.DropTargetListener;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
@@ -25,7 +26,6 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map.Entry;
 import javax.swing.AbstractAction;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
@@ -37,6 +37,7 @@ import javax.swing.ScrollPaneConstants;
 import javax.swing.Scrollable;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
+import javax.swing.Timer;
 import org.terifan.ui.listview.layout.DetailItemRenderer;
 import org.terifan.ui.listview.util.Cache;
 import org.terifan.ui.listview.util.ImageCacheKey;
@@ -1003,8 +1004,17 @@ public class ListView<T extends ListViewItem> extends JComponent implements Scro
 		if (scrollPane != null)
 		{
 			Rectangle viewRect = scrollPane.getViewport().getViewRect();
-			viewRect.grow(aExtraHor, aExtraVer);
 			mLayout.getItemsIntersecting(viewRect, list);
+
+			Rectangle viewRect2 = new Rectangle(viewRect.x, viewRect.y - aExtraVer, viewRect.width, aExtraVer);
+			Rectangle viewRect3 = new Rectangle(viewRect.x, viewRect.y + viewRect.height, viewRect.width, aExtraVer);
+
+			mLayout.getItemsIntersecting(viewRect2, list);
+			mLayout.getItemsIntersecting(viewRect3, list);
+
+//			Rectangle viewRect = scrollPane.getViewport().getViewRect();
+//			viewRect.grow(aExtraHor, aExtraVer);
+//			mLayout.getItemsIntersecting(viewRect, list);
 		}
 		else
 		{
@@ -1019,10 +1029,18 @@ public class ListView<T extends ListViewItem> extends JComponent implements Scro
 	{
 		mFireLoadResource.add(aItem);
 	}
-	
-	
+
+
 	public void addAdjustmentListener(ViewAdjustmentListener aAdjustmentListener)
 	{
 		mAdjustmentListeners.add(aAdjustmentListener);
+	}
+
+
+	private SmoothScroll mSmoothScroll = new SmoothScroll(this);
+	
+	public void smoothScroll(double aPreciseWheelRotation)
+	{
+		mSmoothScroll.smoothScroll(aPreciseWheelRotation);
 	}
 }
