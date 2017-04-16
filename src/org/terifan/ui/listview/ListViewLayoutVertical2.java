@@ -324,11 +324,11 @@ public class ListViewLayoutVertical2<T extends ListViewItem> extends AbstractLis
 				T item = items.get(itemIndex);
 
 				renderer.getItemSize(mListView, item, itemDim);
+				
+				int oldMax = arrayDim.height == 0 ? itemDim.height : arrayDim.height;
 
-				itemDim.width = itemDim.width * 448 / itemDim.height;
-
-				arrayDim.width += itemDim.width;
 				arrayDim.height = Math.max(arrayDim.height, itemDim.height);
+				arrayDim.width = arrayDim.width * arrayDim.height / oldMax + itemDim.width * arrayDim.height / itemDim.height;
 			}
 
 			layout.add(new LayoutInfoArray(arrayLength, arrayDim));
