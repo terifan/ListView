@@ -70,6 +70,7 @@ public class ListView<T extends ListViewItem> extends JComponent implements Scro
 	private double mDPIScale;
 	private boolean mRequestRepaint;
 	private ArrayList<ViewAdjustmentListener> mAdjustmentListeners;
+	private int mMinRowHeight;
 
 
 	public ListView()
@@ -1042,5 +1043,17 @@ public class ListView<T extends ListViewItem> extends JComponent implements Scro
 	public void smoothScroll(double aPreciseWheelRotation)
 	{
 		mSmoothScroll.smoothScroll(aPreciseWheelRotation);
+	}
+
+
+	public int getMinRowHeight()
+	{
+		return mMinRowHeight;
+	}
+
+
+	public void setMinRowHeight(int aMinRowHeight)
+	{
+		mMinRowHeight = aMinRowHeight;
 	}
 }

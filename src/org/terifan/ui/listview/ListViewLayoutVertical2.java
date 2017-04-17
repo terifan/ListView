@@ -316,13 +316,13 @@ public class ListViewLayoutVertical2<T extends ListViewItem> extends AbstractLis
 
 		for (int itemIndex = 0, itemCount = items.size(); itemIndex < itemCount;)
 		{
-			Dimension arrayDim = new Dimension();
+			Dimension arrayDim = new Dimension(0,mListView.getMinRowHeight());
 			int arrayLength = 0;
 
 			for (; itemIndex < itemCount && arrayDim.width < aWidth; arrayLength++, itemIndex++)
 			{
 				renderer.getItemSize(mListView, items.get(itemIndex), itemDim);
-
+					
 				int oldArrayHeight = arrayDim.height == 0 ? itemDim.height : arrayDim.height;
 
 				arrayDim.height = Math.max(arrayDim.height, itemDim.height);
