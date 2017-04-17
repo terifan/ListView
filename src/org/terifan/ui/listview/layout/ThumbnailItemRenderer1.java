@@ -1,13 +1,14 @@
 package org.terifan.ui.listview.layout;
 
+import java.awt.AlphaComposite;
 import java.awt.Color;
+import java.awt.Composite;
 import org.terifan.ui.listview.ListViewLayoutHorizontal;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.image.BufferedImage;
 import java.util.Objects;
-import java.util.Random;
 import org.terifan.ui.listview.ListView;
 import org.terifan.ui.listview.ListViewColumn;
 import org.terifan.ui.listview.ListViewItem;
@@ -176,7 +177,7 @@ public class ThumbnailItemRenderer1<T extends ListViewItem> extends ListViewItem
 
 		if (icon == null)
 		{
-			aGraphics.setColor(THUMB_BACKGROUND_COLOR[new Random(aItem.hashCode()).nextInt(THUMB_BACKGROUND_COLOR.length)]);
+			aGraphics.setColor(getPlaceHolderBackgroundColor(aOriginX, aOriginY));
 			aGraphics.fillRect(aOriginX, aOriginY, aWidth, aHeight);
 
 			if (aItem instanceof ItemFadeController)
@@ -202,7 +203,7 @@ public class ThumbnailItemRenderer1<T extends ListViewItem> extends ListViewItem
 					item.setItemFadeValue(state = System.currentTimeMillis());
 				}
 
-				opacity = (int)Math.max(0, 255 - 255 * (System.currentTimeMillis() - state) / 250);
+				opacity = 255 - (int)Math.pow(Math.min(255, 255 * (System.currentTimeMillis() - state) / 500.0) / 16, 2);
 			}
 
 			int iw = icon.getWidth();
@@ -212,28 +213,28 @@ public class ThumbnailItemRenderer1<T extends ListViewItem> extends ListViewItem
 			if (distance > 0)
 			{
 				aGraphics.drawImage(icon, x, y, x + w, y + h, distance, distance, iw - distance, ih - distance, null);
-
-				if (opacity > 0)
-				{
-					aGraphics.setColor(new Color(30, 30, 30, opacity));
-					aGraphics.fillRect(x, y, w, h);
-
-					requestRepaint(aListView);
-				}
 			}
 			else
 			{
 				aGraphics.drawImage(icon, x, y, w, h, null);
 			}
+
+			if (opacity > 0)
+			{
+				int c = getPlaceHolderBackgroundColor(aOriginX, aOriginY).getRed();
+
+				aGraphics.setColor(new Color(c, c, c, opacity));
+				aGraphics.fillRect(x, y, w, h);
+
+				requestRepaint(aListView);
+			}
 		}
 
-		int labelHeight = -1;//getLabelHeight(aItem);
+		int labelHeight = getLabelHeight(aItem);
 
 		if (labelHeight != 0)
 		{
 			String label = getLabel(aListView, aItem);
-
-			label = aWidth + " x " + aHeight;
 
 			if (label != null)
 			{
@@ -262,6 +263,12 @@ public class ThumbnailItemRenderer1<T extends ListViewItem> extends ListViewItem
 				aGraphics.drawRect(aOriginX + i, aOriginY + i, aWidth - 1 - 2 * i, aHeight - 1 - 2 * i);
 			}
 		}
+	}
+
+
+	protected static Color getPlaceHolderBackgroundColor(int aOriginX, int aOriginY)
+	{
+		return THUMB_BACKGROUND_COLOR[(int)((aOriginX + 21739L * aOriginY) % THUMB_BACKGROUND_COLOR.length)];
 	}
 
 

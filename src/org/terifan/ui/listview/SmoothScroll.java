@@ -24,7 +24,7 @@ public class SmoothScroll
 	
 	public synchronized void smoothScroll(double aPreciseWheelRotation)
 	{
-		mScrollVelocity += 50 * aPreciseWheelRotation;
+		mScrollVelocity += 60 * aPreciseWheelRotation;
 
 		if (mScrollTimer == null)
 		{
@@ -47,7 +47,7 @@ public class SmoothScroll
 						mOwner.scrollRectToVisible(current);
 					}
 
-					mScrollVelocity *= 0.8;
+					mScrollVelocity *= 0.85;
 
 					if (mScrollVelocity < 0 && mScrollFraction + mScrollVelocity > -1 || mScrollVelocity > 0 && mScrollFraction + mScrollVelocity < 1)
 					{

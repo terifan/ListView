@@ -67,7 +67,7 @@ public class ListViewLayoutVertical2<T extends ListViewItem> extends AbstractLis
 			}
 
 			@Override
-			public Object item(int aX, int aY, int aWidth, int aHeight, T aItem)
+			public Object item(int aX, int aY, int aWidth, int aHeight, LayoutInfoGroup aLayout, LayoutInfoArray aArray, T aItem)
 			{
 				if (clip.intersects(aX, aY, aWidth, aHeight))
 				{
@@ -211,7 +211,7 @@ public class ListViewLayoutVertical2<T extends ListViewItem> extends AbstractLis
 						error = tmp - itemWidth;
 					}
 
-					Object result = aVisitor.item(x, aPosition.y, itemWidth, array.mDimension.height, item);
+					Object result = aVisitor.item(x, aPosition.y, itemWidth, array.mDimension.height, aLayoutInfoGroup, array, item);
 					if (result != null)
 					{
 						return result;
@@ -280,7 +280,7 @@ public class ListViewLayoutVertical2<T extends ListViewItem> extends AbstractLis
 			{
 				for (int arrayIndex = 0; itemIndex < items.size() && arrayIndex < array.mItemCount; arrayIndex++, itemIndex++)
 				{
-					Object result = aVisitor.item(0, 0, 0, 0, items.get(itemIndex));
+					Object result = aVisitor.item(0, 0, 0, 0, aLayoutInfoGroup, array, items.get(itemIndex));
 					if (result != null)
 					{
 						return result;
@@ -321,14 +321,12 @@ public class ListViewLayoutVertical2<T extends ListViewItem> extends AbstractLis
 
 			for (; itemIndex < itemCount && arrayDim.width < aWidth; arrayLength++, itemIndex++)
 			{
-				T item = items.get(itemIndex);
+				renderer.getItemSize(mListView, items.get(itemIndex), itemDim);
 
-				renderer.getItemSize(mListView, item, itemDim);
-				
-				int oldMax = arrayDim.height == 0 ? itemDim.height : arrayDim.height;
+				int oldArrayHeight = arrayDim.height == 0 ? itemDim.height : arrayDim.height;
 
 				arrayDim.height = Math.max(arrayDim.height, itemDim.height);
-				arrayDim.width = arrayDim.width * arrayDim.height / oldMax + itemDim.width * arrayDim.height / itemDim.height;
+				arrayDim.width = arrayDim.width * arrayDim.height / oldArrayHeight + itemDim.width * arrayDim.height / itemDim.height;
 			}
 
 			layout.add(new LayoutInfoArray(arrayLength, arrayDim));
@@ -360,7 +358,7 @@ public class ListViewLayoutVertical2<T extends ListViewItem> extends AbstractLis
 			}
 
 			@Override
-			public Object item(int aX, int aY, int aWidth, int aHeight, T aItem)
+			public Object item(int aX, int aY, int aWidth, int aHeight, LayoutInfoGroup aLayout, LayoutInfoArray aArray, T aItem)
 			{
 				if (new Rectangle(aX, aY, aWidth, aHeight).contains(aLocation.x, aLocation.y))
 				{
@@ -417,38 +415,69 @@ public class ListViewLayoutVertical2<T extends ListViewItem> extends AbstractLis
 	@Override
 	public T getItemRelativeTo(T aItem, int aDiffX, int aDiffY)
 	{
-		Rectangle rect = new Rectangle();
-
-		if (getItemBounds(aItem, rect))
+		HierarchicalItemLocation h = findHierarchicalItemLocation(aItem);
+		
+		if (aDiffX < 0)
 		{
-			ArrayList<T> items = new ArrayList<>();
-
-			if (aDiffX < 0)
-			{
-				rect.x += -20;
-				rect.y += rect.height / 2;
-			}
-			if (aDiffX > 0)
-			{
-				rect.x += rect.width + 20;
-				rect.y += rect.height / 2;
-			}
-			if (aDiffY < 0)
-			{
-				rect.x += rect.width / 2;
-				rect.y += -20;
-			}
-			if (aDiffY > 0)
-			{
-				rect.x += rect.width / 2;
-				rect.y += rect.height + 20;
-			}
-			rect.width = 1;
-			rect.height = 1;
-			getItemsIntersecting(rect, items);
+			return h.itemBefore;
+		}
+		if (aDiffX > 0)
+		{
+			return h.itemAfter;
 		}
 		
-		return null;
+		Rectangle currentBounds = new Rectangle();
+		getItemBoundsImpl(aItem, currentBounds, h);
+
+		Object result = visit(new Visitor<T>()
+		{
+			boolean visitedArray;
+
+			@Override
+			public Object item(int aX, int aY, int aWidth, int aHeight, LayoutInfoGroup aLayout, LayoutInfoArray aArray, T aItem)
+			{
+				if (aDiffY < 0)
+				{
+					if (aArray == h.arrayBefore)
+					{
+						if (aX + aWidth + 5 > currentBounds.x + currentBounds.width / 2)
+						{
+							return aItem;
+						}
+
+						visitedArray = true;
+					}
+					else if (visitedArray)
+					{
+						return false;
+					}
+				}
+				else
+				{
+					if (aArray == h.arrayAfter)
+					{
+						if (aX + aWidth + 5 > currentBounds.x + currentBounds.width / 2)
+						{
+							return aItem;
+						}
+
+						visitedArray = true;
+					}
+					else if (visitedArray)
+					{
+						return false;
+					}
+				}
+				return null;
+			}
+		});
+		
+		if (result instanceof Boolean)
+		{
+			return null;
+		}
+
+		return (T)result;
 	}
 
 
@@ -492,7 +521,7 @@ public class ListViewLayoutVertical2<T extends ListViewItem> extends AbstractLis
 			}
 
 			@Override
-			public Object item(int aX, int aY, int aWidth, int aHeight, T aItem)
+			public Object item(int aX, int aY, int aWidth, int aHeight, LayoutInfoGroup aLayout, LayoutInfoArray aArray, T aItem)
 			{
 				if (aRectangle.intersects(aX, aY, aWidth, aHeight))
 				{
@@ -507,38 +536,90 @@ public class ListViewLayoutVertical2<T extends ListViewItem> extends AbstractLis
 	}
 	
 	
-	private Tuple findHierarchicalItemLocation(T aTargetItem)
+	class HierarchicalItemLocation
 	{
-		Tuple tuple = new Tuple(null,null);
+		LayoutInfoGroup group;
+		LayoutInfoGroup groupBefore;
+		LayoutInfoGroup groupAfter;
+		LayoutInfoArray array;
+		LayoutInfoArray arrayBefore;
+		LayoutInfoArray arrayAfter;
+		T itemBefore;
+		T itemAfter;
+		boolean item;
+	}
+
+
+	private HierarchicalItemLocation findHierarchicalItemLocation(T aTargetItem)
+	{
+		AtomicReference<LayoutInfoGroup> prevGroup1 = new AtomicReference<>();
+		AtomicReference<LayoutInfoGroup> prevGroup2 = new AtomicReference<>();
+		AtomicReference<LayoutInfoArray> prevArray1 = new AtomicReference<>();
+		AtomicReference<LayoutInfoArray> prevArray2 = new AtomicReference<>();
+		AtomicReference<T> prevItem = new AtomicReference<>();
+
+		HierarchicalItemLocation result = new HierarchicalItemLocation();
 
 		visitGroupX(mListView.getModel().getRoot(), mListView.getWidth(), new Visitor<T>()
 		{
 			@Override
-			public boolean group(Point aPosition, LayoutInfoGroup aLayout)
+			public boolean group(Point aPosition, LayoutInfoGroup aGroup)
 			{
-				tuple.setFirst(aLayout);
+				if (result.item)
+				{
+					result.groupAfter = aGroup;
+				}
+				else if (!result.item)
+				{
+					prevGroup2.set(prevGroup1.get());
+					prevGroup1.set(aGroup);
+				}
 				return true;
 			}
 
 			@Override
 			public boolean array(Point aPosition, LayoutInfoArray aArray)
 			{
-				tuple.setSecond(aArray);
+				if (result.item && result.arrayAfter == null)
+				{
+					result.arrayAfter = aArray;
+					return false;
+				}
+				else if (!result.item)
+				{
+					prevArray2.set(prevArray1.get());
+					prevArray1.set(aArray);
+				}
+				prevItem.set(null);
 				return true;
 			}
 
 			@Override
-			public Object item(int aX, int aY, int aWidth, int aHeight, T aItem)
+			public Object item(int aX, int aY, int aWidth, int aHeight, LayoutInfoGroup aGroup, LayoutInfoArray aArray, T aItem)
 			{
 				if (aTargetItem == aItem)
 				{
-					return Boolean.TRUE;
+					result.group = aGroup;
+					result.array = aArray;
+					result.itemBefore = prevItem.get();
+					result.arrayBefore = prevArray2.get();
+					result.groupBefore = prevGroup2.get();
+					result.item = true;
 				}
+				else if (!result.item)
+				{
+					result.itemBefore = aItem;
+				}
+				else if (result.item && result.itemAfter == null && result.array == aArray)
+				{
+					result.itemAfter = aItem;
+				}
+				prevItem.set(aItem);
 				return null;
 			}
 		});
 		
-		return tuple;
+		return result;
 	}
 
 
@@ -550,24 +631,46 @@ public class ListViewLayoutVertical2<T extends ListViewItem> extends AbstractLis
 			return false;
 		}
 
-		Tuple t = findHierarchicalItemLocation(aTargetItem);
+		HierarchicalItemLocation h = findHierarchicalItemLocation(aTargetItem);
+		
+		if (!h.item)
+		{
+			return false;
+		}
 
-		Boolean result = (Boolean)visit(new Visitor<T>()
+//		System.out.println(t.group);
+//		System.out.println(t.groupBefore);
+//		System.out.println(t.groupAfter);
+//		System.out.println(t.array);
+//		System.out.println(t.arrayBefore);
+//		System.out.println(t.arrayAfter);
+//		System.out.println(t.itemBefore);
+//		System.out.println(t.itemAfter);
+
+		getItemBoundsImpl(aTargetItem, aRectangle, h);
+
+		return true;
+	}
+	
+	
+	private void getItemBoundsImpl(T aTargetItem, Rectangle aRectangle, HierarchicalItemLocation h)
+	{
+		visit(new Visitor<T>()
 		{
 			@Override
 			public boolean group(Point aPosition, LayoutInfoGroup aLayout)
 			{
-				return aLayout.equals(t.getFirst());
+				return aLayout == h.group;
 			}
 
 			@Override
 			public boolean array(Point aPosition, LayoutInfoArray aArray)
 			{
-				return aArray.equals(t.getSecond());
+				return aArray == h.array;
 			}
 
 			@Override
-			public Object item(int aX, int aY, int aWidth, int aHeight, T aItem)
+			public Object item(int aX, int aY, int aWidth, int aHeight, LayoutInfoGroup aLayout, LayoutInfoArray aArray, T aItem)
 			{
 				if (aTargetItem == aItem)
 				{
@@ -577,8 +680,6 @@ public class ListViewLayoutVertical2<T extends ListViewItem> extends AbstractLis
 				return null;
 			}
 		});
-
-		return result != null && result;
 	}
 
 
@@ -607,7 +708,7 @@ public class ListViewLayoutVertical2<T extends ListViewItem> extends AbstractLis
 			return true;
 		}
 
-		default Object item(int x, int y, int aWidth, int aHeight, T aItem)
+		default Object item(int x, int y, int aWidth, int aHeight, LayoutInfoGroup aLayout, LayoutInfoArray aArray, T aItem)
 		{
 			return null;
 		}
