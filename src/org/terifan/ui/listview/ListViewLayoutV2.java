@@ -11,7 +11,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import org.terifan.ui.listview.util.Cache;
 
 
-public class ListViewLayoutVertical2<T extends ListViewItem> extends AbstractListViewLayout<T>
+public class ListViewLayoutV2<T extends ListViewItem> extends AbstractListViewLayout<T>
 {
 	private Cache<Tuple<Integer,ListViewGroup<T>>, LayoutInfoGroup> mLayoutCache = new Cache<>(1000);
 
@@ -21,7 +21,7 @@ public class ListViewLayoutVertical2<T extends ListViewItem> extends AbstractLis
 	protected Orientation mOrientation;
 
 
-	public ListViewLayoutVertical2(ListView<T> aListView, int aMaxItemsPerRow)
+	public ListViewLayoutV2(ListView<T> aListView, int aMaxItemsPerRow)
 	{
 		mListView = aListView;
 		mMaxItemsPerRow = aMaxItemsPerRow;

@@ -14,6 +14,8 @@ import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import org.terifan.ui.listview.ListView;
 import org.terifan.ui.listview.ListViewColumn;
+import org.terifan.ui.listview.ListViewIcon;
+import org.terifan.ui.listview.ListViewImageIcon;
 import org.terifan.ui.listview.ListViewItem;
 import org.terifan.ui.listview.ListViewItemRenderer;
 import org.terifan.ui.listview.ListViewLayout;
@@ -228,7 +230,7 @@ public class TileItemRenderer<T extends ListViewItem> extends ListViewItemRender
 		int w = mIconWidth + 10;
 		int h = aHeight - 10;
 
-		BufferedImage icon = aItem.getIcon();
+		ListViewIcon icon = aItem.getIcon();
 
 		boolean drawBorder = aListView.isItemBorderPainted(aItem);
 
@@ -239,7 +241,7 @@ public class TileItemRenderer<T extends ListViewItem> extends ListViewItemRender
 		{
 			if (aStyle.thumbPlaceholder != null)
 			{
-				icon = ImageResizer.getScaledImageAspect(aStyle.thumbPlaceholder, tw, th, true, aListView.getImageCache());
+				icon = new ListViewImageIcon(aStyle.thumbPlaceholder).getScaledInstance(tw, th, true, aListView.getImageCache());
 			}
 		}
 
@@ -258,7 +260,7 @@ public class TileItemRenderer<T extends ListViewItem> extends ListViewItemRender
 				aGraphics.drawImage(im, tx - 3, ty - 3, null);
 			}
 
-			aGraphics.drawImage(icon, tx, ty, tw, th, null);
+			icon.drawImage(aGraphics, tx, ty, tw, th);
 		}
 	}
 

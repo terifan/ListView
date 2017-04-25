@@ -3,6 +3,7 @@ package org.terifan.ui.listview.util;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import javax.imageio.ImageIO;
+import org.terifan.ui.listview.ListViewImageIcon;
 
 
 public final class Utilities
@@ -22,6 +23,12 @@ public final class Utilities
 		{
 			throw new IllegalStateException(e);
 		}
+	}
+
+
+	public static ListViewImageIcon loadIcon(Class aOwer, String aPath)
+	{
+		return new ListViewImageIcon(loadImage(aOwer, aPath));
 	}
 
 

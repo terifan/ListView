@@ -12,6 +12,7 @@ import javax.swing.JComponent;
 import org.terifan.ui.listview.ListView;
 import org.terifan.ui.listview.ListViewCellRenderer;
 import org.terifan.ui.listview.ListViewColumn;
+import org.terifan.ui.listview.ListViewIcon;
 import org.terifan.ui.listview.ListViewItem;
 import org.terifan.ui.listview.SelectionMode;
 import org.terifan.ui.listview.Styles;
@@ -121,7 +122,7 @@ public class DetailItemValueRenderer<T extends ListViewItem> extends JComponent 
 
 		if (column.getIconWidth() > 0)
 		{
-			BufferedImage icon = mItem.getIcon();
+			ListViewIcon icon = mItem.getIcon();
 
 			if (icon != null)
 			{
@@ -150,7 +151,7 @@ public class DetailItemValueRenderer<T extends ListViewItem> extends JComponent 
 	//			}
 	//			else
 				{
-					aGraphics.drawImage(icon, ix, iy, iw, ih, null);
+					icon.drawImage(aGraphics, ix, iy, iw, ih);
 				}
 			}
 		}

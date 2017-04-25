@@ -1,20 +1,18 @@
 package org.terifan.ui.listview.layout;
 
-import java.awt.AlphaComposite;
 import java.awt.Color;
-import java.awt.Composite;
 import org.terifan.ui.listview.ListViewLayoutHorizontal;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Point;
-import java.awt.image.BufferedImage;
 import java.util.Objects;
 import org.terifan.ui.listview.ListView;
 import org.terifan.ui.listview.ListViewColumn;
+import org.terifan.ui.listview.ListViewIcon;
 import org.terifan.ui.listview.ListViewItem;
 import org.terifan.ui.listview.ListViewItemRenderer;
 import org.terifan.ui.listview.ListViewLayout;
-import org.terifan.ui.listview.ListViewLayoutVertical2;
+import org.terifan.ui.listview.ListViewLayoutV2;
 import org.terifan.ui.listview.ListViewModel;
 import org.terifan.ui.listview.util.Anchor;
 import org.terifan.ui.listview.util.Orientation;
@@ -173,7 +171,7 @@ public class ThumbnailItemRenderer1<T extends ListViewItem> extends ListViewItem
 		int w = aWidth;
 		int h = aHeight;
 
-		BufferedImage icon = aItem.getIcon();
+		ListViewIcon icon = aItem.getIcon();
 
 		if (icon == null)
 		{
@@ -203,7 +201,7 @@ public class ThumbnailItemRenderer1<T extends ListViewItem> extends ListViewItem
 					item.setItemFadeValue(state = System.currentTimeMillis());
 				}
 
-				opacity = 255 - (int)Math.pow(Math.min(255, 255 * (System.currentTimeMillis() - state) / 500.0) / 16, 2);
+				opacity = 255 - Math.min(255, (int)Math.pow(256 * (System.currentTimeMillis() - state) / 500.0 / 16, 2));
 			}
 
 			int iw = icon.getWidth();
@@ -212,11 +210,11 @@ public class ThumbnailItemRenderer1<T extends ListViewItem> extends ListViewItem
 
 			if (distance > 0)
 			{
-				aGraphics.drawImage(icon, x, y, x + w, y + h, distance, distance, iw - distance, ih - distance, null);
+				icon.drawImage(aGraphics, x, y, x + w, y + h, distance, distance, iw - distance, ih - distance);
 			}
 			else
 			{
-				aGraphics.drawImage(icon, x, y, w, h, null);
+				icon.drawImage(aGraphics, x, y, w, h);
 			}
 
 			if (opacity > 0)
@@ -225,7 +223,7 @@ public class ThumbnailItemRenderer1<T extends ListViewItem> extends ListViewItem
 
 				aGraphics.setColor(new Color(c, c, c, opacity));
 				aGraphics.fillRect(x, y, w, h);
-
+		
 				requestRepaint(aListView);
 			}
 		}
@@ -294,7 +292,7 @@ public class ThumbnailItemRenderer1<T extends ListViewItem> extends ListViewItem
 	{
 		if (mOrientation == Orientation.VERTICAL)
 		{
-			return new ListViewLayoutVertical2(aListView, 100);
+			return new ListViewLayoutV2(aListView, 100);
 		}
 		else
 		{

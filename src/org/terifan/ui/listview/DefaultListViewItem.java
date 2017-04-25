@@ -8,7 +8,7 @@ import java.util.HashMap;
 public class DefaultListViewItem implements ListViewItem
 {
 	protected HashMap<ListViewColumn, Object> mValues;
-	protected BufferedImage mIcon;
+	protected ListViewIcon mIcon;
 
 
 	public DefaultListViewItem()
@@ -31,7 +31,7 @@ public class DefaultListViewItem implements ListViewItem
 
 
 	@Override
-	public BufferedImage getIcon()
+	public ListViewIcon getIcon()
 	{
 		return mIcon;
 	}
@@ -39,7 +39,7 @@ public class DefaultListViewItem implements ListViewItem
 
 	public void setIcon(BufferedImage aIcon)
 	{
-		mIcon = aIcon;
+		mIcon = new ListViewImageIcon(aIcon);
 	}
 
 

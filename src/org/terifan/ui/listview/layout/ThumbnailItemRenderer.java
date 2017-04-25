@@ -8,6 +8,7 @@ import java.awt.image.BufferedImage;
 import java.util.Objects;
 import org.terifan.ui.listview.ListView;
 import org.terifan.ui.listview.ListViewColumn;
+import org.terifan.ui.listview.ListViewIcon;
 import org.terifan.ui.listview.ListViewItem;
 import org.terifan.ui.listview.ListViewItemRenderer;
 import org.terifan.ui.listview.ListViewLayout;
@@ -137,20 +138,11 @@ public class ThumbnailItemRenderer<T extends ListViewItem> extends ListViewItemR
 		int sx = x + (w - sw) / 2;
 		int sy = y + h - sh;
 
-		BufferedImage icon = aItem.getIcon();
+		ListViewIcon icon = aItem.getIcon();
 
-		if (icon != null || style.thumbPlaceholder != null)
+		if (icon != null)
 		{
-			BufferedImage scaledIcon;
-
-			if (icon != null)
-			{
-				scaledIcon = ImageResizer.getScaledImageAspect(icon, mItemSize.width, itemHeight, true, aListView.getImageCache());
-			}
-			else
-			{
-				scaledIcon = ImageResizer.getScaledImageAspect(style.thumbPlaceholder, mItemSize.width, itemHeight, true, aListView.getImageCache());
-			}
+			ListViewIcon scaledIcon = icon.getScaledInstance(mItemSize.width, itemHeight, true, aListView.getImageCache());
 
 			int tw = scaledIcon.getWidth();
 			int th = scaledIcon.getHeight();
@@ -169,7 +161,7 @@ public class ThumbnailItemRenderer<T extends ListViewItem> extends ListViewItemR
 				aGraphics.drawImage(im, tx - 3, ty - 3, null);
 			}
 
-			aGraphics.drawImage(scaledIcon, tx, ty, null);
+			scaledIcon.drawImage(aGraphics, tx, ty);
 		}
 
 		String label = null;

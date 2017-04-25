@@ -75,7 +75,7 @@ public class EntityListViewItem implements ListViewItem
 
 
 	@Override
-	public final BufferedImage getIcon()
+	public final ListViewIcon getIcon()
 	{
 		try
 		{
@@ -85,7 +85,7 @@ public class EntityListViewItem implements ListViewItem
 				if (ann != null)
 				{
 					method.setAccessible(true);
-					return (BufferedImage)method.invoke(this);
+					return (ListViewIcon)method.invoke(this);
 				}
 			}
 
@@ -95,7 +95,7 @@ public class EntityListViewItem implements ListViewItem
 				if (ann != null)
 				{
 					field.setAccessible(true);
-					return (BufferedImage)field.get(this);
+					return (ListViewIcon)field.get(this);
 				}
 			}
 		}
