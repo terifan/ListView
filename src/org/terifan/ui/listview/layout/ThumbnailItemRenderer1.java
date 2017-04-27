@@ -23,19 +23,20 @@ public class ThumbnailItemRenderer1<T extends ListViewItem> extends ListViewItem
 {
 	public final static int DEFAULT_LABEL_HEIGHT = -1;
 
-	private final static Color SELECTION_INNER_BORDER_COLOR = new Color(0,0,0,200);
-	private final static Color SELECTION_OUTER_BORDER_COLOR = new Color(255,255,255);
+	private final static Color SELECTION_INNER_BORDER_COLOR = new Color(0, 0, 0, 200);
+	private final static Color SELECTION_OUTER_BORDER_COLOR = new Color(255, 255, 255);
 	private final static Color LABEL_BACKGROUND_COLOR = new Color(0, 0, 0, 200);
 	private final static Color[] THUMB_BACKGROUND_COLOR = new Color[10];
+
 
 	static
 	{
 		for (int i = 0; i < THUMB_BACKGROUND_COLOR.length; i++)
 		{
-			THUMB_BACKGROUND_COLOR[i] = new Color(50+i,50+i,50+i);
+			THUMB_BACKGROUND_COLOR[i] = new Color(50 + i, 50 + i, 50 + i);
 		}
 	}
-	
+
 	private Dimension mItemSize;
 	private Orientation mOrientation;
 	private int mLabelHeight;
@@ -52,7 +53,7 @@ public class ThumbnailItemRenderer1<T extends ListViewItem> extends ListViewItem
 	{
 		mItemSize = aItemSize;
 		mOrientation = aOrientation;
-		mLabelHeight = -1+0*aLabelHeight;
+		mLabelHeight = -1 + 0 * aLabelHeight;
 	}
 
 
@@ -214,7 +215,8 @@ public class ThumbnailItemRenderer1<T extends ListViewItem> extends ListViewItem
 			}
 			else
 			{
-				icon.drawImage(aGraphics, x, y, w, h);
+				int crop = (iw * h / ih - w) / 2;
+				icon.drawImage(aGraphics, x, y, x + w, y + h, crop, 0, iw - crop, ih);
 			}
 
 			if (opacity > 0)
@@ -223,7 +225,7 @@ public class ThumbnailItemRenderer1<T extends ListViewItem> extends ListViewItem
 
 				aGraphics.setColor(new Color(c, c, c, opacity));
 				aGraphics.fillRect(x, y, w, h);
-		
+
 				requestRepaint(aListView);
 			}
 		}
