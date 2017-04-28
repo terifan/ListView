@@ -8,7 +8,7 @@ import javax.swing.JComponent;
 import javax.swing.Timer;
 
 
-public class SmoothScroll 
+public class SmoothScroll
 {
 	private final JComponent mOwner;
 	private Timer mScrollTimer;
@@ -21,7 +21,7 @@ public class SmoothScroll
 		mOwner = aOwner;
 	}
 
-	
+
 	public synchronized void smoothScroll(double aPreciseWheelRotation)
 	{
 		mScrollVelocity += 60 * aPreciseWheelRotation;
@@ -34,7 +34,7 @@ public class SmoothScroll
 				public void actionPerformed(ActionEvent aEvent)
 				{
 					mScrollFraction += mScrollVelocity;
-					
+
 					int scrollInc = (int)mScrollFraction;
 
 					if (scrollInc != 0)
@@ -47,7 +47,8 @@ public class SmoothScroll
 						mOwner.scrollRectToVisible(current);
 					}
 
-					mScrollVelocity *= 0.85;
+//					mScrollVelocity *= 0.85;
+					mScrollVelocity *= 0.75;
 
 					if (mScrollVelocity < 0 && mScrollFraction + mScrollVelocity > -1 || mScrollVelocity > 0 && mScrollFraction + mScrollVelocity < 1)
 					{

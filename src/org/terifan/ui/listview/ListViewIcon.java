@@ -24,4 +24,7 @@ public interface ListViewIcon
 
 
 	public ListViewImageIcon getScaledInstance(int aWidth, int aHeight, boolean aQuality, Cache<ImageCacheKey, BufferedImage> aImageCache);
+
+
+	public BufferedImage getImage(int aPreferredWidth, int aPreferredHeight);
 }

@@ -88,4 +88,11 @@ public class ListViewImageIcon implements ListViewIcon
 	{
 		return new ListViewImageIcon(ImageResizer.getScaledImageAspect(mImage, aWidth, aHeight, aQuality, aImageCache));
 	}
+
+
+	@Override
+	public BufferedImage getImage(int aPreferredWidth, int aPreferredHeight)
+	{
+		return mImage;
+	}
 }
