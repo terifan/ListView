@@ -5,6 +5,7 @@ import org.terifan.ui.listview.ListViewLayoutHorizontal;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Point;
+import java.awt.Shape;
 import java.util.Objects;
 import org.terifan.ui.listview.ListView;
 import org.terifan.ui.listview.ListViewColumn;
@@ -207,16 +208,30 @@ public class ThumbnailItemRenderer1<T extends ListViewItem> extends ListViewItem
 
 			int iw = icon.getWidth();
 			int ih = icon.getHeight();
-			int distance = opacity / 10;
+			int distance = opacity / 10;	
+
+			int ow = iw * h / ih;
+			int crop = (ow - w) / 2;
 
 			if (distance > 0)
 			{
-				icon.drawImage(aGraphics, x, y, x + w, y + h, distance, distance, iw - distance, ih - distance);
+				// java buggy
+//				icon.drawImage(aGraphics, x, y, x + w, y + h, crop + distance, distance, iw - crop - distance, ih - distance);
+
+				Shape c = aGraphics.getClip();
+				aGraphics.clipRect(x, y, w, h);
+				icon.drawImage(aGraphics, x - crop - distance, y - distance, ow + 2 * distance, h + 2 * distance);
+				aGraphics.setClip(c);
 			}
 			else
 			{
-				int crop = (iw * h / ih - w) / 2;
-				icon.drawImage(aGraphics, x, y, x + w, y + h, crop, 0, iw - crop, ih);
+				// java buggy
+//				icon.drawImage(aGraphics, x, y, x + w, y + h, crop, 0, iw - crop, ih);
+
+				Shape c = aGraphics.getClip();
+				aGraphics.clipRect(x, y, w, h);
+				icon.drawImage(aGraphics, x - crop, y, ow, h);
+				aGraphics.setClip(c);
 			}
 
 			if (opacity > 0)
