@@ -2,6 +2,7 @@ package org.terifan.ui.listview.util;
 
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
+import java.net.URL;
 import javax.imageio.ImageIO;
 import org.terifan.ui.listview.ListViewImageIcon;
 
@@ -17,7 +18,13 @@ public final class Utilities
 	{
 		try
 		{
-			return ImageIO.read(aOwer.getResource(aPath));
+			URL resource = aOwer.getResource(aPath);
+			if (resource == null)
+			{
+				System.err.println("Resource missing: " + aPath);
+				return null;
+			}
+			return ImageIO.read(resource);
 		}
 		catch (Exception e)
 		{

@@ -6,23 +6,54 @@ import javax.swing.SortOrder;
 
 public interface ListViewHeaderRenderer<T extends ListViewItem>
 {
-	public void paintRowHeader(ListView<T> aListView, Graphics aGraphics, int x, int y, int w, int h, boolean aIsSelected, boolean aIsArmed, boolean aIsRollover);
+	default void paintRowHeader(ListView<T> aListView, Graphics aGraphics, int aX, int aY, int aW, int aH, boolean aIsSelected, boolean aIsArmed, boolean aIsRollover)
+	{
+		aGraphics.setColor(aListView.getBackground());
+		aGraphics.fillRect(aX, aY, aW, aH);
+	}
 
-	public void paintColumnHeader(ListView<T> aListView, ListViewColumn<T> aColumn, Graphics aGraphics, int x, int y, int w, int h, boolean aIsSelected, boolean aIsArmed, boolean aIsRollover, SortOrder aSorting, boolean aFirstColumn, boolean aLastColumn);
+	default void paintColumnHeader(ListView<T> aListView, ListViewColumn<T> aColumn, Graphics aGraphics, int aX, int aY, int aW, int aH, boolean aIsSelected, boolean aIsArmed, boolean aIsRollover, SortOrder aSorting, boolean aFirstColumn, boolean aLastColumn)
+	{
+		aGraphics.setColor(aListView.getBackground());
+		aGraphics.fillRect(aX, aY, aW, aH);
+	}
 
-	//TODO: remove
-	public void paintColumnHeaderLeading(ListView<T> aListView, Graphics aGraphics, int x, int y, int w, int h);
+	default void paintColumnHeaderLeading(ListView<T> aListView, Graphics aGraphics, int aX, int aY, int aW, int aH)
+	{
+		aGraphics.setColor(aListView.getBackground());
+		aGraphics.fillRect(aX, aY, aW, aH);
+	}
 
-	//TODO: remove
-	public void paintColumnHeaderTrailing(ListView<T> aListView, Graphics aGraphics, int x, int y, int w, int h);
+	default void paintColumnHeaderTrailing(ListView<T> aListView, Graphics aGraphics, int aX, int aY, int aW, int aH)
+	{
+		aGraphics.setColor(aListView.getBackground());
+		aGraphics.fillRect(aX, aY, aW, aH);
+	}
 
-	public void paintUpperLeftCorner(ListView<T> aListView, Graphics aGraphics, int x, int y, int w, int h);
+	default void paintUpperLeftCorner(ListView<T> aListView, Graphics aGraphics, int aX, int aY, int aW, int aH)
+	{
+		aGraphics.setColor(aListView.getBackground());
+		aGraphics.fillRect(aX, aY, aW, aH);
+	}
 
-	public void paintUpperRightCorner(ListView<T> aListView, Graphics aGraphics, int x, int y, int w, int h);
+	default void paintUpperRightCorner(ListView<T> aListView, Graphics aGraphics, int aX, int aY, int aW, int aH)
+	{
+		aGraphics.setColor(aListView.getBackground());
+		aGraphics.fillRect(aX, aY, aW, aH);
+	}
 
-	public int getColumnHeaderHeight(ListView<T> aListView);
+	default int getRowHeaderWidth()
+	{
+		return 0;
+	}
 
-	public int getRowHeaderWidth();
+	default boolean getExtendLastItem()
+	{
+		return true;
+	}
 
-	public boolean getExtendLastItem();
+	default int getColumnHeaderHeight(ListView<T> aListView)
+	{
+		return 0;
+	}
 }

@@ -47,8 +47,8 @@ public class SmoothScroll
 						mOwner.scrollRectToVisible(current);
 					}
 
-//					mScrollVelocity *= 0.85;
-					mScrollVelocity *= 0.75;
+					mScrollVelocity *= 0.85;
+//					mScrollVelocity *= 0.75;
 
 					if (mScrollVelocity < 0 && mScrollFraction + mScrollVelocity > -1 || mScrollVelocity > 0 && mScrollFraction + mScrollVelocity < 1)
 					{
