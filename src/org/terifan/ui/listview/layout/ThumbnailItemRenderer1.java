@@ -41,7 +41,7 @@ public class ThumbnailItemRenderer1<T extends ListViewItem> extends ListViewItem
 	private Dimension mItemSize;
 	private Orientation mOrientation;
 	private int mLabelHeight;
-	private Point mSpacing = new Point(9, 9);
+	private Point mSpacing;
 
 
 	public ThumbnailItemRenderer1(Dimension aItemSize, Orientation aOrientation)
@@ -52,9 +52,23 @@ public class ThumbnailItemRenderer1<T extends ListViewItem> extends ListViewItem
 
 	public ThumbnailItemRenderer1(Dimension aItemSize, Orientation aOrientation, int aLabelHeight)
 	{
+		this.mSpacing = new Point(9, 9);
 		mItemSize = aItemSize;
 		mOrientation = aOrientation;
 		mLabelHeight = -1 + 0 * aLabelHeight;
+		mSpacing = new Point(9, 9);
+	}
+
+
+	public void setSpacing(Point aSpacing)
+	{
+		this.mSpacing = aSpacing;
+	}
+
+
+	public Point getSpacing()
+	{
+		return mSpacing;
 	}
 
 
@@ -208,7 +222,7 @@ public class ThumbnailItemRenderer1<T extends ListViewItem> extends ListViewItem
 
 			int iw = icon.getWidth();
 			int ih = icon.getHeight();
-			int distance = opacity / 10;	
+			int distance = opacity / 10;
 
 			int ow = iw * h / ih;
 			int crop = (ow - w) / 2;
