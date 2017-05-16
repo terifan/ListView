@@ -11,7 +11,7 @@ import org.terifan.ui.listview.Tuple;
 public class ListViewImageIcon implements ListViewIcon
 {
 	private final static Cache<Tuple<BufferedImage, String>, BufferedImage> CACHE = new Cache<>(4096 * 4096 * 4);
-	private static boolean USE_CACHE = true;
+	private static boolean USE_CACHE = false;
 
 	private final BufferedImage mImage;
 	private Color mBackgroundColor;
