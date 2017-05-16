@@ -227,8 +227,7 @@ public class Cache<K,V> implements Iterable<K>
 
 		if (entry != null)
 		{
-			mCacheOrder.remove(aKey);
-			mCacheOrder.addFirst(aKey);
+			bump(aKey);
 
 			return entry.value;
 		}

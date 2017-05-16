@@ -5,17 +5,19 @@ import org.terifan.ui.listview.ListViewLayoutHorizontal;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Point;
+import java.awt.RenderingHints;
 import java.awt.Shape;
 import java.awt.image.BufferedImage;
 import java.util.Objects;
 import org.terifan.ui.listview.ListView;
 import org.terifan.ui.listview.ListViewColumn;
-import org.terifan.ui.listview.ListViewIcon;
+import org.terifan.ui.listview.util.ListViewIcon;
 import org.terifan.ui.listview.ListViewItem;
 import org.terifan.ui.listview.ListViewItemRenderer;
 import org.terifan.ui.listview.ListViewLayout;
 import org.terifan.ui.listview.ListViewLayoutV2;
 import org.terifan.ui.listview.ListViewModel;
+import org.terifan.ui.listview.Tuple;
 import org.terifan.ui.listview.util.Anchor;
 import org.terifan.ui.listview.util.Cache;
 import org.terifan.ui.listview.util.Orientation;
@@ -179,7 +181,6 @@ public class ThumbnailItemRenderer1<T extends ListViewItem> extends ListViewItem
 		return cat;
 	}
 
-	Cache<T,BufferedImage> cache = new Cache<>(100*1000*1000);
 
 	protected void paintRegularItem(ListView<T> aListView, T aItem, int aOriginX, int aOriginY, int aWidth, int aHeight, Graphics2D aGraphics)
 	{
@@ -242,17 +243,6 @@ public class ThumbnailItemRenderer1<T extends ListViewItem> extends ListViewItem
 			}
 			else
 			{
-//				BufferedImage image = cache.get(aItem);
-//				if (image == null)
-//				{
-//					image = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
-//					Graphics2D g = image.createGraphics();
-//					icon.drawImage(g, 0, 0,  w, h, crop, 0, iw - crop, ih);
-//					g.dispose();
-//					cache.put(aItem, image, image.getWidth()*image.getHeight()*4);
-//				}
-//				aGraphics.drawImage(image, x, y, null);
-
 				// java buggy
 //				icon.drawImage(aGraphics, x, y, x + w, y + h, crop, 0, iw - crop, ih);
 

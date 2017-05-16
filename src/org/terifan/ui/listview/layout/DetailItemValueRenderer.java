@@ -12,7 +12,7 @@ import javax.swing.JComponent;
 import org.terifan.ui.listview.ListView;
 import org.terifan.ui.listview.ListViewCellRenderer;
 import org.terifan.ui.listview.ListViewColumn;
-import org.terifan.ui.listview.ListViewIcon;
+import org.terifan.ui.listview.util.ListViewIcon;
 import org.terifan.ui.listview.ListViewItem;
 import org.terifan.ui.listview.SelectionMode;
 import org.terifan.ui.listview.Styles;

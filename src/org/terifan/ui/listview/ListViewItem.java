@@ -1,5 +1,6 @@
 package org.terifan.ui.listview;
 
+import org.terifan.ui.listview.util.ListViewIcon;
 import java.awt.Dimension;
 
 

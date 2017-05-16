@@ -1,9 +1,7 @@
-package org.terifan.ui.listview;
+package org.terifan.ui.listview.util;
 
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
-import org.terifan.ui.listview.util.Cache;
-import org.terifan.ui.listview.util.ImageCacheKey;
 
 
 public interface ListViewIcon

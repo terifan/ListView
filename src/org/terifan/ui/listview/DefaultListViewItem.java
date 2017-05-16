@@ -1,5 +1,7 @@
 package org.terifan.ui.listview;
 
+import org.terifan.ui.listview.util.ListViewIcon;
+import org.terifan.ui.listview.util.ListViewImageIcon;
 import java.awt.image.BufferedImage;
 import java.util.Arrays;
 import java.util.HashMap;

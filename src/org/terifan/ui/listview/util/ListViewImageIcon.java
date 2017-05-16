@@ -1,15 +1,18 @@
-package org.terifan.ui.listview;
+package org.terifan.ui.listview.util;
 
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
-import org.terifan.ui.listview.util.Cache;
-import org.terifan.ui.listview.util.ImageCacheKey;
-import org.terifan.ui.listview.util.ImageResizer;
+import org.terifan.ui.listview.Tuple;
 
 
 public class ListViewImageIcon implements ListViewIcon
 {
+	private final static Cache<Tuple<BufferedImage, String>, BufferedImage> CACHE = new Cache<>(4096 * 4096 * 4);
+	private static boolean USE_CACHE = true;
+
 	private final BufferedImage mImage;
 	private Color mBackgroundColor;
 
@@ -67,7 +70,30 @@ public class ListViewImageIcon implements ListViewIcon
 			aGraphics.setColor(mBackgroundColor);
 			aGraphics.fillRect(aX, aY, aW, aH);
 		}
-		aGraphics.drawImage(mImage, aX, aY, aW, aH, null);
+
+		if (USE_CACHE)
+		{
+			Tuple<BufferedImage, String> key = new Tuple<>(mImage, aW + "," + aH);
+
+			BufferedImage image = CACHE.get(key);
+			if (image == null)
+			{
+				image = new BufferedImage(aW, aH, BufferedImage.TYPE_INT_RGB);
+
+				Graphics2D g = image.createGraphics();
+				g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+				g.drawImage(mImage, 0, 0, aW, aH, null);
+				g.dispose();
+
+				CACHE.put(key, image, aW * aH * 4);
+			}
+
+			aGraphics.drawImage(image, aX, aY, null);
+		}
+		else
+		{
+			aGraphics.drawImage(mImage, aX, aY, aW, aH, null);
+		}
 	}
 
 
@@ -77,7 +103,7 @@ public class ListViewImageIcon implements ListViewIcon
 		if (mBackgroundColor != null)
 		{
 			aGraphics.setColor(mBackgroundColor);
-			aGraphics.fillRect(dx1, dy1, dx2-dx1, dy2-dy1);
+			aGraphics.fillRect(dx1, dy1, dx2 - dx1, dy2 - dy1);
 		}
 		aGraphics.drawImage(mImage, dx1, dy1, dx2, dy2, sx1, sy1, sx2, sy2, null);
 	}
@@ -94,5 +120,29 @@ public class ListViewImageIcon implements ListViewIcon
 	public BufferedImage getImage(int aPreferredWidth, int aPreferredHeight)
 	{
 		return mImage;
+	}
+
+
+	public static long getCacheSize()
+	{
+		return CACHE.getCapacity();
+	}
+
+
+	public static void setCacheSize(long aSizeBytes)
+	{
+		CACHE.setCapacity(aSizeBytes);
+	}
+
+
+	public static void setUseCache(boolean aState)
+	{
+		USE_CACHE = aState;
+	}
+
+
+	public static boolean isUseCache()
+	{
+		return USE_CACHE;
 	}
 }

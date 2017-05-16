@@ -4,7 +4,6 @@ import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.net.URL;
 import javax.imageio.ImageIO;
-import org.terifan.ui.listview.ListViewImageIcon;
 
 
 public final class Utilities

@@ -1,5 +1,6 @@
 package org.terifan.ui.listview;
 
+import org.terifan.ui.listview.util.ListViewIcon;
 import java.awt.image.BufferedImage;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
