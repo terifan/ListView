@@ -5,9 +5,7 @@ import org.terifan.ui.listview.ListViewLayoutHorizontal;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Point;
-import java.awt.RenderingHints;
 import java.awt.Shape;
-import java.awt.image.BufferedImage;
 import java.util.Objects;
 import org.terifan.ui.listview.ListView;
 import org.terifan.ui.listview.ListViewColumn;
@@ -17,9 +15,7 @@ import org.terifan.ui.listview.ListViewItemRenderer;
 import org.terifan.ui.listview.ListViewLayout;
 import org.terifan.ui.listview.ListViewLayoutV2;
 import org.terifan.ui.listview.ListViewModel;
-import org.terifan.ui.listview.Tuple;
 import org.terifan.ui.listview.util.Anchor;
-import org.terifan.ui.listview.util.Cache;
 import org.terifan.ui.listview.util.Orientation;
 import org.terifan.ui.listview.util.TextRenderer;
 
@@ -46,6 +42,7 @@ public class ThumbnailItemRenderer1<T extends ListViewItem> extends ListViewItem
 	private Orientation mOrientation;
 	private int mLabelHeight;
 	private Point mSpacing;
+	private ItemOverlayRenderer<T> mItemOverlayRenderer;
 
 
 	public ThumbnailItemRenderer1(Dimension aItemSize, Orientation aOrientation)
@@ -262,7 +259,7 @@ public class ThumbnailItemRenderer1<T extends ListViewItem> extends ListViewItem
 				requestRepaint(aListView);
 			}
 		}
-
+		
 		int labelHeight = getLabelHeight(aItem);
 
 		if (labelHeight != 0)
@@ -296,9 +293,14 @@ public class ThumbnailItemRenderer1<T extends ListViewItem> extends ListViewItem
 				aGraphics.drawRect(aOriginX + i, aOriginY + i, aWidth - 1 - 2 * i, aHeight - 1 - 2 * i);
 			}
 		}
+		
+		if (mItemOverlayRenderer != null)
+		{
+			mItemOverlayRenderer.paintOverlay(aListView, aItem, aOriginX, aOriginY, aWidth, aHeight, aGraphics);
+		}
 	}
 
-
+	
 	protected static Color getPlaceHolderBackgroundColor(int aOriginX, int aOriginY)
 	{
 		return THUMB_BACKGROUND_COLOR[(int)((aOriginX + 21739L * aOriginY) % THUMB_BACKGROUND_COLOR.length)];
@@ -342,5 +344,17 @@ public class ThumbnailItemRenderer1<T extends ListViewItem> extends ListViewItem
 	protected int getLabelHeight(T aItem)
 	{
 		return mLabelHeight;
+	}
+
+
+	public ItemOverlayRenderer<T> getItemOverlayRenderer()
+	{
+		return mItemOverlayRenderer;
+	}
+
+
+	public void setItemOverlayRenderer(ItemOverlayRenderer<T> aItemOverlayRenderer)
+	{
+		mItemOverlayRenderer = aItemOverlayRenderer;
 	}
 }
