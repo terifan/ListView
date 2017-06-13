@@ -54,7 +54,7 @@ class ListViewMouseListener<T extends ListViewItem> extends MouseAdapter
 
 				mFirePopupMenu = isPopupTrigger(aEvent);
 			}
-			else
+			else if (info != null && info.isItem())
 			{
 				boolean itemSelected = info != null && info.isItem() && mListView.isItemSelected(info.getItem());
 
