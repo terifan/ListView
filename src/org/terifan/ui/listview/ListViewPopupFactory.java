@@ -5,7 +5,7 @@ import javax.swing.JPopupMenu;
 
 
 @FunctionalInterface
-public interface PopupFactory<T extends ListViewItem>
+public interface ListViewPopupFactory<T extends ListViewItem>
 {
 	public JPopupMenu createPopup(ListView<T> aOwner, Point aPoint, LocationInfo<T> aLocationInfo);
 }

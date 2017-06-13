@@ -62,7 +62,7 @@ public class ListView<T extends ListViewItem> extends JComponent implements Scro
 	private ListViewGroupRenderer mGroupRenderer;
 	private String mPlaceholder;
 	private ListViewMouseListener mMouseListener;
-	private PopupFactory<T> mPopupFactory;
+	private ListViewPopupFactory<T> mPopupFactory;
 	private Cache<ImageCacheKey, BufferedImage> mImageCache;
 	private double mDPIScale;
 	private boolean mRequestRepaint;
@@ -710,7 +710,7 @@ public class ListView<T extends ListViewItem> extends JComponent implements Scro
 	 */
 	protected boolean firePopupMenu(Point aPoint, LocationInfo<T> aLocationInfo)
 	{
-		PopupFactory<T> factory = getPopupFactory();
+		ListViewPopupFactory<T> factory = getPopupFactory();
 
 		if (factory == null)
 		{
@@ -736,7 +736,7 @@ public class ListView<T extends ListViewItem> extends JComponent implements Scro
 	 * @param aMenu
 	 * a pop-up factory or null if non should exist
 	 */
-	public void setPopupFactory(PopupFactory<T> aPopupFactory)
+	public void setPopupFactory(ListViewPopupFactory<T> aPopupFactory)
 	{
 		mPopupFactory = aPopupFactory;
 	}
@@ -748,7 +748,7 @@ public class ListView<T extends ListViewItem> extends JComponent implements Scro
 	 * @return
 	 * a PopupFactory or null if one doesn't exists
 	 */
-	public PopupFactory<T> getPopupFactory()
+	public ListViewPopupFactory<T> getPopupFactory()
 	{
 		return mPopupFactory;
 	}
