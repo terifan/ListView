@@ -17,7 +17,7 @@ class ListViewMouseListener<T extends ListViewItem> extends MouseAdapter
 	private Point mDragStart;
 	private boolean mIsControlDown;
 	private boolean mIsShiftDown;
-	private boolean mPopupTriggered;
+	private boolean mFirePopupMenu;
 	private boolean mIsDragDrop;
 	private boolean mDragStarted;
 	private boolean mDragRectStarted;
@@ -41,36 +41,43 @@ class ListViewMouseListener<T extends ListViewItem> extends MouseAdapter
 			mIsControlDown = aEvent.isControlDown();
 			mIsShiftDown = aEvent.isShiftDown();
 			mDragStart.setLocation(aEvent.getX(), aEvent.getY());
-
 			mDragStarted = false;
 			mDragRectStarted = false;
 			mIsDragDrop = false;
 
 			ListViewLayout<T> layout = mListView.getListViewLayout();
 			LocationInfo<T> info = layout.getLocationInfo(aEvent.getPoint());
-			boolean itemSelected = info != null && info.isItem() && mListView.isItemSelected(info.getItem());
 
-			if (!itemSelected)
+			if (info != null && info.isGroup())
 			{
-				mSelectedItemsClone.clear();
-				if (mIsControlDown)
+				processGroupPressed(aEvent);
+
+				mFirePopupMenu = isPopupTrigger(aEvent);
+			}
+			else
+			{
+				boolean itemSelected = info != null && info.isItem() && mListView.isItemSelected(info.getItem());
+
+				if (!itemSelected && !mIsControlDown)
 				{
-					mSelectedItemsClone.addAll(mListView.getSelectedItems());
+					mSelectedItemsClone.clear();
+				}
+
+				processPressed(aEvent);
+
+				if (isPopupTrigger(aEvent))
+				{
+					mFirePopupMenu = isPopupTrigger(aEvent);
+				}
+				else
+				{
+					// use modulo to avoid tripple clicks to be regarded as two double clicks etc.
+					if (itemSelected && SwingUtilities.isLeftMouseButton(aEvent) && (aEvent.getClickCount() % 2) == 0)
+					{
+						mListView.fireSelectionAction(new ListViewEvent(mListView, aEvent));
+					}
 				}
 			}
-
-			process(aEvent, false);
-
-			// use modulo to avoid tripple clicks to be regarded as two double clicks etc.
-			if (itemSelected && SwingUtilities.isLeftMouseButton(aEvent) && (aEvent.getClickCount() % 2) == 0)
-			{
-				mListView.fireSelectionAction(new ListViewEvent(mListView, aEvent));
-			}
-		}
-
-		if (!aEvent.isPopupTrigger())
-		{
-			mPopupTriggered = false;
 		}
 	}
 
@@ -84,29 +91,37 @@ class ListViewMouseListener<T extends ListViewItem> extends MouseAdapter
 			mListView.repaint();
 		}
 
-		mSelectedItemsClone.clear();
-
-		if (mPopupTriggered)
+		if (mFirePopupMenu)
 		{
-			mousePressed(aEvent);
+			ListViewLayout<T> layout = mListView.getListViewLayout();
+			LocationInfo<T> info = layout.getLocationInfo(aEvent.getPoint());
+
+			mListView.firePopupMenu(aEvent.getPoint(), info);
+
+			mFirePopupMenu = false;
 		}
-
-		if (aEvent.isPopupTrigger())
+		else
 		{
-			mPopupTriggered = mListView.firePopupMenu(aEvent.getPoint());
-		}
+			mSelectedItemsClone.clear();
 
-		if (!mDragRectStarted && !mDragStarted && !mIsControlDown && !mIsShiftDown && !mIsDragDrop)
-		{
-			mListView.setItemsSelected(false);
-			LocationInfo<T> info = mListView.getListViewLayout().getLocationInfo(aEvent.getPoint());
-			if (info != null && info.getItem() != null)
+			if (!mDragRectStarted && !mDragStarted && !mIsControlDown && !mIsShiftDown && !mIsDragDrop)
 			{
-				mListView.setFocusItem(info.getItem());
-				mListView.setItemSelected(info.getItem(), true);
+				mListView.setItemsSelected(false);
+				LocationInfo<T> info = mListView.getListViewLayout().getLocationInfo(aEvent.getPoint());
+				if (info != null && info.getItem() != null)
+				{
+					mListView.setFocusItem(info.getItem());
+					mListView.setItemSelected(info.getItem(), true);
+				}
+				mListView.repaint();
 			}
-			mListView.repaint();
 		}
+	}
+
+
+	protected boolean isPopupTrigger(MouseEvent aEvent)
+	{
+		return SwingUtilities.isRightMouseButton(aEvent);
 	}
 
 
@@ -135,114 +150,187 @@ class ListViewMouseListener<T extends ListViewItem> extends MouseAdapter
 	{
 		if (!mIsDragDrop && !mIsShiftDown && mListView.getSelectionMode() != SelectionMode.SINGLE_ROW && mListView.getSelectionMode() != SelectionMode.NONE && SwingUtilities.isLeftMouseButton(aEvent))
 		{
-			process(aEvent, true);
+			processDragged(aEvent);
 		}
 	}
 
 
-	private void process(MouseEvent aEvent, boolean aMouseDragged)
+	private void processGroupPressed(MouseEvent aEvent)
 	{
 		Point point = aEvent.getPoint();
-
 		ListViewLayout<T> layout = mListView.getListViewLayout();
 		LocationInfo<T> info = layout.getLocationInfo(point);
 
-		if (aMouseDragged)
+		mListView.setItemsSelected(false);
+
+		if (info.isGroupButton())
 		{
-			int width = Math.abs(mDragStart.x - point.x);
-			int height = Math.abs(mDragStart.y - point.y);
-
-			if (Math.abs(width) < 4 || Math.abs(height) < 4)
-			{
-				return;
-			}
-
-			if (!mDragStarted && !mDragRectStarted)
-			{
-				if (info != null && info.getItem() != null && mListView.isItemSelected(info.getItem()))
-				{
-					mIsDragDrop = true;
-
-					new ListViewDragListener(mListView).startDrag(aEvent);
-
-					return;
-				}
-
-				mSelectedItemsClone.clear();
-				if (mIsControlDown)
-				{
-					mSelectedItemsClone.addAll(mListView.getSelectedItems());
-				}
-
-				mDragStarted = true;
-			}
-
-			mListView.getSelectionRectangle().setLocation(Math.min(mDragStart.x, point.x), Math.min(mDragStart.y, point.y));
-			mListView.getSelectionRectangle().setSize(width, height);
+			info.getGroup().setCollapsed(!info.getGroup().isCollapsed());
+			mListView.revalidate();
+			mListView.repaint();
 		}
-		else if (!mDragRectStarted)
+
+		if (info.isGroup())
 		{
-			if (mIsControlDown)
-			{
-				mSelectedItemsClone.clear();
-				mSelectedItemsClone.addAll(mListView.getSelectedItems());
-			}
-			else if (info != null && info.getItem() != null && mListView.isItemSelected(info.getItem()))
+			mListView.revalidate();
+			mListView.repaint();
+			mListView.fireSelectionChanged(new ListViewEvent(mListView, aEvent, info.getGroup()));
+		}
+	}
+
+
+	private void processPressed(MouseEvent aEvent)
+	{
+		if (mIsControlDown)
+		{
+			processPressedControl(aEvent);
+			return;
+		}
+		if (mIsShiftDown)
+		{
+			processPressedShift(aEvent);
+			return;
+		}
+
+		ListViewLayout<T> layout = mListView.getListViewLayout();
+		LocationInfo<T> info = layout.getLocationInfo(aEvent.getPoint());
+
+		if (!mDragRectStarted)
+		{
+			if (mListView.isItemSelected(info.getItem()))
 			{
 				return;
 			}
 			mDragRectStarted = true;
 		}
 
-		boolean isItem = info != null && info.isItem();
-		T selectedItem = info == null ? null : info.getItem();
+		T selectedItem = info.getItem();
 
-		// click on expand/collapse button
-		if (!aMouseDragged && info != null && info.isGroup() && info.isGroupButton())
-		{
-			info.getGroup().setCollapsed(!info.getGroup().isCollapsed());
-			mListView.revalidate();
-			mListView.repaint();
-			return;
-		}
-
-		// click on group
-		if (!aMouseDragged && info != null && info.isGroup())
-		{
-			mListView.revalidate();
-			mListView.repaint();
-			mListView.fireSelectionChanged(new ListViewEvent(mListView, aEvent, info.getGroup()));
-			return;
-		}
-
-		boolean changed = false;
-
-		if (mIsShiftDown)
-		{
-			if (!aMouseDragged)
-			{
-				mListView.setItemsSelected(false);
-				changed = true;
-			}
-			if (isItem)
-			{
-				mListView.setItemsSelected(layout.getItemsIntersecting(mListView.getAnchorItem(), selectedItem), true);
-				changed = true;
-			}
-		}
-		else if (mIsControlDown || (SwingUtilities.isLeftMouseButton(aEvent) || !isItem || !mListView.isItemSelected(selectedItem)))
+		if (SwingUtilities.isLeftMouseButton(aEvent) || !mListView.isItemSelected(selectedItem))
 		{
 			mListView.setItemsSelected(false);
-			changed = true;
 		}
 
-		if (isItem && !mIsShiftDown)
+		mListView.setItemSelected(selectedItem, true);
+		mListView.setAnchorItem(selectedItem);
+		mListView.setFocusItem(selectedItem);
+
+		layout.getItemBounds(selectedItem, mTempScrollRect);
+		mListView.scrollRectToVisible(mTempScrollRect);
+
+//		if (changed)
+		{
+			mListView.fireSelectionChanged(new ListViewEvent(mListView, aEvent));
+		}
+
+		mListView.repaint();
+	}
+
+
+	private void processPressedShift(MouseEvent aEvent)
+	{
+		ListViewLayout<T> layout = mListView.getListViewLayout();
+		LocationInfo<T> info = layout.getLocationInfo(aEvent.getPoint());
+
+		T selectedItem = info == null ? null : info.getItem();
+
+		if (selectedItem == null)
+		{
+			return;
+		}
+
+		mListView.setItemsSelected(false);
+		mListView.setItemsSelected(layout.getItemsIntersecting(mListView.getAnchorItem(), selectedItem), true);
+
+		layout.getItemBounds(selectedItem, mTempScrollRect);
+		mListView.scrollRectToVisible(mTempScrollRect);
+
+		if (mListView.getAnchorItem() == null)
 		{
 			mListView.setAnchorItem(selectedItem);
-			mListView.setFocusItem(selectedItem);
 		}
 
-		mListView.setItemsSelected(mSelectedItemsClone, true);
+//		if (changed)
+		{
+			mListView.fireSelectionChanged(new ListViewEvent(mListView, aEvent));
+		}
+
+		mListView.repaint();
+	}
+
+
+	private void processPressedControl(MouseEvent aEvent)
+	{
+		ListViewLayout<T> layout = mListView.getListViewLayout();
+		LocationInfo<T> info = layout.getLocationInfo(aEvent.getPoint());
+
+		T selectedItem = info == null ? null : info.getItem();
+
+		if (selectedItem == null)
+		{
+			return;
+		}
+
+		mListView.setItemSelected(selectedItem, !mListView.isItemSelected(selectedItem));
+		mListView.setAnchorItem(selectedItem);
+		mListView.setFocusItem(selectedItem);
+
+		layout.getItemBounds(selectedItem, mTempScrollRect);
+		mListView.scrollRectToVisible(mTempScrollRect);
+
+//		if (changed)
+		{
+			mListView.fireSelectionChanged(new ListViewEvent(mListView, aEvent));
+		}
+
+		mListView.repaint();
+	}
+
+
+	private void processDragged(MouseEvent aEvent)
+	{
+		Point point = aEvent.getPoint();
+
+		ListViewLayout<T> layout = mListView.getListViewLayout();
+		LocationInfo<T> info = layout.getLocationInfo(point);
+
+		int width = Math.abs(mDragStart.x - point.x);
+		int height = Math.abs(mDragStart.y - point.y);
+
+		if (Math.abs(width) < 4 || Math.abs(height) < 4)
+		{
+			return;
+		}
+
+		if (!mDragStarted && !mDragRectStarted)
+		{
+			if (info != null && info.getItem() != null && mListView.isItemSelected(info.getItem()))
+			{
+				mIsDragDrop = true;
+
+				new ListViewDragListener(mListView).startDrag(aEvent);
+
+				return;
+			}
+
+			mSelectedItemsClone.clear();
+			if (mIsControlDown)
+			{
+				mSelectedItemsClone.addAll(mListView.getSelectedItems());
+			}
+
+			mDragStarted = true;
+		}
+
+		mListView.getSelectionRectangle().setLocation(Math.min(mDragStart.x, point.x), Math.min(mDragStart.y, point.y));
+		mListView.getSelectionRectangle().setSize(width, height);
+
+		mListView.setItemsSelected(false);
+
+		if (aEvent.isControlDown())
+		{
+			mListView.setItemsSelected(mSelectedItemsClone, true);
+		}
 
 		Rectangle r = new Rectangle(mDragStart);
 		r.add(point);
@@ -254,25 +342,17 @@ class ListViewMouseListener<T extends ListViewItem> extends MouseAdapter
 			mListView.setItemSelected(item, !mSelectedItemsClone.contains(item));
 		}
 
-		if (changed)
-		{
-			mListView.fireSelectionChanged(new ListViewEvent(mListView, aEvent));
-		}
-
-		if (aMouseDragged)
-		{
-			mTempScrollRect.setBounds(point.x - 25, point.y - 25, 50, 50);
-			mListView.scrollRectToVisible(mTempScrollRect);
-		}
-		else if (isItem)
-		{
-			layout.getItemBounds(selectedItem, mTempScrollRect);
-			mListView.scrollRectToVisible(mTempScrollRect);
-		}
+		mTempScrollRect.setBounds(point.x - 25, point.y - 25, 50, 50);
+		mListView.scrollRectToVisible(mTempScrollRect);
 
 		if (mListView.getAnchorItem() == null)
 		{
 			mListView.setAnchorItem(mListView.getFocusItem());
+		}
+
+//		if (changed)
+		{
+			mListView.fireSelectionChanged(new ListViewEvent(mListView, aEvent));
 		}
 
 		mListView.repaint();

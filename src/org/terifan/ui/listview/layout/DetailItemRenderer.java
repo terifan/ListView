@@ -114,13 +114,13 @@ public class DetailItemRenderer<T extends ListViewItem> extends ListViewItemRend
 		Styles style = aListView.getStyles();
 
 		int x = aOriginX;
-
-		ListViewModel model = aListView.getModel();
-
 		boolean isSelected = aListView.isItemSelected(aItem);
 		boolean isRollover = aListView.getRolloverItem() == aItem;
+		boolean isFocusOwner = aListView.isFocusOwner();
+		ListViewModel model = aListView.getModel();
+		SelectionMode selectionMode = aListView.getSelectionMode();
 
-		if (aListView.getSelectionMode() == SelectionMode.ROW || aListView.getSelectionMode() == SelectionMode.SINGLE_ROW)
+		if (selectionMode == SelectionMode.ROW || selectionMode == SelectionMode.SINGLE_ROW)
 		{
 			Color c;
 			if (isSelected)
@@ -129,7 +129,7 @@ public class DetailItemRenderer<T extends ListViewItem> extends ListViewItemRend
 				{
 					c = style.itemSelectedRolloverBackground;
 				}
-				else if (aListView.isFocusOwner())
+				else if (isFocusOwner)
 				{
 					c = style.itemSelectedBackground;
 				}
@@ -167,8 +167,7 @@ public class DetailItemRenderer<T extends ListViewItem> extends ListViewItemRend
 			}
 
 			boolean sorted = model.getSortedColumn() == column;
-
-			boolean focus = aListView.isFocusOwner() && aListView.getFocusItem() == aItem && aListView.getModel().getColumn(col).isFocusable() && aListView.getSelectionMode() != SelectionMode.ROW && aListView.getSelectionMode() != SelectionMode.SINGLE_ROW;
+			boolean focus = isFocusOwner && selectionMode != SelectionMode.ROW && selectionMode != SelectionMode.SINGLE_ROW && aListView.getFocusItem() == aItem && model.getColumn(col).isFocusable();
 
 			Component c = getCellRenderer(aListView, aItem, col).getListViewCellRendererComponent(aListView, aItem, col, isSelected, focus, isRollover, sorted);
 			c.setBounds(x + 1, aOriginY, w - 1, aHeight - 1);
@@ -184,9 +183,9 @@ public class DetailItemRenderer<T extends ListViewItem> extends ListViewItemRend
 			aGraphics.drawLine(aOriginX, aOriginY + aHeight - thickness, aOriginX + aWidth, aOriginY + aHeight - 1);
 		}
 
-		if (aListView.getFocusItem() == aItem && (aListView.getSelectionMode() == SelectionMode.ROW || aListView.getSelectionMode() == SelectionMode.SINGLE_ROW))
+		if (aListView.getFocusItem() == aItem && (selectionMode == SelectionMode.ROW || selectionMode == SelectionMode.SINGLE_ROW))
 		{
-			aGraphics.setColor(style.focusRect);
+			aGraphics.setColor(isFocusOwner ? style.focusRect : style.focusRectUnfocused);
 			Utilities.drawFocusRect(aGraphics, aOriginX, aOriginY, aWidth, aHeight - 1, false);
 		}
 	}

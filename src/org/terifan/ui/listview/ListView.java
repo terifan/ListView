@@ -1,7 +1,6 @@
 package org.terifan.ui.listview;
 
 import org.terifan.ui.listview.util.Orientation;
-import org.terifan.ui.listview.util.PopupFactory;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Container;
@@ -15,7 +14,6 @@ import java.awt.RenderingHints;
 import java.awt.dnd.DropTarget;
 import java.awt.dnd.DropTargetListener;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
@@ -37,7 +35,6 @@ import javax.swing.ScrollPaneConstants;
 import javax.swing.Scrollable;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
-import javax.swing.Timer;
 import org.terifan.ui.listview.layout.DetailItemRenderer;
 import org.terifan.ui.listview.util.Cache;
 import org.terifan.ui.listview.util.ImageCacheKey;
@@ -65,7 +62,7 @@ public class ListView<T extends ListViewItem> extends JComponent implements Scro
 	private ListViewGroupRenderer mGroupRenderer;
 	private String mPlaceholder;
 	private ListViewMouseListener mMouseListener;
-	private PopupFactory<ListView> mPopupFactory;
+	private PopupFactory<T> mPopupFactory;
 	private Cache<ImageCacheKey, BufferedImage> mImageCache;
 	private double mDPIScale;
 	private boolean mRequestRepaint;
@@ -711,16 +708,16 @@ public class ListView<T extends ListViewItem> extends JComponent implements Scro
 	 * @return
 	 *
 	 */
-	protected boolean firePopupMenu(Point aPoint)
+	protected boolean firePopupMenu(Point aPoint, LocationInfo<T> aLocationInfo)
 	{
-		PopupFactory<ListView> factory = getPopupFactory();
+		PopupFactory<T> factory = getPopupFactory();
 
 		if (factory == null)
 		{
 			return false;
 		}
 
-		JPopupMenu menu = factory.createPopup(this, aPoint);
+		JPopupMenu menu = factory.createPopup(this, aPoint, aLocationInfo);
 
 		if (menu == null)
 		{
@@ -739,7 +736,7 @@ public class ListView<T extends ListViewItem> extends JComponent implements Scro
 	 * @param aMenu
 	 * a pop-up factory or null if non should exist
 	 */
-	public void setPopupFactory(PopupFactory<ListView> aPopupFactory)
+	public void setPopupFactory(PopupFactory<T> aPopupFactory)
 	{
 		mPopupFactory = aPopupFactory;
 	}
@@ -751,7 +748,7 @@ public class ListView<T extends ListViewItem> extends JComponent implements Scro
 	 * @return
 	 * a PopupFactory or null if one doesn't exists
 	 */
-	public PopupFactory<ListView> getPopupFactory()
+	public PopupFactory<T> getPopupFactory()
 	{
 		return mPopupFactory;
 	}
@@ -1039,7 +1036,7 @@ public class ListView<T extends ListViewItem> extends JComponent implements Scro
 
 
 	private SmoothScroll mSmoothScroll = new SmoothScroll(this);
-	
+
 	public void smoothScroll(double aPreciseWheelRotation)
 	{
 		mSmoothScroll.smoothScroll(aPreciseWheelRotation);
