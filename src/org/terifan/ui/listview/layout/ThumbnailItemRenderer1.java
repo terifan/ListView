@@ -53,7 +53,7 @@ public class ThumbnailItemRenderer1<T extends ListViewItem> extends ListViewItem
 
 	public ThumbnailItemRenderer1(Dimension aItemSize, Orientation aOrientation, int aLabelHeight)
 	{
-		this.mSpacing = new Point(9, 9);
+		mSpacing = new Point(9, 9);
 		mItemSize = aItemSize;
 		mOrientation = aOrientation;
 		mLabelHeight = -1 + 0 * aLabelHeight;
