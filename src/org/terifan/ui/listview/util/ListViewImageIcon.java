@@ -82,6 +82,11 @@ public class ListViewImageIcon implements ListViewIcon
 
 				Graphics2D g = image.createGraphics();
 				g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+				if (mBackgroundColor != null)
+				{
+					g.setColor(mBackgroundColor);
+					g.fillRect(aX, aY, aW, aH);
+				}
 				g.drawImage(mImage, 0, 0, aW, aH, null);
 				g.dispose();
 

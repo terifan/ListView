@@ -259,7 +259,7 @@ public class ThumbnailItemRenderer1<T extends ListViewItem> extends ListViewItem
 				requestRepaint(aListView);
 			}
 		}
-		
+
 		int labelHeight = getLabelHeight(aItem);
 
 		if (labelHeight != 0)
@@ -293,14 +293,14 @@ public class ThumbnailItemRenderer1<T extends ListViewItem> extends ListViewItem
 				aGraphics.drawRect(aOriginX + i, aOriginY + i, aWidth - 1 - 2 * i, aHeight - 1 - 2 * i);
 			}
 		}
-		
+
 		if (mItemOverlayRenderer != null)
 		{
 			mItemOverlayRenderer.paintOverlay(aListView, aItem, aOriginX, aOriginY, aWidth, aHeight, aGraphics);
 		}
 	}
 
-	
+
 	protected static Color getPlaceHolderBackgroundColor(int aOriginX, int aOriginY)
 	{
 		return THUMB_BACKGROUND_COLOR[(int)((aOriginX + 21739L * aOriginY) % THUMB_BACKGROUND_COLOR.length)];
