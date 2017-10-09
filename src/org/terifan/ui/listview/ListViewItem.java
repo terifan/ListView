@@ -10,6 +10,11 @@ public interface ListViewItem
 
 	ListViewIcon getIcon();
 	
+	default ListViewIcon getPlaceholder()
+	{
+		return null;
+	}
+	
 	default Dimension getDimension()
 	{
 		return null;

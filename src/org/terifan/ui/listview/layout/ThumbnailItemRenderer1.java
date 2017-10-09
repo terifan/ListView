@@ -189,11 +189,29 @@ public class ThumbnailItemRenderer1<T extends ListViewItem> extends ListViewItem
 		int h = aHeight;
 
 		ListViewIcon icon = aItem.getIcon();
-
+		
 		if (icon == null)
 		{
-			aGraphics.setColor(getPlaceHolderBackgroundColor(aOriginX, aOriginY));
+			int cc = getPlaceHolderBackgroundColor(aOriginX, aOriginY, aItem).getRed();
+
+			aGraphics.setColor(new Color(cc, cc, cc));
 			aGraphics.fillRect(aOriginX, aOriginY, aWidth, aHeight);
+
+			icon = aItem.getPlaceholder();
+
+			if (icon != null)
+			{
+				int iw = icon.getWidth();
+				int ih = icon.getHeight();
+
+				int ow = iw * h / ih;
+				int crop = (ow - w) / 2;
+
+				Shape c = aGraphics.getClip();
+				aGraphics.clipRect(x, y, w, h);
+				icon.drawImage(aGraphics, x - crop, y, ow, h);
+				aGraphics.setClip(c);
+			}
 
 			if (aItem instanceof ItemFadeController)
 			{
@@ -203,8 +221,7 @@ public class ThumbnailItemRenderer1<T extends ListViewItem> extends ListViewItem
 
 			aListView.fireLoadResources(aItem);
 		}
-
-		if (icon != null)
+		else
 		{
 			int opacity = 0;
 
@@ -251,7 +268,7 @@ public class ThumbnailItemRenderer1<T extends ListViewItem> extends ListViewItem
 
 			if (opacity > 0)
 			{
-				int c = getPlaceHolderBackgroundColor(aOriginX, aOriginY).getRed();
+				int c = getPlaceHolderBackgroundColor(aOriginX, aOriginY, aItem).getRed();
 
 				aGraphics.setColor(new Color(c, c, c, opacity));
 				aGraphics.fillRect(x, y, w, h);
@@ -301,9 +318,9 @@ public class ThumbnailItemRenderer1<T extends ListViewItem> extends ListViewItem
 	}
 
 
-	protected static Color getPlaceHolderBackgroundColor(int aOriginX, int aOriginY)
+	protected Color getPlaceHolderBackgroundColor(int aOriginX, int aOriginY, T aItem)
 	{
-		return THUMB_BACKGROUND_COLOR[(int)((aOriginX + 21739L * aOriginY) % THUMB_BACKGROUND_COLOR.length)];
+		return getCategory(aItem) == 0 ? new Color(31,31,31) : THUMB_BACKGROUND_COLOR[(int)((aOriginX + 21739L * aOriginY) % THUMB_BACKGROUND_COLOR.length)];
 	}
 
 
@@ -331,10 +348,8 @@ public class ThumbnailItemRenderer1<T extends ListViewItem> extends ListViewItem
 		{
 			return new ListViewLayoutV2(aListView, 100);
 		}
-		else
-		{
-			return new ListViewLayoutHorizontal(aListView);
-		}
+
+		return new ListViewLayoutHorizontal(aListView);
 	}
 
 
