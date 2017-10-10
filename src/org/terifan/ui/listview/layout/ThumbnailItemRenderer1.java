@@ -285,12 +285,15 @@ public class ThumbnailItemRenderer1<T extends ListViewItem> extends ListViewItem
 			labelHeight = Math.abs(labelHeight * (aGraphics.getFontMetrics().getHeight() * 120 / 100));
 		}
 
-		aGraphics.setColor(LABEL_BACKGROUND_COLOR);
-		aGraphics.fillRect(aOriginX, aOriginY + aHeight - labelHeight, aWidth, labelHeight);
-
 		if (labelHeight != 0)
 		{
 			String label = getLabel(aListView, aItem);
+
+			if (label != null && !label.isEmpty())
+			{
+				aGraphics.setColor(LABEL_BACKGROUND_COLOR);
+				aGraphics.fillRect(aOriginX, aOriginY + aHeight - labelHeight, aWidth, labelHeight);
+			}
 
 			Rectangle tr = new Rectangle(x + 3, y + h - labelHeight, w - 6, labelHeight);
 
@@ -299,7 +302,7 @@ public class ThumbnailItemRenderer1<T extends ListViewItem> extends ListViewItem
 				mItemOverlayRenderer.paintOverlayBefore(aListView, aItem, tr, aGraphics);
 			}
 
-			if (label != null && !label.isEmpty())
+			if (label != null && !label.isEmpty() && isDrawThumbnailLabels(aItem))
 			{
 				TextRenderer.drawString(aGraphics, label, tr.x, tr.y, tr.width, tr.height, Anchor.CENTER, aListView.getForeground(), null, false);
 			}
@@ -379,5 +382,11 @@ public class ThumbnailItemRenderer1<T extends ListViewItem> extends ListViewItem
 	public void setItemOverlayRenderer(ItemOverlayRenderer<T> aItemOverlayRenderer)
 	{
 		mItemOverlayRenderer = aItemOverlayRenderer;
+	}
+
+	
+	protected boolean isDrawThumbnailLabels(T aItem)
+	{
+		return true;
 	}
 }
