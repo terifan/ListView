@@ -5,6 +5,7 @@ import org.terifan.ui.listview.ListViewLayoutHorizontal;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.Shape;
 import java.util.Objects;
 import org.terifan.ui.listview.ListView;
@@ -284,18 +285,23 @@ public class ThumbnailItemRenderer1<T extends ListViewItem> extends ListViewItem
 			labelHeight = Math.abs(labelHeight * (aGraphics.getFontMetrics().getHeight() * 120 / 100));
 		}
 
-		if (mItemOverlayRenderer != null)
-		{
-			mItemOverlayRenderer.paintOverlayBefore(aListView, aItem, aOriginX, aOriginY, aWidth, aHeight, labelHeight, aGraphics);
-		}
+		aGraphics.setColor(LABEL_BACKGROUND_COLOR);
+		aGraphics.fillRect(aOriginX, aOriginY + aHeight - labelHeight, aWidth, labelHeight);
 
 		if (labelHeight != 0)
 		{
 			String label = getLabel(aListView, aItem);
 
-			if (label != null)
+			Rectangle tr = new Rectangle(x + 3, y + h - labelHeight, w - 6, labelHeight);
+
+			if (mItemOverlayRenderer != null)
 			{
-				TextRenderer.drawString(aGraphics, label, x + 2, y + h - labelHeight - 2, w - 4, labelHeight, Anchor.CENTER, aListView.getForeground(), null, false);
+				mItemOverlayRenderer.paintOverlayBefore(aListView, aItem, tr, aGraphics);
+			}
+
+			if (label != null && !label.isEmpty())
+			{
+				TextRenderer.drawString(aGraphics, label, tr.x, tr.y, tr.width, tr.height, Anchor.CENTER, aListView.getForeground(), null, false);
 			}
 		}
 
