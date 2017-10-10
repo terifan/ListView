@@ -189,7 +189,7 @@ public class ThumbnailItemRenderer1<T extends ListViewItem> extends ListViewItem
 		int h = aHeight;
 
 		ListViewIcon icon = aItem.getIcon();
-		
+
 		if (icon == null)
 		{
 			int cc = getPlaceHolderBackgroundColor(aOriginX, aOriginY, aItem).getRed();
@@ -279,20 +279,22 @@ public class ThumbnailItemRenderer1<T extends ListViewItem> extends ListViewItem
 
 		int labelHeight = getLabelHeight(aItem);
 
+		if (labelHeight < 0)
+		{
+			labelHeight = Math.abs(labelHeight * (aGraphics.getFontMetrics().getHeight() * 120 / 100));
+		}
+
+		if (mItemOverlayRenderer != null)
+		{
+			mItemOverlayRenderer.paintOverlayBefore(aListView, aItem, aOriginX, aOriginY, aWidth, aHeight, labelHeight, aGraphics);
+		}
+
 		if (labelHeight != 0)
 		{
 			String label = getLabel(aListView, aItem);
 
 			if (label != null)
 			{
-				if (labelHeight < 0)
-				{
-					labelHeight = Math.abs(labelHeight * (aGraphics.getFontMetrics().getHeight() * 120 / 100));
-				}
-
-				aGraphics.setColor(LABEL_BACKGROUND_COLOR);
-				aGraphics.fillRect(x, y + h - labelHeight, w, labelHeight);
-
 				TextRenderer.drawString(aGraphics, label, x + 2, y + h - labelHeight - 2, w - 4, labelHeight, Anchor.CENTER, aListView.getForeground(), null, false);
 			}
 		}
@@ -313,7 +315,7 @@ public class ThumbnailItemRenderer1<T extends ListViewItem> extends ListViewItem
 
 		if (mItemOverlayRenderer != null)
 		{
-			mItemOverlayRenderer.paintOverlay(aListView, aItem, aOriginX, aOriginY, aWidth, aHeight, aGraphics);
+			mItemOverlayRenderer.paintOverlayAfter(aListView, aItem, aOriginX, aOriginY, aWidth, aHeight, labelHeight, aGraphics);
 		}
 	}
 

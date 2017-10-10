@@ -7,5 +7,11 @@ import org.terifan.ui.listview.ListViewItem;
 
 public interface ItemOverlayRenderer<T extends ListViewItem>
 {
-	void paintOverlay(ListView<T> aListView, T aItem, int aOriginX, int aOriginY, int aWidth, int aHeight, Graphics2D aGraphics);
+	default void paintOverlayAfter(ListView<T> aListView, T aItem, int aOriginX, int aOriginY, int aWidth, int aHeight, int aLabelHeight, Graphics2D aGraphics)
+	{
+	}
+
+	default void paintOverlayBefore(ListView<T> aListView, T aItem, int aOriginX, int aOriginY, int aWidth, int aHeight, int aLabelHeight, Graphics2D aGraphics)
+	{
+	}
 }
