@@ -756,9 +756,12 @@ public class ListView<T extends ListViewItem> extends JComponent implements Scro
 
 	public void ensureItemIsVisible(T aItem)
 	{
-		Rectangle rect = new Rectangle();
-		mLayout.getItemBounds(aItem, rect);
-		scrollRectToVisible(rect);
+		if (aItem != null)
+		{
+			Rectangle rect = new Rectangle();
+			mLayout.getItemBounds(aItem, rect);
+			scrollRectToVisible(rect);
+		}
 	}
 
 
