@@ -6,6 +6,10 @@ import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.Transparency;
 import java.awt.image.BufferedImage;
+import java.io.File;
+import javax.imageio.ImageIO;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
 
 
 public class ImageResizer
@@ -129,8 +133,16 @@ public class ImageResizer
 		int currentHeight = aSource.getHeight();
 		boolean flush = false;
 
+		BufferedImage buffer = null;
+		Graphics2D g = null;
+		
+		int METHOD = 1;
+		
 		do
 		{
+			int oldWidth = currentWidth;
+			int oldHeight = currentHeight;
+
 			if (currentWidth > aWidth)
 			{
 				currentWidth = Math.max((currentWidth + 1) / 2, aWidth);
@@ -139,18 +151,48 @@ public class ImageResizer
 			{
 				currentHeight = Math.max((currentHeight + 1) / 2, aHeight);
 			}
-			
-			BufferedImage tmp = renderImage(aSource, currentWidth, currentHeight, aQuality);
 
-			if (flush)
+			if (METHOD == 1)
 			{
-				aSource.flush();
-			}
+				if (buffer == null)
+				{
+					buffer = new BufferedImage(currentWidth, currentHeight, aSource.getTransparency() == Transparency.OPAQUE ? BufferedImage.TYPE_INT_RGB : BufferedImage.TYPE_INT_ARGB);
 
-			aSource = tmp;
-			flush = true;
+					g = buffer.createGraphics();
+					g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, aQuality ? RenderingHints.VALUE_INTERPOLATION_BICUBIC : RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+					g.drawImage(aSource, 0, 0, currentWidth, currentHeight, null);
+				}
+				else
+				{
+					g.drawImage(buffer, 0, 0, currentWidth, currentHeight, 0, 0, oldWidth, oldHeight, null);
+				}
+			}
+			else
+			{
+				BufferedImage tmp = renderImage(aSource, currentWidth, currentHeight, aQuality);
+
+				if (flush)
+				{
+					aSource.flush();
+				}
+
+				aSource = tmp;
+				flush = true;
+			}
 		}
 		while (currentWidth > aWidth || currentHeight > aHeight);
+
+		if (METHOD == 1)
+		{
+			g.dispose();
+
+			if (buffer.getWidth() == aWidth && buffer.getHeight() == aHeight)
+			{
+				return buffer;
+			}
+
+			return buffer.getSubimage(0, 0, currentWidth, currentHeight);
+		}
 
 		return aSource;
 	}
@@ -221,6 +263,58 @@ public class ImageResizer
 			aGraphics.drawImage(aImage, 0, aHeight - aFrameBottom, aFrameLeft, aHeight, 0, th - aFrameBottom, aFrameLeft, th, null);
 			aGraphics.drawImage(aImage, aFrameLeft, aHeight - aFrameBottom, aWidth - aFrameRight, aHeight, aFrameLeft, th - aFrameBottom, tw - aFrameRight, th, null);
 			aGraphics.drawImage(aImage, aWidth - aFrameRight, aHeight - aFrameBottom, aWidth, aHeight, tw - aFrameRight, th - aFrameBottom, tw, th, null);
+		}
+	}
+	
+	
+	public static void xmain(String... args)
+	{
+		try
+		{
+			BufferedImage img = getScaledImageAspect(ImageIO.read(new File("d:\\8 (6).jpg")), 256, 256, true, null);
+
+			JFrame frame = new JFrame();
+			frame.add(new JPanel()
+			{
+				@Override
+				protected void paintComponent(Graphics aG)
+				{
+					aG.drawImage(img, 0, 0, null);
+				}
+				
+			});
+			frame.setSize(1024, 768);
+			frame.setLocationRelativeTo(null);
+			frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+			frame.setVisible(true);
+		}
+		catch (Throwable e)
+		{
+			e.printStackTrace(System.out);
+		}
+	}
+	
+	
+	public static void main(String... args)
+	{
+		try
+		{
+			ImageIO.setUseCache(false);
+
+			long t = System.currentTimeMillis();
+
+			for (File file : new File("M:\\Collections\\closeups").listFiles(e->e.isFile()))
+			{
+				System.out.println((Runtime.getRuntime().maxMemory()-Runtime.getRuntime().totalMemory()+Runtime.getRuntime().freeMemory())/1024/1024+"\t"+file);
+				
+				BufferedImage img = getScaledImageAspect(ImageIO.read(file), 256, 256, true, null);
+			}
+
+			System.out.println(System.currentTimeMillis()-t);
+		}
+		catch (Throwable e)
+		{
+			e.printStackTrace(System.out);
 		}
 	}
 }
