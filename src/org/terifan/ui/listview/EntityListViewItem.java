@@ -1,7 +1,6 @@
 package org.terifan.ui.listview;
 
 import org.terifan.ui.listview.util.ListViewIcon;
-import java.awt.image.BufferedImage;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -97,6 +96,42 @@ public class EntityListViewItem implements ListViewItem
 				{
 					field.setAccessible(true);
 					return (ListViewIcon)field.get(this);
+				}
+			}
+		}
+		catch (IllegalAccessException | InvocationTargetException e)
+		{
+			e.printStackTrace(System.out);
+		}
+
+		System.err.println("No icon provider specified in entity: " + mThisType);
+
+		return null;
+	}
+
+
+	@Override
+	public final String getTitle()
+	{
+		try
+		{
+			for (Method method : mThisType.getDeclaredMethods())
+			{
+				ListViewItemTitle ann = method.getAnnotation(ListViewItemTitle.class);
+				if (ann != null)
+				{
+					method.setAccessible(true);
+					return (String)method.invoke(this);
+				}
+			}
+
+			for (Field field : mThisType.getDeclaredFields())
+			{
+				ListViewItemTitle ann = field.getAnnotation(ListViewItemTitle.class);
+				if (ann != null)
+				{
+					field.setAccessible(true);
+					return (String)field.get(this);
 				}
 			}
 		}
