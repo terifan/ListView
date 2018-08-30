@@ -15,6 +15,10 @@ public interface ListViewItem
 		return null;
 	}
 
+	default void renderItemHeader()
+	{
+	}
+
 	default String getTitle()
 	{
 		return null;
