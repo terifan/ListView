@@ -68,6 +68,7 @@ public class ListView<T extends ListViewItem> extends JComponent implements Scro
 	private boolean mRequestRepaint;
 	private ArrayList<ViewAdjustmentListener> mAdjustmentListeners;
 	private int mMinRowHeight;
+	private SmoothScrollController mSmoothScroll;
 
 
 	public ListView()
@@ -1038,10 +1039,18 @@ public class ListView<T extends ListViewItem> extends JComponent implements Scro
 	}
 
 
-	private SmoothScroll mSmoothScroll = new SmoothScroll(this);
+	public void setSmoothScroll(SmoothScrollController aSmoothScroll)
+	{
+		mSmoothScroll = aSmoothScroll;
+	}
+
 
 	public void smoothScroll(double aPreciseWheelRotation)
 	{
+		if (mSmoothScroll == null)
+		{
+			mSmoothScroll = new SmoothScrollController(this, 10, mItemRenderer.getItemPreferredWidth(this) + mItemRenderer.getItemSpacing(this).y, 500);
+		}
 		mSmoothScroll.smoothScroll(aPreciseWheelRotation);
 	}
 
