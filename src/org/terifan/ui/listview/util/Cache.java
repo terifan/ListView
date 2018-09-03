@@ -342,7 +342,14 @@ public class Cache<K,V> implements Iterable<K>
 		mCacheOrder.remove(aKey);
 		mUsedSize -= entry.size;
 
+		onRemove(aKey, entry.value);
+		
 		return entry.value;
+	}
+
+
+	protected void onRemove(K aKey, V aValue)
+	{
 	}
 
 
