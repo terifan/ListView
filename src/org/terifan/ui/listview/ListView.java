@@ -1039,9 +1039,9 @@ public class ListView<T extends ListViewItem> extends JComponent implements Scro
 	}
 
 
-	public void setSmoothScroll(SmoothScrollController aSmoothScroll)
+	public void setSmoothScrollController(SmoothScrollController aSmoothScrollController)
 	{
-		mSmoothScroll = aSmoothScroll;
+		mSmoothScroll = aSmoothScrollController;
 	}
 
 
