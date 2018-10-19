@@ -1039,9 +1039,9 @@ public class ListView<T extends ListViewItem> extends JComponent implements Scro
 	}
 
 
-	public void setSmoothScroll(SmoothScrollController aSmoothScroll)
+	public void setSmoothScrollController(SmoothScrollController aSmoothScrollController)
 	{
-		mSmoothScroll = aSmoothScroll;
+		mSmoothScroll = aSmoothScrollController;
 	}
 
 
@@ -1049,7 +1049,7 @@ public class ListView<T extends ListViewItem> extends JComponent implements Scro
 	{
 		if (mSmoothScroll == null)
 		{
-			mSmoothScroll = new SmoothScrollController(this, 10, mItemRenderer.getItemPreferredWidth(this) + mItemRenderer.getItemSpacing(this).y, 500);
+			mSmoothScroll = new SmoothScrollController(this, 10, mItemRenderer.getItemPreferredHeight(this) + mItemRenderer.getItemSpacing(this).y, 500);
 		}
 		mSmoothScroll.smoothScroll(aPreciseWheelRotation);
 	}

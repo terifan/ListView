@@ -23,6 +23,12 @@ public class ListViewImageIcon implements ListViewIcon
 	}
 
 
+	public BufferedImage getImage()
+	{
+		return mImage;
+	}
+
+
 	public Color getBackgroundColor()
 	{
 		return mBackgroundColor;
