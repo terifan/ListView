@@ -157,7 +157,7 @@ public class SmoothScrollController
 				@Override
 				public void actionPerformed(ActionEvent aEvent)
 				{
-					System.out.println(System.currentTimeMillis() - mOperationStartTime);
+//					System.out.println(System.currentTimeMillis() - mOperationStartTime);
 					mOperationStartTime = System.currentTimeMillis();
 
 					if (mWheelRotation != 0)
