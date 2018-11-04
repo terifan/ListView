@@ -314,6 +314,11 @@ public class ListViewLayoutV2<T extends ListViewItem> extends AbstractListViewLa
 		Dimension itemDim = new Dimension();
 		Dimension groupDimension = new Dimension(aWidth, 0);
 
+		Integer tmp = mListView.getMinRowHeight();
+		int minRowHeight = tmp == null ? 0 : tmp;
+		tmp = mListView.getMaxRowHeight();
+		int maxRowHeight = tmp == null ? Integer.MAX_VALUE : tmp;
+
 		for (int itemIndex = 0, itemCount = items.size(); itemIndex < itemCount;)
 		{
 			Dimension arrayDim = new Dimension(0,mListView.getMinRowHeight());
@@ -322,10 +327,10 @@ public class ListViewLayoutV2<T extends ListViewItem> extends AbstractListViewLa
 			for (; itemIndex < itemCount && arrayDim.width < aWidth; arrayLength++, itemIndex++)
 			{
 				renderer.getItemSize(mListView, items.get(itemIndex), itemDim);
-					
+
 				int oldArrayHeight = arrayDim.height == 0 ? itemDim.height : arrayDim.height;
 
-				arrayDim.height = Math.max(arrayDim.height, itemDim.height);
+				arrayDim.height = Math.min(Math.max(Math.max(arrayDim.height, itemDim.height), minRowHeight), maxRowHeight);
 				arrayDim.width = arrayDim.width * arrayDim.height / oldArrayHeight + itemDim.width * arrayDim.height / itemDim.height;
 			}
 
