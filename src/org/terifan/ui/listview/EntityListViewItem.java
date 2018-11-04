@@ -96,6 +96,25 @@ public class EntityListViewItem implements ListViewItem
 					}
 				}
 			}
+			
+			// TODO: improve
+			for (Method method : mThisType.getMethods())
+			{
+				ListViewItemIcon ann = method.getAnnotation(ListViewItemIcon.class);
+				if (ann != null)
+				{
+					try
+					{
+						method.setAccessible(true);
+						return (ListViewIcon)method.invoke(this);
+					}
+					catch (Exception e)
+					{
+						System.out.println("Failed to invoke method \"" + method.getName() + "\" to load ListViewIcon:");
+						e.printStackTrace(System.out);
+					}
+				}
+			}
 
 			for (Field field : mThisType.getDeclaredFields())
 			{
