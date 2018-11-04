@@ -84,8 +84,16 @@ public class EntityListViewItem implements ListViewItem
 				ListViewItemIcon ann = method.getAnnotation(ListViewItemIcon.class);
 				if (ann != null)
 				{
-					method.setAccessible(true);
-					return (ListViewIcon)method.invoke(this);
+					try
+					{
+						method.setAccessible(true);
+						return (ListViewIcon)method.invoke(this);
+					}
+					catch (Exception e)
+					{
+						System.out.println("Failed to invoke method \"" + method.getName() + "\" to load ListViewIcon:");
+						e.printStackTrace(System.out);
+					}
 				}
 			}
 
@@ -94,17 +102,25 @@ public class EntityListViewItem implements ListViewItem
 				ListViewItemIcon ann = field.getAnnotation(ListViewItemIcon.class);
 				if (ann != null)
 				{
-					field.setAccessible(true);
-					return (ListViewIcon)field.get(this);
+					try
+					{
+						field.setAccessible(true);
+						return (ListViewIcon)field.get(this);
+					}
+					catch (Exception e)
+					{
+						System.out.println("Failed to read ListViewIcon from field \"" + field.getName() + "\":");
+						e.printStackTrace(System.out);
+					}
 				}
 			}
+
+			System.out.println("No icon provider specified in entity: " + mThisType);
 		}
-		catch (IllegalAccessException | InvocationTargetException e)
+		catch (Exception e)
 		{
 			e.printStackTrace(System.out);
 		}
-
-		System.err.println("No icon provider specified in entity: " + mThisType);
 
 		return null;
 	}

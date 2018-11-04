@@ -550,6 +550,13 @@ public class ListView<T extends ListViewItem> extends JComponent implements Scro
 		revalidate();
 		repaint();
 	}
+	
+	
+//	public ListView addItem(T aItem)
+//	{
+//		mModel.addItem(aItem);
+//		return this;
+//	}
 
 
 	public boolean isItemSelected(T aItem)
