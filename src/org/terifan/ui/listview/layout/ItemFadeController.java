@@ -1,9 +1,9 @@
 package org.terifan.ui.listview.layout;
 
 
-public interface ItemFadeController 
+public interface ItemFadeController
 {
-	void setItemFadeValue(long aState);
+	int getItemFadeValue();
 
-	long getItemFadeValue();
+	boolean isRepaintRequest();
 }

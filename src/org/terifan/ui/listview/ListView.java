@@ -396,7 +396,7 @@ public class ListView<T extends ListViewItem> extends JComponent implements Scro
 				}
 			}
 		}
-		catch (Exception e)
+		catch (Throwable e)
 		{
 			e.printStackTrace(System.err);
 		}
@@ -551,8 +551,8 @@ public class ListView<T extends ListViewItem> extends JComponent implements Scro
 		revalidate();
 		repaint();
 	}
-	
-	
+
+
 //	public ListView addItem(T aItem)
 //	{
 //		mModel.addItem(aItem);
