@@ -24,6 +24,8 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Timer;
+import java.util.TimerTask;
 import javax.swing.AbstractAction;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
@@ -70,6 +72,7 @@ public class ListView<T extends ListViewItem> extends JComponent implements Scro
 	private Integer mMinRowHeight;
 	private Integer mMaxRowHeight;
 	private SmoothScrollController mSmoothScroll;
+	private Timer mTimer;
 
 
 	public ListView()
@@ -89,6 +92,7 @@ public class ListView<T extends ListViewItem> extends JComponent implements Scro
 		mAdjustmentListeners = new ArrayList<>();
 		mFireLoadResource = new ArrayList<>();
 		mDPIScale = 1;
+		mTimer = new Timer(true);
 
 		super.setOpaque(true);
 		super.setFocusable(true);
@@ -357,9 +361,53 @@ public class ListView<T extends ListViewItem> extends JComponent implements Scro
 	}
 
 
+	protected void requestRepaint()
+	{
+		mRequestRepaint = true;
+
+////		if (mRequestRepaint)
+////		{
+//			if (mTimerTask == null)
+//			{
+//				mTimerTask = new TimerTask()
+//				{
+//					@Override
+//					public void run()
+//					{
+//						repaint();
+//					}
+//				};
+//				mTimer.schedule(mTimerTask, 0, 50);
+//			}
+////		}
+////		else if (mTimerTask != null)
+////		{
+////			mTimerTask.cancel();
+////		}
+	}
+//
+//
+//	protected void cancelRepaint()
+//	{
+//		if (mTimerTask != null)
+//		{
+//			mTimerTask.cancel();
+//			mTimerTask = null;
+//		}
+//	}
+
+
+	public boolean isRequestRepaint()
+	{
+		return mRequestRepaint;
+	}
+
+
 	@Override
 	public synchronized void paintComponent(Graphics aGraphics)
 	{
+		long time = System.currentTimeMillis();
+
 		try
 		{
 			mRequestRepaint = false;
@@ -403,9 +451,27 @@ public class ListView<T extends ListViewItem> extends JComponent implements Scro
 
 		if (mRequestRepaint)
 		{
-			repaint();
+			if (mTimerTask == null)
+			{
+				mTimerTask = new TimerTask()
+				{
+					@Override
+					public void run()
+					{
+						repaint();
+					}
+				};
+				mTimer.schedule(mTimerTask, Math.max(0, 40 - (System.currentTimeMillis() - time)), 40);
+			}
+		}
+		else if (mTimerTask != null)
+		{
+			mTimerTask.cancel();
+			mTimerTask = null;
 		}
 	}
+
+	private TimerTask mTimerTask;
 
 
 	protected void paintPlaceHolder(Graphics2D aGraphics)
@@ -906,10 +972,10 @@ public class ListView<T extends ListViewItem> extends JComponent implements Scro
 
 					if (aExpandView)
 					{
-						x -= itemRect.width;
-						y -= itemRect.height;
-						w += itemRect.width * 2;
-						h += itemRect.height * 2;
+						x -= itemRect.width * 2;
+						y -= itemRect.height * 2;
+						w += itemRect.width * 4;
+						h += itemRect.height * 4;
 					}
 
 					return !SwingUtilities.computeIntersection(x, y, w, h, itemRect).isEmpty();
@@ -992,12 +1058,6 @@ public class ListView<T extends ListViewItem> extends JComponent implements Scro
 			repaint();
 		}
 	};
-
-
-	protected void requestRepaint()
-	{
-		mRequestRepaint = true;
-	}
 
 
 	public ArrayList<T> getVisibleItems()
