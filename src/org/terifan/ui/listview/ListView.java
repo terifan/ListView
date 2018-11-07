@@ -69,8 +69,8 @@ public class ListView<T extends ListViewItem> extends JComponent implements Scro
 	private double mDPIScale;
 	private boolean mRequestRepaint;
 	private ArrayList<ViewAdjustmentListener> mAdjustmentListeners;
-	private Integer mMinRowHeight;
-	private Integer mMaxRowHeight;
+	private int mMinRowHeight;
+	private int mMaxRowHeight;
 	private SmoothScrollController mSmoothScroll;
 	private Timer mTimer;
 
@@ -93,6 +93,9 @@ public class ListView<T extends ListViewItem> extends JComponent implements Scro
 		mFireLoadResource = new ArrayList<>();
 		mDPIScale = 1;
 		mTimer = new Timer(true);
+		
+		mMinRowHeight = 0;
+		mMaxRowHeight = Integer.MAX_VALUE;
 
 		super.setOpaque(true);
 		super.setFocusable(true);
@@ -1123,25 +1126,25 @@ public class ListView<T extends ListViewItem> extends JComponent implements Scro
 	}
 
 
-	public Integer getMinRowHeight()
+	public int getMinRowHeight()
 	{
 		return mMinRowHeight;
 	}
 
 
-	public void setMinRowHeight(Integer aMinRowHeight)
+	public void setMinRowHeight(int aMinRowHeight)
 	{
 		mMinRowHeight = aMinRowHeight;
 	}
 
 
-	public Integer getMaxRowHeight()
+	public int getMaxRowHeight()
 	{
 		return mMaxRowHeight;
 	}
 
 
-	public void setMaxRowHeight(Integer aMaxRowHeight)
+	public void setMaxRowHeight(int aMaxRowHeight)
 	{
 		mMaxRowHeight = aMaxRowHeight;
 	}

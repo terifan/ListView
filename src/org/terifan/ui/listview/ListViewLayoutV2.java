@@ -76,6 +76,35 @@ public class ListViewLayoutV2<T extends ListViewItem> extends AbstractListViewLa
 				return null;
 			}
 		});
+
+		int rowHeight = Math.min(mListView.getMaxRowHeight(), Math.max(mListView.getMinRowHeight(), mListView.getItemRenderer().getItemPreferredHeight(mListView)));
+		Rectangle clip1 = new Rectangle(clip.x, clip.y - rowHeight, clip.width, rowHeight);
+		Rectangle clip2 = new Rectangle(clip.x, clip.y + clip.height, clip.width, rowHeight);
+
+		visit(new Visitor<T>()
+		{
+			@Override
+			public boolean group(Point aPosition, LayoutInfoGroup aGroup)
+			{
+				return clip1.intersects(aPosition.x, aPosition.y, aGroup.mDimension.width, aGroup.mDimension.height) || clip2.intersects(aPosition.x, aPosition.y, aGroup.mDimension.width, aGroup.mDimension.height);
+			}
+
+			@Override
+			public boolean array(Point aPosition, LayoutInfoArray aArray)
+			{
+				return clip1.intersects(aPosition.x, aPosition.y, aArray.mDimension.width, aArray.mDimension.height) || clip2.intersects(aPosition.x, aPosition.y, aArray.mDimension.width, aArray.mDimension.height);
+			}
+
+			@Override
+			public Object item(int aX, int aY, int aWidth, int aHeight, LayoutInfoGroup aLayout, LayoutInfoArray aArray, T aItem)
+			{
+				if (clip1.intersects(aX, aY, aWidth, aHeight) || clip2.intersects(aX, aY, aWidth, aHeight))
+				{
+					aItem.prepareLayout();
+				}
+				return null;
+			}
+		});
 	}
 
 
@@ -314,10 +343,8 @@ public class ListViewLayoutV2<T extends ListViewItem> extends AbstractListViewLa
 		Dimension itemDim = new Dimension();
 		Dimension groupDimension = new Dimension(aWidth, 0);
 
-		Integer tmp = mListView.getMinRowHeight();
-		int minRowHeight = tmp == null ? 0 : tmp;
-		tmp = mListView.getMaxRowHeight();
-		int maxRowHeight = tmp == null ? Integer.MAX_VALUE : tmp;
+		int minRowHeight = mListView.getMinRowHeight();
+		int maxRowHeight = mListView.getMaxRowHeight();
 
 		for (int itemIndex = 0, itemCount = items.size(); itemIndex < itemCount;)
 		{
