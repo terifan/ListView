@@ -39,15 +39,17 @@ public class EntityListViewItem implements ListViewItem
 				throw new IllegalArgumentException("Column key is null");
 			}
 
-			for (Method method : mThisType.getDeclaredMethods())
+			for (int loop = 0; loop < 2; loop++)
 			{
-				String name = method.getName();
-				if (method.getParameterCount() == 0 && (name.startsWith("get") && name.substring(3).equalsIgnoreCase(key)
-					|| name.startsWith("is") && name.substring(2).equalsIgnoreCase(key)))
+				for (Method method : loop == 0 ? mThisType.getDeclaredMethods() : mThisType.getMethods())
 				{
-					method.setAccessible(true);
-					aColumn.setUserObject(EntityListViewItem.class, method);
-					return method.invoke(this);
+					String name = method.getName();
+					if (method.getParameterCount() == 0 && (name.startsWith("get") && name.substring(3).equalsIgnoreCase(key) || name.startsWith("is") && name.substring(2).equalsIgnoreCase(key)))
+					{
+						method.setAccessible(true);
+						aColumn.setUserObject(EntityListViewItem.class, method);
+						return method.invoke(this);
+					}
 				}
 			}
 
@@ -62,7 +64,7 @@ public class EntityListViewItem implements ListViewItem
 				}
 			}
 
-			return "#missing";
+			return "#missing: " + aColumn;
 		}
 		catch (IllegalAccessException | InvocationTargetException e)
 		{

@@ -50,6 +50,44 @@ public class ListViewModel<T extends ListViewItem> implements Iterable<T>
 	}
 
 
+	public T addItemSorted(T aItem)
+	{
+		if (aItem == null)
+		{
+			throw new IllegalArgumentException("Item is null.");
+		}
+
+		mItems.add(aItem);
+
+		int groupCount = mGroups.size();
+
+		if (groupCount == 0)
+		{
+			ListViewGroup root = new ListViewGroup(this, null, 0, null);
+			ArrayList<T> items = new ArrayList<>();
+			root.setItems(items);
+
+			for (int i = 0; i < mItems.size(); i++)
+			{
+				items.add(mItems.get(i));
+			}
+			
+			ListViewColumn<T> column = getSortedColumn();
+			Comparator comparator = column.getComparator();
+			Collections.sort(items, new ComparatorProxy(comparator, getColumnIndex(column), column.getSortOrder() == SortOrder.ASCENDING));
+
+			root.aggregate();
+
+			mTree = root;
+		}
+		else
+		{
+		}
+
+		return aItem;
+	}
+
+
 	public boolean removeItem(T aItem)
 	{
 		return mItems.remove(aItem);
@@ -397,6 +435,9 @@ public class ListViewModel<T extends ListViewItem> implements Iterable<T>
 	}
 
 
+	/**
+	 * Compiles and sort the items
+	 */
 	public void validate()
 	{
 		compile();
@@ -450,7 +491,7 @@ public class ListViewModel<T extends ListViewItem> implements Iterable<T>
 	}
 
 
-	protected void compile()
+	public void compile()
 	{
 		int groupCount = mGroups.size();
 
@@ -691,10 +732,7 @@ public class ListViewModel<T extends ListViewItem> implements Iterable<T>
 			{
 				return ((Comparable)v1).compareTo(v2);
 			}
-			else
-			{
-				return v1.toString().compareTo(v2.toString());
-			}
+			return v1.toString().compareTo(v2.toString());
 		}
 	}
 
