@@ -1,6 +1,7 @@
 package org.terifan.ui.listview.util;
 
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.net.URL;
 import javax.imageio.ImageIO;
@@ -32,6 +33,22 @@ public final class Utilities
 	}
 
 
+	public static BufferedImage padImage(BufferedImage aImage, int aWidth, int aHeight)
+	{
+		if (aImage.getWidth() >= aWidth && aImage.getHeight() >= aHeight)
+		{
+			return aImage;
+		}
+
+		BufferedImage image = new BufferedImage(aWidth, aHeight, BufferedImage.TYPE_INT_ARGB);
+		Graphics2D g = image.createGraphics();
+		g.drawImage(aImage, (aWidth - aImage.getWidth()) / 2, (aHeight - aImage.getHeight()) / 2, null);
+		g.dispose();
+
+		return image;
+	}
+
+
 	public static ListViewImageIcon loadIcon(Class aOwer, String aPath)
 	{
 		return new ListViewImageIcon(loadImage(aOwer, aPath));
@@ -41,7 +58,7 @@ public final class Utilities
 	public static void drawFocusRect(Graphics aGraphics, int x, int y, int w, int h, boolean aAlign)
 	{
 		aGraphics.drawRect(x, y, w - 1, h - 1);
-		
+
 //		if (aAlign)
 //		{
 //			w |= 1;
