@@ -405,72 +405,87 @@ public class ListView<T extends ListViewItem> extends JComponent implements Scro
 		return mRequestRepaint;
 	}
 
+private boolean mPainting;
 
 	@Override
-	public synchronized void paintComponent(Graphics aGraphics)
+	public void paintComponent(Graphics aGraphics)
 	{
-		long time = System.currentTimeMillis();
+if (mPainting)
+{
+	System.out.println("#");
+	return;
+}
+mPainting = true;
 
 		try
 		{
-			mRequestRepaint = false;
+			long time = System.currentTimeMillis();
 
-			super.paintComponent(aGraphics);
-
-			Graphics2D g = (Graphics2D)aGraphics;
-
-			g.setFont(mStyles.item);
-			g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_LCD_HRGB);
-			g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-
-			JScrollPane scrollPane = getEnclosingScrollPane();
-			if (scrollPane != null)
+			try
 			{
-				Rectangle viewport = scrollPane.getViewport().getViewRect();
-				g.setClip(viewport.x, viewport.y, viewport.width, viewport.height);
-			}
+				mRequestRepaint = false;
 
-			mFireLoadResource.clear();
+				super.paintComponent(aGraphics);
 
-			mLayout.paint(g);
+				Graphics2D g = (Graphics2D)aGraphics;
 
-			if (mModel.getItemCount() == 0)
-			{
-				paintPlaceHolder(g);
-			}
+				g.setFont(mStyles.item);
+				g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_LCD_HRGB);
+				g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
 
-			if (!mFireLoadResource.isEmpty())
-			{
-				for (ViewAdjustmentListener listener : mAdjustmentListeners)
+				JScrollPane scrollPane = getEnclosingScrollPane();
+				if (scrollPane != null)
 				{
-					listener.requestResources(mFireLoadResource);
+					Rectangle viewport = scrollPane.getViewport().getViewRect();
+					g.setClip(viewport.x, viewport.y, viewport.width, viewport.height);
+				}
+
+				mFireLoadResource.clear();
+
+				mLayout.paint(g);
+
+				if (mModel.getItemCount() == 0)
+				{
+					paintPlaceHolder(g);
+				}
+
+				if (!mFireLoadResource.isEmpty())
+				{
+					for (ViewAdjustmentListener listener : mAdjustmentListeners)
+					{
+						listener.requestResources(mFireLoadResource);
+					}
 				}
 			}
-		}
-		catch (Throwable e)
-		{
-			e.printStackTrace(System.err);
-		}
-
-		if (mRequestRepaint)
-		{
-			if (mTimerTask == null)
+			catch (Throwable e)
 			{
-				mTimerTask = new TimerTask()
+				e.printStackTrace(System.err);
+			}
+
+			if (mRequestRepaint)
+			{
+				if (mTimerTask == null)
 				{
-					@Override
-					public void run()
+					mTimerTask = new TimerTask()
 					{
-						repaint();
-					}
-				};
-				mTimer.schedule(mTimerTask, Math.max(0, 40 - (System.currentTimeMillis() - time)), 40);
+						@Override
+						public void run()
+						{
+							repaint();
+						}
+					};
+					mTimer.schedule(mTimerTask, Math.max(0, 40 - (System.currentTimeMillis() - time)), 40);
+				}
+			}
+			else if (mTimerTask != null)
+			{
+				mTimerTask.cancel();
+				mTimerTask = null;
 			}
 		}
-		else if (mTimerTask != null)
+		finally
 		{
-			mTimerTask.cancel();
-			mTimerTask = null;
+			mPainting = false;
 		}
 	}
 
