@@ -18,6 +18,12 @@ public interface ListViewItem
 	}
 
 
+	default boolean isPlaceholder()
+	{
+		return false;
+	}
+
+
 	default void renderItemHeader()
 	{
 	}

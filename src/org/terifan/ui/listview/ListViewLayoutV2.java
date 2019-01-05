@@ -110,7 +110,6 @@ public class ListViewLayoutV2<T extends ListViewItem> extends AbstractListViewLa
 
 	private Object visit(Visitor<T> aVisitor)
 	{
-//		Point position = new Point();
 		int width = mListView.getWidth();
 		int height = mListView.getHeight();
 
@@ -118,36 +117,8 @@ public class ListViewLayoutV2<T extends ListViewItem> extends AbstractListViewLa
 		{
 			return null;
 		}
-		
-		return visitGroup(mListView.getModel().getRoot(), 0, new Point(), width, height, aVisitor);
 
-//		ListViewGroup<T> root = mListView.getModel().getRoot();
-//		SortedMap<Object, ListViewGroup<T>> children = root.getChildren();
-//
-//		if (children != null)
-//		{
-//			for (Object key : children.getKeys())
-//			{
-//				Object result = visitGroup(children.get(key), 0, position, width, height, aVisitor);
-//				if (result != null)
-//				{
-//					return result;
-//				}
-//			}
-//
-//			return null;
-//		}
-//
-//		if (mOrientation == Orientation.VERTICAL)
-//		{
-//			LayoutInfoGroup layout = prepareVerticalLayout(root, width);
-//
-//			return visitVerticalItemList(root, position, width, aVisitor, layout);
-//		}
-//		else
-//		{
-//			return null;
-//		}
+		return visitGroup(mListView.getModel().getRoot(), 0, new Point(), width, height, aVisitor);
 	}
 
 
@@ -159,10 +130,6 @@ public class ListViewLayoutV2<T extends ListViewItem> extends AbstractListViewLa
 
 			if (children != null)
 			{
-//				mListView.getGroupRenderer().paintGroup(mListView, aGraphics, verticalBarWidth * aLevel, aOriginY, mListView.getWidth() - verticalBarWidth * aLevel, groupBarHeight, aGroup);
-//				paintVerticalBar(aGraphics, verticalBarWidth * aLevel, aOriginY + groupBarHeight, verticalBarWidth, height);
-//				mListView.getStyles().verticalBarWidth
-
 				for (Object key : children.getKeys())
 				{
 					ListViewGroup group = children.get(key);
@@ -190,10 +157,6 @@ public class ListViewLayoutV2<T extends ListViewItem> extends AbstractListViewLa
 						aPosition.y += layout.mDimension.height;
 					}
 				}
-				else
-				{
-//					return visitItemList(aGroup, aLevel, aPosition, aWidth, aHeight, aVisitor);
-				}
 			}
 		}
 
@@ -207,8 +170,8 @@ public class ListViewLayoutV2<T extends ListViewItem> extends AbstractListViewLa
 
 		ListViewItemRenderer<T> renderer = mListView.getItemRenderer();
 		Point itemSpacing = renderer.getItemSpacing(mListView);
-		int itemIndex = 0;
 		Dimension itemDim = new Dimension();
+		int itemIndex = 0;
 
 		ArrayList<T> items = aGroup.getItems();
 		int size = items.size();
@@ -448,7 +411,7 @@ public class ListViewLayoutV2<T extends ListViewItem> extends AbstractListViewLa
 	public T getItemRelativeTo(T aItem, int aDiffX, int aDiffY)
 	{
 		HierarchicalItemLocation h = findHierarchicalItemLocation(aItem);
-		
+
 		if (aDiffX < 0)
 		{
 			return h.itemBefore;
@@ -685,7 +648,7 @@ public class ListViewLayoutV2<T extends ListViewItem> extends AbstractListViewLa
 	}
 	
 	
-	private void getItemBoundsImpl(T aTargetItem, Rectangle aRectangle, HierarchicalItemLocation h)
+	private void getItemBoundsImpl(T aTargetItem, Rectangle oRectangle, HierarchicalItemLocation h)
 	{
 		visit(new Visitor<T>()
 		{
@@ -706,7 +669,7 @@ public class ListViewLayoutV2<T extends ListViewItem> extends AbstractListViewLa
 			{
 				if (aTargetItem == aItem)
 				{
-					aRectangle.setBounds(aX, aY, aWidth, aHeight);
+					oRectangle.setBounds(aX, aY, aWidth, aHeight);
 					return Boolean.TRUE;
 				}
 				return null;
