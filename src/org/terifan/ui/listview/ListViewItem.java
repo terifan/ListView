@@ -18,6 +18,9 @@ public interface ListViewItem
 	}
 
 
+	/**
+	 * Override this method and return true if there isn't any icon and no attempts to load an icon should be made.
+	 */
 	default boolean isPlaceholder()
 	{
 		return false;
