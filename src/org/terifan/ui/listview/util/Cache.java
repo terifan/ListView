@@ -341,14 +341,28 @@ public class Cache<K,V> implements Iterable<K>
 
 		mCacheOrder.remove(aKey);
 		mUsedSize -= entry.size;
-
-		onRemove(aKey, entry.value);
 		
-		return entry.value;
+		V value = entry.value;
+
+		onRemove(aKey, value, aDropped);
+
+		// free memory
+		entry.key = null;
+		entry.value = null;
+		
+		return value;
 	}
 
 
-	protected void onRemove(K aKey, V aValue)
+	/**
+	 * This method is called for each item removed from the cache. Default does nothing.
+	 * 
+	 * @param aKey
+	 * @param aValue
+	 * @param aDropped
+	 *   True if the Cache implementation removed the item because expiration or size constraints. False if a Cache user removed the item.
+	 */
+	protected void onRemove(K aKey, V aValue, boolean aDropped)
 	{
 	}
 
