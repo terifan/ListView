@@ -131,18 +131,10 @@ public class ImageResizer
 
 		int currentWidth = aSource.getWidth();
 		int currentHeight = aSource.getHeight();
-		boolean flush = false;
+		BufferedImage work = aSource;
 
-		BufferedImage buffer = null;
-		Graphics2D g = null;
-		
-		int METHOD = 1;
-		
 		do
 		{
-			int oldWidth = currentWidth;
-			int oldHeight = currentHeight;
-
 			if (currentWidth > aWidth)
 			{
 				currentWidth = Math.max((currentWidth + 1) / 2, aWidth);
@@ -152,49 +144,11 @@ public class ImageResizer
 				currentHeight = Math.max((currentHeight + 1) / 2, aHeight);
 			}
 
-			if (METHOD == 1)
-			{
-				if (buffer == null)
-				{
-					buffer = new BufferedImage(currentWidth, currentHeight, aSource.getTransparency() == Transparency.OPAQUE ? BufferedImage.TYPE_INT_RGB : BufferedImage.TYPE_INT_ARGB);
-
-					g = buffer.createGraphics();
-					g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, aQuality ? RenderingHints.VALUE_INTERPOLATION_BICUBIC : RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-					g.drawImage(aSource, 0, 0, currentWidth, currentHeight, null);
-				}
-				else
-				{
-					g.drawImage(buffer, 0, 0, currentWidth, currentHeight, 0, 0, oldWidth, oldHeight, null);
-				}
-			}
-			else
-			{
-				BufferedImage tmp = renderImage(aSource, currentWidth, currentHeight, aQuality);
-
-				if (flush)
-				{
-					aSource.flush();
-				}
-
-				aSource = tmp;
-				flush = true;
-			}
+			work = renderImage(work, currentWidth, currentHeight, aQuality);
 		}
 		while (currentWidth > aWidth || currentHeight > aHeight);
 
-		if (METHOD == 1)
-		{
-			g.dispose();
-
-			if (buffer.getWidth() == aWidth && buffer.getHeight() == aHeight)
-			{
-				return buffer;
-			}
-
-			return buffer.getSubimage(0, 0, currentWidth, currentHeight);
-		}
-
-		return aSource;
+		return work;
 	}
 
 
