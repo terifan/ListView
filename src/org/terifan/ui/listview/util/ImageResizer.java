@@ -1,5 +1,6 @@
 package org.terifan.ui.listview.util;
 
+import java.awt.AlphaComposite;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -157,6 +158,9 @@ public class ImageResizer
 		BufferedImage output = new BufferedImage(aWidth, aHeight, aSource.getTransparency() == Transparency.OPAQUE ? BufferedImage.TYPE_INT_RGB : BufferedImage.TYPE_INT_ARGB);
 
 		Graphics2D g = output.createGraphics();
+		g.setComposite(AlphaComposite.getInstance(AlphaComposite.CLEAR));
+		g.fillRect(0, 0, aWidth, aHeight);
+		g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER));
 		g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, aQuality ? RenderingHints.VALUE_INTERPOLATION_BICUBIC : RenderingHints.VALUE_INTERPOLATION_BILINEAR);
 		g.drawImage(aSource, 0, 0, aWidth, aHeight, null);
 		g.dispose();
