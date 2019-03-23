@@ -688,6 +688,10 @@ public class ListViewModel<T extends ListViewItem> implements Iterable<T>
 
 			if (mComparator != null)
 			{
+				if (mComparator instanceof ListViewItemComparator)
+				{
+					((ListViewItemComparator)mComparator).bind(ListViewModel.this);
+				}
 				return mComparator.compare(v1, v2);
 			}
 			else if (v1 instanceof Comparable)

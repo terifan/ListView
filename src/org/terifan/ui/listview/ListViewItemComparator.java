@@ -5,19 +5,19 @@ import java.util.Comparator;
 
 public class ListViewItemComparator<T extends ListViewItem> implements Comparator<T>
 {
-	private ListView<T> mListView;
+	private ListViewModel<T> mListViewModel;
 
 
-	public ListViewItemComparator(ListView<T> aListView)
+	public void bind(ListViewModel<T> aListViewModel)
 	{
-		mListView = aListView;
+		mListViewModel = aListViewModel;
 	}
-	
-	
+
+
 	@Override
 	public int compare(T o1, T o2)
 	{
-		ListViewColumn sci = mListView.getModel().getSortedColumn();
+		ListViewColumn sci = mListViewModel.getSortedColumn();
 		
 		if (sci == null)
 		{
