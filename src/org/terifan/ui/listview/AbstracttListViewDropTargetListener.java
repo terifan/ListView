@@ -9,7 +9,7 @@ import java.awt.dnd.DropTargetDropEvent;
 import java.io.IOException;
 
 
-public abstract class AbstracttListViewDropTargetListener<T extends ListViewItem> extends DropTargetAdapter
+public abstract class AbstracttListViewDropTargetListener<T> extends DropTargetAdapter
 {
 	private ListView<T> mListView;
 	private T mDropTarget;

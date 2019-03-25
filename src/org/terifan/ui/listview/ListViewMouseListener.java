@@ -9,7 +9,7 @@ import java.util.HashSet;
 import javax.swing.SwingUtilities;
 
 
-class ListViewMouseListener<T extends ListViewItem> extends MouseAdapter
+class ListViewMouseListener<T> extends MouseAdapter
 {
 	private HashSet<T> mSelectedItemsClone;
 	private Rectangle mTempScrollRect = new Rectangle();

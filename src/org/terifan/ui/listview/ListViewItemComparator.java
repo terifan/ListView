@@ -1,34 +1,26 @@
 package org.terifan.ui.listview;
 
-import java.util.Comparator;
 
 
-public class ListViewItemComparator<T extends ListViewItem> implements Comparator<T>
+public class ListViewItemComparator<T>
 {
-	private ListViewModel<T> mListViewModel;
-
-
-	public void bind(ListViewModel<T> aListViewModel)
+	public int compare(ListViewModel<T> aModel, T o1, T o2)
 	{
-		mListViewModel = aListViewModel;
-	}
+		ListViewColumn sci = aModel.getSortedColumn();
 
-
-	@Override
-	public int compare(T o1, T o2)
-	{
-		ListViewColumn sci = mListViewModel.getSortedColumn();
-		
 		if (sci == null)
 		{
 			throw new IllegalStateException("Sorted column is null");
 		}
 
-		if (o1.getValue(sci) instanceof Number)
+		Object v1 = aModel.getValueAt(o1, sci);
+		Object v2 = aModel.getValueAt(o2, sci);
+
+		if (v1 instanceof Number)
 		{
-			return Long.compare(((Number)o1.getValue(sci)).longValue(), ((Number)o2.getValue(sci)).longValue());
+			return Long.compare(((Number)v1).longValue(), ((Number)v2).longValue());
 		}
 
-		return o1.getValue(sci).toString().compareToIgnoreCase(o2.getValue(sci).toString());
+		return v1.toString().compareToIgnoreCase(v2.toString());
 	}
 }

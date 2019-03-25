@@ -1,12 +1,12 @@
 package org.terifan.ui.listview;
 
 
-public abstract class AbstractListViewLayout<T extends ListViewItem> implements ListViewLayout<T>
+public abstract class AbstractListViewLayout<T> implements ListViewLayout<T>
 {
 	protected ListView<T> mListView;
 
 
-	private class FirstItemVisitor<T extends ListViewItem> implements GroupVisitor<T>
+	private class FirstItemVisitor<T> implements GroupVisitor<T>
 	{
 		T mItem;
 
@@ -33,7 +33,7 @@ public abstract class AbstractListViewLayout<T extends ListViewItem> implements 
 	}
 
 
-	private class LastItemVisitor<T extends ListViewItem> implements GroupVisitor<T>
+	private class LastItemVisitor<T> implements GroupVisitor<T>
 	{
 		T mItem;
 

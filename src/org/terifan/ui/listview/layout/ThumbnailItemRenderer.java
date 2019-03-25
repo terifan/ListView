@@ -6,10 +6,10 @@ import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.util.Objects;
+import java.util.function.Function;
 import org.terifan.ui.listview.ListView;
 import org.terifan.ui.listview.ListViewColumn;
-import org.terifan.ui.listview.util.ListViewIcon;
-import org.terifan.ui.listview.ListViewItem;
+import org.terifan.ui.listview.ListViewIcon;
 import org.terifan.ui.listview.ListViewItemRenderer;
 import org.terifan.ui.listview.ListViewLayout;
 import org.terifan.ui.listview.Styles;
@@ -20,7 +20,7 @@ import org.terifan.ui.listview.util.TextRenderer;
 import org.terifan.ui.listview.util.Utilities;
 
 
-public class ThumbnailItemRenderer<T extends ListViewItem> extends ListViewItemRenderer<T>
+public class ThumbnailItemRenderer<T> extends ListViewItemRenderer<T>
 {
 	public final static int DEFAULT_LABEL_HEIGHT = -1;
 	public final static int ITEM_PAD_HOR = 20;
@@ -31,6 +31,7 @@ public class ThumbnailItemRenderer<T extends ListViewItem> extends ListViewItemR
 	private Dimension mItemSize;
 	private Orientation mOrientation;
 	private int mLabelHeight;
+	private Function<T, Boolean> mBorderFunction;
 
 
 	public ThumbnailItemRenderer(Dimension aItemSize, Orientation aOrientation)
@@ -44,6 +45,19 @@ public class ThumbnailItemRenderer<T extends ListViewItem> extends ListViewItemR
 		mItemSize = aItemSize;
 		mOrientation = aOrientation;
 		mLabelHeight = aLabelHeight;
+	}
+
+
+	public Function<T, Boolean> getBorderFunction()
+	{
+		return mBorderFunction;
+	}
+
+
+	public ThumbnailItemRenderer<T> setBorderFunction(Function<T, Boolean> aBorderFunction)
+	{
+		mBorderFunction = aBorderFunction;
+		return this;
 	}
 
 
@@ -138,14 +152,17 @@ public class ThumbnailItemRenderer<T extends ListViewItem> extends ListViewItemR
 		int sx = x + (w - sw) / 2;
 		int sy = y + h - sh;
 
-		ListViewIcon icon = aItem.getIcon();
+		ListViewIcon icon = aListView.getModel().getItemIcon(aItem);
 
 		if (icon != null)
 		{
-			ListViewIcon scaledIcon = icon.getScaledInstance(mItemSize.width, itemHeight, true, aListView.getImageCache());
+			int tw = mItemSize.width;
+			int th = itemHeight;
 
-			int tw = scaledIcon.getWidth();
-			int th = scaledIcon.getHeight();
+			double f = Math.min(tw / (double)icon.getWidth(), th / (double)icon.getHeight());
+			tw = (int)(f * icon.getWidth());
+			th = (int)(f * icon.getHeight());
+
 			int tx = x + (w - tw) / 2;
 			int ty = y + h - 8 - th - labelHeight;
 
@@ -155,13 +172,13 @@ public class ThumbnailItemRenderer<T extends ListViewItem> extends ListViewItemR
 				aGraphics.drawImage(im, sx, sy, null);
 			}
 
-			if (aListView.isItemBorderPainted(aItem))
+			if (mBorderFunction == null || mBorderFunction.apply(aItem))
 			{
 				BufferedImage im = ImageResizer.getScaledImage(selected ? style.thumbBorderSelected : style.thumbBorderNormal, tw + 3 + 6, th + 3 + 7, 3, 3, 7, 6, false, aListView.getImageCache());
 				aGraphics.drawImage(im, tx - 3, ty - 3, null);
 			}
 
-			scaledIcon.drawImage(aGraphics, tx, ty);
+			icon.drawIcon(aGraphics, tx, ty, tw, th);
 		}
 
 		String label = null;
@@ -171,7 +188,8 @@ public class ThumbnailItemRenderer<T extends ListViewItem> extends ListViewItemR
 			ListViewColumn column = aListView.getModel().getColumn(i);
 			if (column.isTitle())
 			{
-				label = column.getFormatter() == null ? Objects.toString(aItem.getValue(column)) : column.getFormatter().format(aItem.getValue(column));
+				Object value = aListView.getModel().getValueAt(aItem, column);
+				label = column.getFormatter() == null ? Objects.toString(value) : column.getFormatter().format(value);
 				break;
 			}
 		}

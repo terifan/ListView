@@ -5,7 +5,7 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 
 
-public abstract class ListViewItemRenderer<T extends ListViewItem>
+public abstract class ListViewItemRenderer<T>
 {
 	Point DEFAULT_ITEM_SPACING = new Point(0,0);
 	

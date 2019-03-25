@@ -8,7 +8,6 @@ import javax.swing.JComponent;
 import org.terifan.ui.listview.ListView;
 import org.terifan.ui.listview.ListViewCellRenderer;
 import org.terifan.ui.listview.ListViewColumn;
-import org.terifan.ui.listview.ListViewItem;
 import org.terifan.ui.listview.ListViewItemRenderer;
 import org.terifan.ui.listview.ListViewLayout;
 import org.terifan.ui.listview.ListViewLayoutVertical;
@@ -18,7 +17,7 @@ import org.terifan.ui.listview.Styles;
 import org.terifan.ui.listview.util.Utilities;
 
 
-public class DetailItemRenderer<T extends ListViewItem> extends ListViewItemRenderer<T>
+public class DetailItemRenderer<T> extends ListViewItemRenderer<T>
 {
 	protected boolean mExtendLastItem;
 
@@ -88,14 +87,14 @@ public class DetailItemRenderer<T extends ListViewItem> extends ListViewItemRend
 
 
 	@Override
-	public int getItemWidth(ListView aListView, ListViewItem aItem)
+	public int getItemWidth(ListView<T> aListView, T aItem)
 	{
 		return getItemPreferredWidth(aListView);
 	}
 
 
 	@Override
-	public int getItemHeight(ListView aListView, ListViewItem aItem)
+	public int getItemHeight(ListView<T> aListView, T aItem)
 	{
 		return aListView.getStyles().itemHeight;
 	}
@@ -109,7 +108,7 @@ public class DetailItemRenderer<T extends ListViewItem> extends ListViewItemRend
 
 
 	@Override
-	public void paintItem(Graphics2D aGraphics, int aOriginX, int aOriginY, int aWidth, int aHeight, ListView aListView, ListViewItem aItem)
+	public void paintItem(Graphics2D aGraphics, int aOriginX, int aOriginY, int aWidth, int aHeight, ListView<T> aListView, T aItem)
 	{
 		Styles style = aListView.getStyles();
 
@@ -198,9 +197,9 @@ public class DetailItemRenderer<T extends ListViewItem> extends ListViewItemRend
 	}
 
 
-	protected ListViewCellRenderer getCellRenderer(ListView aListView, ListViewItem aItem, int aIndex)
+	protected ListViewCellRenderer getCellRenderer(ListView<T> aListView, T aItem, int aColumnIndex)
 	{
-		Object v = aItem.getValue(aListView.getModel().getColumn(aIndex));
+		Object v = aListView.getModel().getValueAt(aItem, aColumnIndex);
 		if (v instanceof JComponent)
 		{
 			return new ComponentWrapper((JComponent)v);
@@ -209,7 +208,7 @@ public class DetailItemRenderer<T extends ListViewItem> extends ListViewItemRend
 	}
 
 
-	static class ComponentWrapper implements ListViewCellRenderer
+	static class ComponentWrapper<T> implements ListViewCellRenderer<T>
 	{
 		JComponent c;
 
@@ -221,7 +220,7 @@ public class DetailItemRenderer<T extends ListViewItem> extends ListViewItemRend
 
 
 		@Override
-		public JComponent getListViewCellRendererComponent(ListView aListView, ListViewItem aItem, int aColumnIndex, boolean aIsSelected, boolean aHasFocus, boolean aIsRollover, boolean aIsSorted)
+		public JComponent getListViewCellRendererComponent(ListView<T> aListView, T aItem, int aColumnIndex, boolean aIsSelected, boolean aHasFocus, boolean aIsRollover, boolean aIsSorted)
 		{
 			if (c.getParent() == null)
 			{

@@ -12,11 +12,11 @@ import java.awt.font.FontRenderContext;
 import java.awt.font.LineMetrics;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
+import java.util.function.Function;
 import org.terifan.ui.listview.ListView;
 import org.terifan.ui.listview.ListViewColumn;
-import org.terifan.ui.listview.util.ListViewIcon;
-import org.terifan.ui.listview.util.ListViewImageIcon;
-import org.terifan.ui.listview.ListViewItem;
+import org.terifan.ui.listview.ListViewIcon;
+import org.terifan.ui.listview.ListViewImageIcon;
 import org.terifan.ui.listview.ListViewItemRenderer;
 import org.terifan.ui.listview.ListViewLayout;
 import org.terifan.ui.listview.ListViewModel;
@@ -26,7 +26,7 @@ import org.terifan.ui.listview.util.ImageResizer;
 import org.terifan.ui.listview.util.Utilities;
 
 
-public class TileItemRenderer<T extends ListViewItem> extends ListViewItemRenderer<T>
+public class TileItemRenderer<T> extends ListViewItemRenderer<T>
 {
 	protected final static FontRenderContext FRC = new FontRenderContext(new AffineTransform(), false, false);
 
@@ -40,6 +40,7 @@ public class TileItemRenderer<T extends ListViewItem> extends ListViewItemRender
 	private Orientation mOrientation;
 	private int mIconWidth;
 	private int mMaxItemsPerRow;
+	private Function<T, Boolean> mBorderFunction;
 
 
 	/**
@@ -56,6 +57,19 @@ public class TileItemRenderer<T extends ListViewItem> extends ListViewItemRender
 		mOrientation = aOrientation;
 		mIconWidth = aIconWidth;
 		mMaxItemsPerRow = 100;
+	}
+
+
+	public Function<T, Boolean> getBorderFunction()
+	{
+		return mBorderFunction;
+	}
+
+
+	public TileItemRenderer<T> setBorderFunction(Function<T, Boolean> aBorderFunction)
+	{
+		mBorderFunction = aBorderFunction;
+		return this;
 	}
 
 
@@ -114,14 +128,14 @@ public class TileItemRenderer<T extends ListViewItem> extends ListViewItemRender
 
 
 	@Override
-	public int getItemWidth(ListView aListView, ListViewItem aItem)
+	public int getItemWidth(ListView<T> aListView, T aItem)
 	{
 		return mItemSize.width;
 	}
 
 
 	@Override
-	public int getItemHeight(ListView aListView, ListViewItem aItem)
+	public int getItemHeight(ListView<T> aListView, T aItem)
 	{
 		return mItemSize.height;
 	}
@@ -135,7 +149,7 @@ public class TileItemRenderer<T extends ListViewItem> extends ListViewItemRender
 
 
 	@Override
-	public void paintItem(Graphics2D aGraphics, int aOriginX, int aOriginY, int aWidth, int aHeight, ListView aListView, ListViewItem aItem)
+	public void paintItem(Graphics2D aGraphics, int aOriginX, int aOriginY, int aWidth, int aHeight, ListView<T> aListView, T aItem)
 	{
 		Styles style = aListView.getStyles();
 		boolean selected = aListView.isItemSelected(aItem);
@@ -154,7 +168,7 @@ public class TileItemRenderer<T extends ListViewItem> extends ListViewItemRender
 	}
 
 
-	protected void paintFocusIndicator(Graphics2D aGraphics, ListView aListView, ListViewItem aItem, Styles aStyle, int aOriginX, int aOriginY, int aWidth, int aHeight, boolean aSelected, boolean aFocusOwner)
+	protected void paintFocusIndicator(Graphics2D aGraphics, ListView<T> aListView, T aItem, Styles aStyle, int aOriginX, int aOriginY, int aWidth, int aHeight, boolean aSelected, boolean aFocusOwner)
 	{
 		aGraphics.setColor(aFocusOwner ? aListView.getStyles().focusRect : aListView.getStyles().focusRectUnfocused);
 
@@ -162,7 +176,7 @@ public class TileItemRenderer<T extends ListViewItem> extends ListViewItemRender
 	}
 
 
-	protected void paintItemBackground(Graphics2D aGraphics, ListView aListView, ListViewItem aItem, Styles aStyle, int aOriginX, int aOriginY, int aWidth, int aHeight, boolean aSelected, boolean aFocusOwner)
+	protected void paintItemBackground(Graphics2D aGraphics, ListView<T> aListView, T aItem, Styles aStyle, int aOriginX, int aOriginY, int aWidth, int aHeight, boolean aSelected, boolean aFocusOwner)
 	{
 		if (aSelected)
 		{
@@ -172,7 +186,7 @@ public class TileItemRenderer<T extends ListViewItem> extends ListViewItemRender
 	}
 
 
-	protected void paintValues(Graphics2D aGraphics, ListView aListView, ListViewItem aItem, Styles aStyle, int aOriginX, int aOriginY, int aWidth, int aHeight, boolean aSelected, boolean aFocusOwner)
+	protected void paintValues(Graphics2D aGraphics, ListView<T> aListView, T aItem, Styles aStyle, int aOriginX, int aOriginY, int aWidth, int aHeight, boolean aSelected, boolean aFocusOwner)
 	{
 		ListViewModel model = aListView.getModel();
 
@@ -196,7 +210,7 @@ public class TileItemRenderer<T extends ListViewItem> extends ListViewItemRender
 				continue;
 			}
 
-			Object label = aItem.getValue(column);
+			Object label = model.getValueAt(aItem, column);
 
 			if (column.getFormatter() != null)
 			{
@@ -218,7 +232,7 @@ public class TileItemRenderer<T extends ListViewItem> extends ListViewItemRender
 	}
 
 
-	protected void paintIcon(Graphics2D aGraphics, ListView aListView, ListViewItem aItem, Styles aStyle, int aOriginX, int aOriginY, int aWidth, int aHeight, boolean aSelected, boolean aFocusOwner)
+	protected void paintIcon(Graphics2D aGraphics, ListView<T> aListView, T aItem, Styles aStyle, int aOriginX, int aOriginY, int aWidth, int aHeight, boolean aSelected, boolean aFocusOwner)
 	{
 		if (mIconWidth <= 0)
 		{
@@ -230,23 +244,13 @@ public class TileItemRenderer<T extends ListViewItem> extends ListViewItemRender
 		int w = mIconWidth + 10;
 		int h = aHeight - 10;
 
-		ListViewIcon icon = aItem.getIcon();
-
-		boolean drawBorder = aListView.isItemBorderPainted(aItem);
-
-		int tw = mIconWidth;
-		int th = mItemSize.height - PADDING_HEIGHT;
-
-		if (icon == null)
-		{
-			if (aStyle.thumbPlaceholder != null)
-			{
-				icon = new ListViewImageIcon(aStyle.thumbPlaceholder).getScaledInstance(tw, th, true, aListView.getImageCache());
-			}
-		}
+		ListViewIcon icon = aListView.getModel().getItemIcon(aItem);
 
 		if (icon != null)
 		{
+			int tw = mIconWidth;
+			int th = mItemSize.height - PADDING_HEIGHT;
+
 			double f = Math.min(tw / (double)icon.getWidth(), th / (double)icon.getHeight());
 			tw = (int)(f * icon.getWidth());
 			th = (int)(f * icon.getHeight());
@@ -254,13 +258,13 @@ public class TileItemRenderer<T extends ListViewItem> extends ListViewItemRender
 			int tx = x + (w - tw) / 2;
 			int ty = y + 5;
 
-			if (drawBorder)
+			if (mBorderFunction == null || mBorderFunction.apply(aItem))
 			{
 				BufferedImage im = ImageResizer.getScaledImage(aSelected ? aStyle.thumbBorderSelected : aStyle.thumbBorderNormal, tw + 3 + 6, th + 3 + 7, 3, 3, 7, 6, false, aListView.getImageCache());
 				aGraphics.drawImage(im, tx - 3, ty - 3, null);
 			}
 
-			icon.drawImage(aGraphics, tx, ty, tw, th);
+			icon.drawIcon(aGraphics, tx, ty, tw, th);
 		}
 	}
 

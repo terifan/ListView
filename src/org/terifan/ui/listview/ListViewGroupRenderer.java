@@ -5,7 +5,7 @@ import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 
 
-public class ListViewGroupRenderer<T extends ListViewItem>
+public class ListViewGroupRenderer<T>
 {
 	public void paintGroup(ListView<T> aListView, Graphics2D aGraphics, int aOriginX, int aOriginY, int aWidth, int aHeight, ListViewGroup<T> aGroup)
 	{

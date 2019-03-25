@@ -4,7 +4,7 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
 
-class ListViewKeyListener<T extends ListViewItem> extends KeyAdapter
+class ListViewKeyListener<T> extends KeyAdapter
 {
 	private ListView<T> mListView;
 

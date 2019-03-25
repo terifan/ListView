@@ -7,7 +7,7 @@ import java.util.HashMap;
 import javax.swing.SortOrder;
 
 
-public class ListViewColumn<T extends ListViewItem>
+public class ListViewColumn<T>
 {
 	private final ListViewModel<T> mModel;
 	protected String mKey;

@@ -12,19 +12,18 @@ import javax.swing.JComponent;
 import org.terifan.ui.listview.ListView;
 import org.terifan.ui.listview.ListViewCellRenderer;
 import org.terifan.ui.listview.ListViewColumn;
-import org.terifan.ui.listview.util.ListViewIcon;
-import org.terifan.ui.listview.ListViewItem;
+import org.terifan.ui.listview.ListViewIcon;
 import org.terifan.ui.listview.SelectionMode;
 import org.terifan.ui.listview.Styles;
 import org.terifan.ui.listview.util.Utilities;
 
 
-public class DetailItemValueRenderer<T extends ListViewItem> extends JComponent implements ListViewCellRenderer
+public class DetailItemValueRenderer<T> extends JComponent implements ListViewCellRenderer<T>
 {
 	private Rectangle mTempRectangle = new Rectangle();
 
 	protected ListView mListView;
-	protected ListViewItem mItem;
+	protected T mItem;
 	protected boolean mIsSelected;
 	protected boolean mIsFocused;
 	protected boolean mIsRollover;
@@ -42,7 +41,7 @@ public class DetailItemValueRenderer<T extends ListViewItem> extends JComponent 
 
 
 	@Override
-	public JComponent getListViewCellRendererComponent(ListView aListView, ListViewItem aItem, int aColumnIndex, boolean aIsSelected, boolean aIsFocused, boolean aIsRollover, boolean aIsSorted)
+	public JComponent getListViewCellRendererComponent(ListView<T> aListView, T aItem, int aColumnIndex, boolean aIsSelected, boolean aIsFocused, boolean aIsRollover, boolean aIsSorted)
 	{
 		mListView = aListView;
 		mItem = aItem;
@@ -74,7 +73,7 @@ public class DetailItemValueRenderer<T extends ListViewItem> extends JComponent 
 		Rectangle rect = getBounds();
 		Rectangle tr = mTempRectangle;
 
-		Object value = mItem.getValue(column);
+		Object value = mListView.getModel().getValueAt(mItem, column);
 		if (column.getFormatter() != null)
 		{
 			value = column.getFormatter().format(value);
@@ -122,7 +121,7 @@ public class DetailItemValueRenderer<T extends ListViewItem> extends JComponent 
 
 		if (column.getIconWidth() > 0)
 		{
-			ListViewIcon icon = mItem.getIcon();
+			ListViewIcon icon = mListView.getModel().getItemIcon(mItem);
 
 			if (icon != null)
 			{
@@ -151,7 +150,7 @@ public class DetailItemValueRenderer<T extends ListViewItem> extends JComponent 
 	//			}
 	//			else
 				{
-					icon.drawImage(aGraphics, ix, iy, iw, ih);
+					icon.drawIcon(aGraphics, ix, iy, iw, ih);
 				}
 			}
 		}

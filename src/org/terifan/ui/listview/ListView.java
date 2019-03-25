@@ -42,7 +42,7 @@ import org.terifan.ui.listview.util.Cache;
 import org.terifan.ui.listview.util.ImageCacheKey;
 
 
-public class ListView<T extends ListViewItem> extends JComponent implements Scrollable
+public class ListView<T> extends JComponent implements Scrollable
 {
 	private final HashMap<T, Object> mVisibleItems;
 	private final ArrayList<T> mFireLoadResource;
@@ -1056,10 +1056,10 @@ mPainting = true;
 	/**
 	 * Return true if the border of a item icon should be drawn. Default implementation return true whenever there is an icon otherwise false. Override this method for custom handling.
 	 */
-	public boolean isItemBorderPainted(T aItem)
-	{
-		return aItem.getIcon() != null;
-	}
+//	public boolean isItemBorderPainted(T aItem)
+//	{
+//		return aItem.getIcon() != null;
+//	}
 
 	private FocusListener mFocusListener = new FocusAdapter()
 	{

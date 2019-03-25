@@ -8,7 +8,7 @@ import java.awt.Rectangle;
 import java.util.ArrayList;
 
 
-public interface ListViewLayout<T extends ListViewItem>
+public interface ListViewLayout<T>
 {
 	Orientation getLayoutOrientation();
 

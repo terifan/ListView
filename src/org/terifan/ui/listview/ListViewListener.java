@@ -1,7 +1,7 @@
 package org.terifan.ui.listview;
 
 
-public interface ListViewListener<T extends ListViewItem>
+public interface ListViewListener<T>
 {
 	void selectionChanged(ListViewEvent<T> aEvent);
 

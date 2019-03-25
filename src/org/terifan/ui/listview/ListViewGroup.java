@@ -4,7 +4,7 @@ import org.terifan.ui.listview.util.SortedMap;
 import java.util.ArrayList;
 
 
-public class ListViewGroup<T extends ListViewItem>
+public class ListViewGroup<T>
 {
 	protected final ListViewModel<T> mModel;
 	protected final ListViewGroup<T> mParent;

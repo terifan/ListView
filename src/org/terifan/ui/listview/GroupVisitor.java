@@ -1,6 +1,6 @@
 package org.terifan.ui.listview;
 
-public interface GroupVisitor<T extends ListViewItem>
+public interface GroupVisitor<T>
 {
 	/**
 	 * Visits a group.

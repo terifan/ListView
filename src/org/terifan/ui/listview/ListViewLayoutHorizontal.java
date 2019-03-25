@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 
 
-public class ListViewLayoutHorizontal<T extends ListViewItem> extends AbstractListViewLayout<T>
+public class ListViewLayoutHorizontal<T> extends AbstractListViewLayout<T>
 {
 	protected Dimension mPreferredSize;
 

@@ -1,7 +1,7 @@
 package org.terifan.ui.listview;
 
 
-public class LocationInfo<T extends ListViewItem>
+public class LocationInfo<T>
 {
 	private ListViewGroup<T> mGroup;
 	private boolean mGroupButton;

@@ -11,18 +11,15 @@ import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import org.terifan.ui.listview.ListView;
 import org.terifan.ui.listview.ListViewColumn;
-import org.terifan.ui.listview.ListViewItem;
 import org.terifan.ui.listview.ListViewItemRenderer;
 import org.terifan.ui.listview.ListViewLayout;
 import org.terifan.ui.listview.ListViewModel;
 import org.terifan.ui.listview.util.Orientation;
 import org.terifan.ui.listview.Styles;
-import org.terifan.ui.listview.util.ImageCacheKey;
 import org.terifan.ui.listview.util.ImageResizer;
-import org.terifan.ui.listview.util.Utilities;
 
 
-public class CardItemRenderer<T extends ListViewItem> extends ListViewItemRenderer<T>
+public class CardItemRenderer<T> extends ListViewItemRenderer<T>
 {
 	protected final static int ROW_HEADER_PADDING = 5;
 	protected int PADDING = 13;
@@ -90,7 +87,7 @@ public class CardItemRenderer<T extends ListViewItem> extends ListViewItemRender
 
 
 	@Override
-	public int getItemWidth(ListView aListView, ListViewItem aItem)
+	public int getItemWidth(ListView<T> aListView, T aItem)
 	{
 		return mItemSize.width;
 	}
@@ -104,7 +101,7 @@ public class CardItemRenderer<T extends ListViewItem> extends ListViewItemRender
 
 
 	@Override
-	public int getItemHeight(ListView aListView, ListViewItem aItem)
+	public int getItemHeight(ListView<T> aListView, T aItem)
 	{
 		ListViewModel model = aListView.getModel();
 
@@ -125,7 +122,7 @@ public class CardItemRenderer<T extends ListViewItem> extends ListViewItemRender
 			}
 			else
 			{
-				Object value = aItem.getValue(column);
+				Object value = model.getValueAt(aItem, column);
 				if (column.getFormatter() != null)
 				{
 					value = column.getFormatter().format(value);
@@ -145,7 +142,7 @@ public class CardItemRenderer<T extends ListViewItem> extends ListViewItemRender
 
 
 	@Override
-	public void paintItem(Graphics2D aGraphics, int aOriginX, int aOriginY, int aWidth, int aHeight, ListView aListView, ListViewItem aItem)
+	public void paintItem(Graphics2D aGraphics, int aOriginX, int aOriginY, int aWidth, int aHeight, ListView<T> aListView, T aItem)
 	{
 		Styles style = aListView.getStyles();
 		ListViewModel model = aListView.getModel();
@@ -190,7 +187,7 @@ public class CardItemRenderer<T extends ListViewItem> extends ListViewItemRender
 				continue;
 			}
 
-			Object value = aItem.getValue(column);
+			Object value = model.getValueAt(aItem, column);
 			if (column.getFormatter() != null)
 			{
 				value = column.getFormatter().format(value);

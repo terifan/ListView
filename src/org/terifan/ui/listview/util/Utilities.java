@@ -1,5 +1,6 @@
 package org.terifan.ui.listview.util;
 
+import org.terifan.ui.listview.ListViewImageIcon;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;

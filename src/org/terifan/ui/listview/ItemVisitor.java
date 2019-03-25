@@ -1,7 +1,7 @@
 package org.terifan.ui.listview;
 
 
-public interface ItemVisitor<T extends ListViewItem>
+public interface ItemVisitor<T>
 {
 	/**
 	 * Visits an item.

@@ -7,18 +7,22 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
-import javax.swing.Icon;
+import java.util.function.BiFunction;
+import java.util.function.Function;
 import javax.swing.SortOrder;
+import org.terifan.ui.listview.util.EntityAccessor;
 
 
-public class ListViewModel<T extends ListViewItem> implements Iterable<T>
+public class ListViewModel<T> implements Iterable<T>
 {
-	protected ArrayList<ListViewColumn> mColumns;
-	protected ArrayList<Integer> mGroups;
-	protected ArrayList<T> mItems;
+	protected final ArrayList<ListViewColumn> mColumns;
+	protected final ArrayList<Integer> mGroups;
+	protected final ArrayList<T> mItems;
+	protected final HashSet<Object> mCollapsedGroups;
 	protected ListViewGroup<T> mTree;
 	protected ListViewColumn<T> mSortedColumn;
-	protected HashSet<Object> mCollapsedGroups;
+	protected Function<T, ListViewIcon> mItemIconFunction;
+	protected BiFunction<T, ListViewColumn<T>, Object> mItemValueFunction;
 
 
 	public ListViewModel()
@@ -29,10 +33,18 @@ public class ListViewModel<T extends ListViewItem> implements Iterable<T>
 		mCollapsedGroups = new HashSet<>();
 	}
 
+	
+	public ListViewModel(Class aType)
+	{
+		this();
+
+		setItemValueFunction(new EntityAccessor<>(aType));
+	}
+
 
 	public void clear()
 	{
-		mItems = new ArrayList<>();
+		mItems.clear();
 		mTree = null;
 	}
 
@@ -108,26 +120,73 @@ public class ListViewModel<T extends ListViewItem> implements Iterable<T>
 
 	public Object getValueAt(int aRow, int aColumn)
 	{
-		return mItems.get(aRow).getValue(getColumn(aColumn));
-	}
-
-
-	public Icon getIconAt(int aRow, int aColumn)
-	{
-		return null;
+		return getValueAt(mItems.get(aRow), getColumn(aColumn));
 	}
 
 
 	public T findItemByColumnValue(int aColumnIndex, Object aObject)
 	{
+		ListViewColumn<T> column = getColumn(aColumnIndex);
+		
 		for (T item : mItems)
 		{
-			if (item.getValue(getColumn(aColumnIndex)).equals(aObject))
+			if (getValueAt(item, column).equals(aObject))
 			{
 				return item;
 			}
 		}
 		return null;
+	}
+
+
+	public Function<T, ListViewIcon> getItemIconFunction()
+	{
+		return mItemIconFunction;
+	}
+
+
+	public void setItemIconFunction(Function<T, ListViewIcon> aItemIconFunction)
+	{
+		mItemIconFunction = aItemIconFunction;
+	}
+	
+
+	public ListViewIcon getItemIcon(T aItem)
+	{
+		if (mItemIconFunction == null)
+		{
+			throw new IllegalStateException("No ItemIconFunction has been assigned to this model.");
+		}
+
+		return mItemIconFunction.apply(aItem);
+	}
+
+
+	public BiFunction<T, ListViewColumn<T>, Object> getItemValueFunction()
+	{
+		return mItemValueFunction;
+	}
+
+
+	public void setItemValueFunction(BiFunction<T, ListViewColumn<T>, Object> aItemValueFunction)
+	{
+		this.mItemValueFunction = aItemValueFunction;
+	}
+
+
+	public Object getValueAt(T aItem, int aColumnIndex)
+	{
+		return getValueAt(aItem, mColumns.get(aColumnIndex));
+	}
+
+
+	public Object getValueAt(T aItem, ListViewColumn<T> aColumn)
+	{
+		if (mItemValueFunction == null)
+		{
+			throw new IllegalStateException("No ItemValueFunction has been assigned to this model.");
+		}
+		return mItemValueFunction.apply(aItem, aColumn);
 	}
 
 
@@ -383,7 +442,8 @@ public class ListViewModel<T extends ListViewItem> implements Iterable<T>
 	{
 		return mSortedColumn;
 	}
-
+	
+	
 	// -- Tree -----------------
 
 	public ListViewGroup<T> getRoot()
@@ -436,6 +496,8 @@ public class ListViewModel<T extends ListViewItem> implements Iterable<T>
 			column = mSortedColumn;
 			list = aParent.getItems();
 			comparator = column.getComparator();
+
+			Collections.sort(list, new ComparatorProxy(comparator, getColumnIndex(column), column.getSortOrder() == SortOrder.ASCENDING));
 		}
 		else
 		{
@@ -447,9 +509,9 @@ public class ListViewModel<T extends ListViewItem> implements Iterable<T>
 			column = mColumns.get(mGroups.get(aLevel));
 			list = aParent.getChildren().getKeys();
 			comparator = column.getGroupComparator() != null ? column.getGroupComparator() : column.getComparator();
-		}
 
-		Collections.sort(list, new ComparatorProxy(comparator, getColumnIndex(column), column.getSortOrder() == SortOrder.ASCENDING));
+			Collections.sort(list, new ComparatorProxy(comparator, -1, column.getSortOrder() == SortOrder.ASCENDING));
+		}
 	}
 
 
@@ -487,7 +549,7 @@ public class ListViewModel<T extends ListViewItem> implements Iterable<T>
 				{
 					int groupColumnIndex = mGroups.get(groupIndex);
 
-					Object groupKey = item.getValue(getColumn(groupColumnIndex));
+					Object groupKey = getValueAt(item, getColumn(groupColumnIndex));
 
 					Formatter formatter = mColumns.get(groupColumnIndex).getGroupFormatter();
 					if (formatter != null)
@@ -667,10 +729,10 @@ public class ListViewModel<T extends ListViewItem> implements Iterable<T>
 			Object v1 = t1;
 			Object v2 = t2;
 
-			if (!(mComparator instanceof ListViewItemComparator) && (t1 instanceof ListViewItem))
+			if (mColumnIndex >= 0)
 			{
-				v1 = ((T)t1).getValue(getColumn(mColumnIndex));
-				v2 = ((T)t2).getValue(getColumn(mColumnIndex));
+				v1 = getValueAt((T)t1, getColumn(mColumnIndex));
+				v2 = getValueAt((T)t2, getColumn(mColumnIndex));
 			}
 
 			if (v1 == null && v2 != null)
@@ -688,17 +750,27 @@ public class ListViewModel<T extends ListViewItem> implements Iterable<T>
 
 			if (mComparator != null)
 			{
-				if (mComparator instanceof ListViewItemComparator)
-				{
-					((ListViewItemComparator)mComparator).bind(ListViewModel.this);
-				}
 				return mComparator.compare(v1, v2);
 			}
-			else if (v1 instanceof Comparable)
+
+			if (v1 instanceof Comparable)
 			{
 				return ((Comparable)v1).compareTo(v2);
 			}
-			return v1.toString().compareTo(v2.toString());
+
+			ListViewColumn sci = ListViewModel.this.getSortedColumn();
+
+			if (sci == null)
+			{
+				throw new IllegalStateException("Sorted column is null");
+			}
+
+			if (v1 instanceof Number)
+			{
+				return Long.compare(((Number)v1).longValue(), ((Number)v2).longValue());
+			}
+
+			return v1.toString().compareToIgnoreCase(v2.toString());
 		}
 	}
 

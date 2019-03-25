@@ -5,7 +5,6 @@ import javax.swing.JFrame;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
-import org.terifan.ui.listview.EntityListViewItem;
 import org.terifan.ui.listview.ListView;
 import org.terifan.ui.listview.ListViewModel;
 
@@ -16,18 +15,19 @@ public class TestMini
 	{
 		try
 		{
-			ListViewModel<Item> model = new ListViewModel<>();
+			ListViewModel<MyListItem> model = new ListViewModel<>(MyListItem.class);
 			model.addColumn("Id", 60);
 			model.addColumn("Name", 300);
 			model.addColumn("Number", 300);
 			model.addColumn("Group", 100);
 			model.addGroup(model.getColumn("Group"));
+
 			for (int i = 1; i < 30; i++)
 			{
-				model.addItem(new Item(i, "item " + i, Math.random(), "group " + (i % 3)));
+				model.addItem(new MyListItem(i, "item " + i, Math.random(), "group " + (i % 3)));
 			}
 
-			ListView<Item> listView = new ListView<>(model);
+			ListView<MyListItem> listView = new ListView<>(model);
 			listView.getStyles().scale(1);
 
 			listView.setPopupFactory((lv,p,t)->{
@@ -60,14 +60,14 @@ public class TestMini
 	}
 
 
-	private static class Item extends EntityListViewItem
+	private static class MyListItem
 	{
 		int id;
 		String name;
 		double number;
 		String group;
 
-		public Item(int aId, String aName, double aNumber, String aGroup)
+		public MyListItem(int aId, String aName, double aNumber, String aGroup)
 		{
 			this.id = aId;
 			this.name = aName;

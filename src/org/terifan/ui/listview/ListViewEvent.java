@@ -4,7 +4,7 @@ import java.awt.event.InputEvent;
 import java.awt.event.MouseEvent;
 
 
-public class ListViewEvent<T extends ListViewItem>
+public class ListViewEvent<T>
 {
 	private ListView<T> mListView;
 	private InputEvent mInputEvent;
