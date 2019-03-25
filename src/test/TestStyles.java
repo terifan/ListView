@@ -14,6 +14,8 @@ import javax.imageio.ImageIO;
 import javax.swing.AbstractAction;
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JToolBar;
 import org.terifan.ui.listview.ListView;
@@ -82,7 +84,21 @@ public class TestStyles
 
 			mListView = new ListView<>(model);
 
-			mListView.getStyles().scale(dpiScale);
+			mListView.setPopupFactory((lv,p,t)->{
+				JPopupMenu menu = new JPopupMenu();
+				if (t.isItem())
+				{
+					menu.add(new JMenuItem("==> " + t.getItem().name));
+				}
+				if (t.isGroup())
+				{
+					menu.add(new JMenuItem("==> " + t.getGroup().getGroupKey()));
+				}
+				menu.add(new JMenuItem("Option 1"));
+				menu.add(new JMenuItem("Option 2"));
+				menu.add(new JMenuItem("Option 3"));
+				return menu;
+			});
 			
 			Function<MyListItem,Boolean> fn = item->item.icon != folderIcon && item.icon != unknownIcon;
 			

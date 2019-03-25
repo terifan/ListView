@@ -25,6 +25,9 @@ public class ListViewModel<T> implements Iterable<T>
 	protected BiFunction<T, ListViewColumn<T>, Object> mItemValueFunction;
 
 
+	/**
+	 * Creates an unbound ListViewModel. It's necessary to call  the setItemValueFunction to provide a function to access item column values.
+	 */
 	public ListViewModel()
 	{
 		mColumns = new ArrayList<>();
@@ -34,6 +37,9 @@ public class ListViewModel<T> implements Iterable<T>
 	}
 
 	
+	/**
+	 * Creates a ListViewModel initialized with an EntityAccessor for the class provided.
+	 */
 	public ListViewModel(Class aType)
 	{
 		this();
