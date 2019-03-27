@@ -20,6 +20,8 @@ import java.awt.event.FocusListener;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseWheelEvent;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -70,8 +72,9 @@ public class ListView<T> extends JComponent implements Scrollable
 	private int mMaxRowHeight;
 	private SmoothScrollController mSmoothScroll;
 	private ViewportMonitor<T> mViewportMonitor;
-	private double mMonitorViewExtraFactor;
+	private double mAdjustmentListenerExtraFactor;
 	private double mSmoothScrollSpeedMultiplier;
+	private MouseAdapter mSmoothScrollMouseAdapter;
 
 
 	public ListView()
@@ -1024,6 +1027,10 @@ public class ListView<T> extends JComponent implements Scrollable
 	}
 
 
+	/**
+	 * Add listeners receiving reports on items entering or leaving the view 
+	 * of the ListView viewport assuming it is enclosed in a JScrollPane.
+	 */
 	public void addAdjustmentListener(ViewAdjustmentListener aAdjustmentListener)
 	{
 		mAdjustmentListeners.add(aAdjustmentListener);
@@ -1052,20 +1059,27 @@ public class ListView<T> extends JComponent implements Scrollable
 	}
 
 
-	public void setSmoothScrollSpeedMultiplier(double aSpeed)
+	public double getSmoothScrollSpeedMultiplier()
+	{
+		return mSmoothScrollSpeedMultiplier;
+	}
+
+
+	public void setSmoothScrollSpeedMultiplier(double aMultiplier)
 	{
 		mSmoothScroll = null;
-		mSmoothScrollSpeedMultiplier = aSpeed;
+		mSmoothScrollSpeedMultiplier = aMultiplier;
 	}
 
 
 	public void smoothScroll(double aPreciseWheelRotation)
 	{
-		if (mSmoothScroll == null)
+		SmoothScrollController ss = mSmoothScroll;
+		if (ss == null)
 		{
-			mSmoothScroll = new SmoothScrollController(this, 10, (int)(mSmoothScrollSpeedMultiplier * (mItemRenderer.getItemPreferredHeight(this) + mItemRenderer.getItemSpacing(this).y)), 500);
+			mSmoothScroll = ss = new SmoothScrollController(this, 10, (int)(mSmoothScrollSpeedMultiplier * (mItemRenderer.getItemPreferredHeight(this) + mItemRenderer.getItemSpacing(this).y)), 500);
 		}
-		mSmoothScroll.smoothScroll(aPreciseWheelRotation);
+		ss.smoothScroll(aPreciseWheelRotation);
 	}
 
 
@@ -1093,15 +1107,18 @@ public class ListView<T> extends JComponent implements Scrollable
 	}
 
 
-	public void setMonitorViewExtraFactor(double aMonitorViewExtraFactor)
+	public double getAdjustmentListenerExtraFactor()
 	{
-		mMonitorViewExtraFactor = aMonitorViewExtraFactor;
+		return mAdjustmentListenerExtraFactor;
 	}
 
 
-	public double getMonitorViewExtraFactor()
+	/**
+	 * Extend the range in which items are reported to be added or removed by the AdjustmentListener, by this factor.
+	 */
+	public void setAdjustmentListenerExtraFactor(double aFactor)
 	{
-		return mMonitorViewExtraFactor;
+		mAdjustmentListenerExtraFactor = aFactor;
 	}
 	
 	
@@ -1111,7 +1128,7 @@ public class ListView<T> extends JComponent implements Scrollable
 
 		if (monitor != null)
 		{
-			monitor.register(getVisibleItems(mMonitorViewExtraFactor));
+			monitor.register(getVisibleItems(mAdjustmentListenerExtraFactor));
 		}
 	}
 
@@ -1137,6 +1154,44 @@ public class ListView<T> extends JComponent implements Scrollable
 					listener.viewChanged(aVisibleItems, addedItems, removedItems);
 				}
 			}
+		}
+	}
+	
+	
+	public boolean isSmoothScrollEnabled()
+	{
+		return mSmoothScrollMouseAdapter != null;
+	}
+	
+
+	public void setSmoothScrollEnabled(boolean aState)
+	{
+		JScrollPane scrollPane = getEnclosingScrollPane();
+
+		if (scrollPane == null)
+		{
+			throw new IllegalStateException("The ListView must have an enclosing JScrollPane.");
+		}
+
+		if (aState)
+		{
+			mSmoothScrollMouseAdapter = new MouseAdapter()
+			{
+				@Override
+				public void mouseWheelMoved(MouseWheelEvent aEvent)
+				{
+					smoothScroll(aEvent.getPreciseWheelRotation());
+				}
+			};
+
+			scrollPane.setWheelScrollingEnabled(false);
+			scrollPane.addMouseWheelListener(mSmoothScrollMouseAdapter);
+		}
+		else if (isSmoothScrollEnabled())
+		{
+			scrollPane.setWheelScrollingEnabled(true);
+			scrollPane.removeMouseWheelListener(mSmoothScrollMouseAdapter);
+			mSmoothScrollMouseAdapter = null;
 		}
 	}
 }

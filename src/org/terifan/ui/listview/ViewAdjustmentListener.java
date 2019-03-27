@@ -5,5 +5,5 @@ import java.util.List;
 
 public interface ViewAdjustmentListener<T>
 {
-	void viewChanged(List<T> aVisibleItems, List<T> aAddedItems, List<T> aRemovedItems);
+	void viewChanged(List<T> aVisibleItems, List<T> aItemsEnteringView, List<T> aItemsLeavingView);
 }
