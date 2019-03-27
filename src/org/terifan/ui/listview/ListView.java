@@ -24,8 +24,6 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Timer;
-import java.util.TimerTask;
 import javax.swing.AbstractAction;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
@@ -37,6 +35,8 @@ import javax.swing.ScrollPaneConstants;
 import javax.swing.Scrollable;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import org.terifan.ui.listview.layout.DetailItemRenderer;
 import org.terifan.ui.listview.util.Cache;
 import org.terifan.ui.listview.util.ImageCacheKey;
@@ -45,7 +45,6 @@ import org.terifan.ui.listview.util.ImageCacheKey;
 public class ListView<T> extends JComponent implements Scrollable
 {
 	private final HashMap<T, Object> mVisibleItems;
-	private final ArrayList<T> mFireLoadResource;
 	private final Rectangle mSelectionRectangle;
 	private final HashSet<T> mSelectedItems;
 	private ListViewModel<T> mModel;
@@ -66,13 +65,13 @@ public class ListView<T> extends JComponent implements Scrollable
 	private ListViewMouseListener mMouseListener;
 	private ListViewPopupFactory<T> mPopupFactory;
 	private Cache<ImageCacheKey, BufferedImage> mImageCache;
-	private double mDPIScale;
-	private boolean mRequestRepaint;
 	private ArrayList<ViewAdjustmentListener> mAdjustmentListeners;
 	private int mMinRowHeight;
 	private int mMaxRowHeight;
 	private SmoothScrollController mSmoothScroll;
-	private Timer mTimer;
+	private ViewportMonitor<T> mViewportMonitor;
+	private double mMonitorViewExtraFactor;
+	private double mSmoothScrollSpeedMultiplier;
 
 
 	public ListView()
@@ -90,9 +89,7 @@ public class ListView<T> extends JComponent implements Scrollable
 		mSelectionRectangle = new Rectangle();
 		mVisibleItems = new HashMap<>();
 		mAdjustmentListeners = new ArrayList<>();
-		mFireLoadResource = new ArrayList<>();
-		mDPIScale = 1;
-		mTimer = new Timer(true);
+		mSmoothScrollSpeedMultiplier = 1;
 		
 		mMinRowHeight = 0;
 		mMaxRowHeight = Integer.MAX_VALUE;
@@ -364,132 +361,31 @@ public class ListView<T> extends JComponent implements Scrollable
 	}
 
 
-	protected void requestRepaint()
-	{
-		mRequestRepaint = true;
-
-////		if (mRequestRepaint)
-////		{
-//			if (mTimerTask == null)
-//			{
-//				mTimerTask = new TimerTask()
-//				{
-//					@Override
-//					public void run()
-//					{
-//						repaint();
-//					}
-//				};
-//				mTimer.schedule(mTimerTask, 0, 50);
-//			}
-////		}
-////		else if (mTimerTask != null)
-////		{
-////			mTimerTask.cancel();
-////		}
-	}
-//
-//
-//	protected void cancelRepaint()
-//	{
-//		if (mTimerTask != null)
-//		{
-//			mTimerTask.cancel();
-//			mTimerTask = null;
-//		}
-//	}
-
-
-	public boolean isRequestRepaint()
-	{
-		return mRequestRepaint;
-	}
-
-private boolean mPainting;
-
 	@Override
 	public void paintComponent(Graphics aGraphics)
 	{
-if (mPainting)
-{
-	System.out.println("#");
-	return;
-}
-mPainting = true;
+		super.paintComponent(aGraphics);
 
-		try
+		Graphics2D g = (Graphics2D)aGraphics;
+
+		g.setFont(mStyles.item);
+		g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_LCD_HRGB);
+		g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+
+		JScrollPane scrollPane = getEnclosingScrollPane();
+		if (scrollPane != null)
 		{
-			long time = System.currentTimeMillis();
-
-			try
-			{
-				mRequestRepaint = false;
-
-				super.paintComponent(aGraphics);
-
-				Graphics2D g = (Graphics2D)aGraphics;
-
-				g.setFont(mStyles.item);
-				g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_LCD_HRGB);
-				g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-
-				JScrollPane scrollPane = getEnclosingScrollPane();
-				if (scrollPane != null)
-				{
-					Rectangle viewport = scrollPane.getViewport().getViewRect();
-					g.setClip(viewport.x, viewport.y, viewport.width, viewport.height);
-				}
-
-				mFireLoadResource.clear();
-
-				mLayout.paint(g);
-
-				if (mModel.getItemCount() == 0)
-				{
-					paintPlaceHolder(g);
-				}
-
-				if (!mFireLoadResource.isEmpty())
-				{
-					for (ViewAdjustmentListener listener : mAdjustmentListeners)
-					{
-						listener.requestResources(mFireLoadResource);
-					}
-				}
-			}
-			catch (Throwable e)
-			{
-				e.printStackTrace(System.err);
-			}
-
-			if (mRequestRepaint)
-			{
-				if (mTimerTask == null)
-				{
-					mTimerTask = new TimerTask()
-					{
-						@Override
-						public void run()
-						{
-							repaint();
-						}
-					};
-					mTimer.schedule(mTimerTask, Math.max(0, 40 - (System.currentTimeMillis() - time)), 40);
-				}
-			}
-			else if (mTimerTask != null)
-			{
-				mTimerTask.cancel();
-				mTimerTask = null;
-			}
+			Rectangle viewport = scrollPane.getViewport().getViewRect();
+			g.setClip(viewport.x, viewport.y, viewport.width, viewport.height);
 		}
-		finally
+
+		mLayout.paint(g);
+
+		if (mModel.getItemCount() == 0)
 		{
-			mPainting = false;
+			paintPlaceHolder(g);
 		}
 	}
-
-	private TimerTask mTimerTask;
 
 
 	protected void paintPlaceHolder(Graphics2D aGraphics)
@@ -526,17 +422,31 @@ mPainting = true;
 				return;
 			}
 
-			viewport.addChangeListener(e
-				->
+			viewport.addChangeListener(new ChangeListener()
 			{
-				if (mRolloverEnabled)
+				@Override
+				public void stateChanged(ChangeEvent e)
 				{
-					Point p1 = MouseInfo.getPointerInfo().getLocation();
-					SwingUtilities.convertPointFromScreen(p1, ListView.this);
-					updateRollover(p1);
+					if (mRolloverEnabled)
+					{
+						Point p1 = MouseInfo.getPointerInfo().getLocation();
+						SwingUtilities.convertPointFromScreen(p1, ListView.this);
+						updateRollover(p1);
+					}
+					
+//					JScrollBar horizontalScrollBar = scrollPane.getHorizontalScrollBar();
+//					JScrollBar verticalScrollBar = scrollPane.getVerticalScrollBar();
+//					
+//					Dimension totalSize = viewport.getView().getSize();
+//					int scrollX = horizontalScrollBar.getValue();
+//					int scrollY = verticalScrollBar.getValue();
+//					boolean dragged = verticalScrollBar.getValueIsAdjusting() || horizontalScrollBar.getValueIsAdjusting();
+//					Dimension visibleSize = viewport.getSize();
+
+					triggerViewportChange();
 				}
 			});
-
+			
 			JPanel columnHeaderView = new JPanel(new BorderLayout());
 			columnHeaderView.add(new ListViewBar(this), BorderLayout.NORTH);
 			columnHeaderView.add(new ListViewHeader(this, ListViewHeader.COLUMN_HEADER), BorderLayout.SOUTH);
@@ -1080,11 +990,11 @@ mPainting = true;
 
 	public ArrayList<T> getVisibleItems()
 	{
-		return getVisibleItems(0, 0);
+		return getVisibleItems(0.0);
 	}
 
 
-	public ArrayList<T> getVisibleItems(int aExtraHor, int aExtraVer)
+	public ArrayList<T> getVisibleItems(double aExtraFactor)
 	{
 		JScrollPane scrollPane = getEnclosingScrollPane();
 		ArrayList<T> list = new ArrayList<>();
@@ -1092,17 +1002,18 @@ mPainting = true;
 		if (scrollPane != null)
 		{
 			Rectangle viewRect = scrollPane.getViewport().getViewRect();
+
+			if (aExtraFactor > 0)
+			{
+				int w = viewRect.width;
+				int h = viewRect.height;
+				viewRect.x -= aExtraFactor * w;
+				viewRect.width += 2 * aExtraFactor * w;
+				viewRect.y -= aExtraFactor * h;
+				viewRect.height += 2 * aExtraFactor * h;
+			}
+			
 			mLayout.getItemsIntersecting(viewRect, list);
-
-			Rectangle viewRect2 = new Rectangle(viewRect.x, viewRect.y - aExtraVer, viewRect.width, aExtraVer);
-			Rectangle viewRect3 = new Rectangle(viewRect.x, viewRect.y + viewRect.height, viewRect.width, aExtraVer);
-
-			mLayout.getItemsIntersecting(viewRect2, list);
-			mLayout.getItemsIntersecting(viewRect3, list);
-
-//			Rectangle viewRect = scrollPane.getViewport().getViewRect();
-//			viewRect.grow(aExtraHor, aExtraVer);
-//			mLayout.getItemsIntersecting(viewRect, list);
 		}
 		else
 		{
@@ -1113,15 +1024,25 @@ mPainting = true;
 	}
 
 
-	public void fireLoadResources(T aItem)
-	{
-		mFireLoadResource.add(aItem);
-	}
-
-
 	public void addAdjustmentListener(ViewAdjustmentListener aAdjustmentListener)
 	{
 		mAdjustmentListeners.add(aAdjustmentListener);
+		
+		if (mViewportMonitor == null)
+		{
+			mViewportMonitor = new ViewportMonitor<>();
+		}
+	}
+
+
+	public void removeAdjustmentListener(ViewAdjustmentListener aAdjustmentListener)
+	{
+		mAdjustmentListeners.remove(aAdjustmentListener);
+
+		if (mViewportMonitor != null && mAdjustmentListeners.isEmpty())
+		{
+			mViewportMonitor = null;
+		}
 	}
 
 
@@ -1131,11 +1052,18 @@ mPainting = true;
 	}
 
 
+	public void setSmoothScrollSpeedMultiplier(double aSpeed)
+	{
+		mSmoothScroll = null;
+		mSmoothScrollSpeedMultiplier = aSpeed;
+	}
+
+
 	public void smoothScroll(double aPreciseWheelRotation)
 	{
 		if (mSmoothScroll == null)
 		{
-			mSmoothScroll = new SmoothScrollController(this, 10, mItemRenderer.getItemPreferredHeight(this) + mItemRenderer.getItemSpacing(this).y, 500);
+			mSmoothScroll = new SmoothScrollController(this, 10, (int)(mSmoothScrollSpeedMultiplier * (mItemRenderer.getItemPreferredHeight(this) + mItemRenderer.getItemSpacing(this).y)), 500);
 		}
 		mSmoothScroll.smoothScroll(aPreciseWheelRotation);
 	}
@@ -1162,5 +1090,53 @@ mPainting = true;
 	public void setMaxRowHeight(int aMaxRowHeight)
 	{
 		mMaxRowHeight = aMaxRowHeight;
+	}
+
+
+	public void setMonitorViewExtraFactor(double aMonitorViewExtraFactor)
+	{
+		mMonitorViewExtraFactor = aMonitorViewExtraFactor;
+	}
+
+
+	public double getMonitorViewExtraFactor()
+	{
+		return mMonitorViewExtraFactor;
+	}
+	
+	
+	protected void triggerViewportChange()
+	{
+		ViewportMonitor monitor = mViewportMonitor;
+
+		if (monitor != null)
+		{
+			monitor.register(getVisibleItems(mMonitorViewExtraFactor));
+		}
+	}
+
+
+	private class ViewportMonitor<T>
+	{
+		ArrayList<T> mVisibleItems = new ArrayList<>();
+		
+		void register(ArrayList<T> aVisibleItems)
+		{
+			ArrayList<T> removedItems = new ArrayList<>(mVisibleItems);
+			ArrayList<T> addedItems = new ArrayList<>(aVisibleItems);
+
+			removedItems.removeAll(aVisibleItems);
+			addedItems.removeAll(mVisibleItems);
+
+			mVisibleItems = aVisibleItems;
+
+			if (!removedItems.isEmpty() || !addedItems.isEmpty())
+			{
+				for (ViewAdjustmentListener listener : mAdjustmentListeners)
+				{
+					listener.viewChanged(aVisibleItems, addedItems, removedItems);
+				}
+			}
+		}
 	}
 }

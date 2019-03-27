@@ -1,75 +1,5 @@
 package org.terifan.ui.listview;
 
-//import java.awt.Rectangle;
-//import java.awt.event.ActionEvent;
-//import java.awt.event.ActionListener;
-//import javax.swing.AbstractAction;
-//import javax.swing.JComponent;
-//import javax.swing.Timer;
-//
-//
-//public class SmoothScrollController
-//{
-//	private final JComponent mOwner;
-//	private Timer mScrollTimer;
-//	private double mScrollVelocity;
-//	private double mScrollFraction;
-//
-//
-//	public SmoothScrollController(JComponent aOwner, int a, int b, int c)
-//	{
-//		mOwner = aOwner;
-//	}
-//
-//
-//	public synchronized void smoothScroll(double aPreciseWheelRotation)
-//	{
-//		mScrollVelocity += 60 * aPreciseWheelRotation;
-//
-//		if (mScrollTimer == null)
-//		{
-//			ActionListener task = new AbstractAction()
-//			{
-//				@Override
-//				public void actionPerformed(ActionEvent aEvent)
-//				{
-//					mScrollFraction += mScrollVelocity;
-//
-//					int scrollInc = (int)mScrollFraction;
-//
-//					if (scrollInc != 0)
-//					{
-//						Rectangle current = mOwner.getVisibleRect();
-//						current.y += scrollInc;
-//
-//						mScrollFraction -= scrollInc;
-//
-//						mOwner.scrollRectToVisible(current);
-//					}
-//
-//					mScrollVelocity *= 0.85;
-//
-//					if (mScrollVelocity < 0 && mScrollFraction + mScrollVelocity > -1 || mScrollVelocity > 0 && mScrollFraction + mScrollVelocity < 1)
-//					{
-//						synchronized (SmoothScrollController.this)
-//						{
-//							mScrollTimer.stop();
-//							mScrollFraction = 0;
-//							mScrollVelocity = 0;
-//							mScrollTimer = null;
-//						}
-//					}
-//				}
-//			};
-//
-//			mScrollTimer = new Timer(10, task);
-//			mScrollTimer.setInitialDelay(0);
-//			mScrollTimer.start();
-//		}
-//	}
-//}
-
-
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -157,7 +87,6 @@ public class SmoothScrollController
 				@Override
 				public void actionPerformed(ActionEvent aEvent)
 				{
-//					System.out.println(System.currentTimeMillis() - mOperationStartTime);
 					mOperationStartTime = System.currentTimeMillis();
 
 					if (mWheelRotation != 0)

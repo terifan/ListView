@@ -35,9 +35,4 @@ public abstract class ListViewItemRenderer<T>
 	abstract protected ListViewLayout<T> createListViewLayout(ListView<T> aListView);
 
 	abstract protected void getItemSize(ListView<T> aListView, T aItem, Dimension aDimension);
-	
-	protected void requestRepaint(ListView<T> aListView)
-	{
-		aListView.requestRepaint();
-	}
 }
