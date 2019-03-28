@@ -7,32 +7,65 @@ import java.awt.Point;
 
 public abstract class ListViewItemRenderer<T>
 {
-	Point DEFAULT_ITEM_SPACING = new Point(0,0);
-	
-	abstract protected int getItemMinimumHeight(ListView<T> aListView);
+	protected abstract int getItemPreferredWidth(ListView<T> aListView);
 
-	abstract protected int getItemMaximumHeight(ListView<T> aListView);
 
-	abstract protected int getItemMinimumWidth(ListView<T> aListView);
+	protected abstract int getItemPreferredHeight(ListView<T> aListView);
 
-	abstract protected int getItemMaximumWidth(ListView<T> aListView);
 
-	abstract protected int getItemPreferredWidth(ListView<T> aListView);
+	protected abstract Dimension getItemSize(ListView<T> aListView, T aItem);
 
-	abstract protected int getItemPreferredHeight(ListView<T> aListView);
 
-	abstract protected int getItemWidth(ListView<T> aListView, T aItem);
+	protected abstract void paintItem(Graphics2D aGraphics, int aOriginX, int aOriginY, int aWidth, int aHeight, ListView<T> aListView, T aItem);
 
-	abstract protected int getItemHeight(ListView<T> aListView, T aItem);
+
+	protected abstract ListViewLayout<T> createListViewLayout(ListView<T> aListView);
+
 
 	protected Point getItemSpacing(ListView<T> aListView)
 	{
-		return DEFAULT_ITEM_SPACING;
+		return new Point(0, 0);
 	}
 
-	abstract protected void paintItem(Graphics2D aGraphics, int aOriginX, int aOriginY, int aWidth, int aHeight, ListView<T> aListView, T aItem);
 
-	abstract protected ListViewLayout<T> createListViewLayout(ListView<T> aListView);
+	@Deprecated
+	protected int getItemWidth(ListView<T> aListView, T aItem)
+	{
+		throw new UnsupportedOperationException();
+	}
 
-	abstract protected void getItemSize(ListView<T> aListView, T aItem, Dimension aDimension);
+
+	@Deprecated
+	protected int getItemHeight(ListView<T> aListView, T aItem)
+	{
+		throw new UnsupportedOperationException();
+	}
+
+
+	@Deprecated
+	protected int getItemMinimumHeight(ListView<T> aListView)
+	{
+		throw new UnsupportedOperationException();
+	}
+
+
+	@Deprecated
+	protected int getItemMaximumHeight(ListView<T> aListView)
+	{
+		throw new UnsupportedOperationException();
+	}
+
+
+	@Deprecated
+	protected int getItemMinimumWidth(ListView<T> aListView)
+	{
+		throw new UnsupportedOperationException();
+	}
+
+
+	@Deprecated
+	protected int getItemMaximumWidth(ListView<T> aListView)
+	{
+		throw new UnsupportedOperationException();
+	}
 }

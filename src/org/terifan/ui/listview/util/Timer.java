@@ -30,9 +30,10 @@ public class Timer extends Thread implements AutoCloseable
 	}
 
 
-	public void setRunnable(Runnable aRunnable)
+	public Timer setRunnable(Runnable aRunnable)
 	{
 		mRunnable = aRunnable;
+		return this;
 	}
 
 
@@ -42,9 +43,10 @@ public class Timer extends Thread implements AutoCloseable
 	 * @param aDelay 
 	 *    time in milliseconds
 	 */
-	public void setDelay(long aDelay)
+	public Timer setDelay(long aDelay)
 	{
 		mDelay = aDelay;
+		return this;
 	}
 
 
@@ -54,35 +56,38 @@ public class Timer extends Thread implements AutoCloseable
 	 * @param aPauseAt
 	 *    time in milliseconds
 	 */
-	public void setPauseAt(long aPauseAt)
+	public Timer setPauseAt(long aPauseAt)
 	{
 		mPauseAt = aPauseAt;
+		return this;
 	}
 
 
 	/**
 	 * Pauses or un-pauses the Timer.
 	 */
-	public void setPaused(boolean aPaused)
+	public Timer setPaused(boolean aPaused)
 	{
 		mPaused = aPaused;
 		synchronized (Runnable.class)
 		{
 			Runnable.class.notify();
 		}
+		return this;
 	}
 
 
 	/**
 	 * Cancels this Timer.
 	 */
-	public void cancel()
+	public Timer cancel()
 	{
 		mCancel = true;
 		synchronized (Runnable.class)
 		{
 			Runnable.class.notify();
 		}
+		return this;
 	}
 
 

@@ -142,9 +142,9 @@ public class TileItemRenderer<T> extends ListViewItemRenderer<T>
 
 
 	@Override
-	protected void getItemSize(ListView<T> aListView, T aItem, Dimension aDimension)
+	protected Dimension getItemSize(ListView<T> aListView, T aItem)
 	{
-		aDimension.setSize(mItemSize);
+		return mItemSize;
 	}
 
 

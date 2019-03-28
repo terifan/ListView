@@ -13,18 +13,16 @@ import org.terifan.ui.listview.util.Cache;
 
 public class ListViewLayoutV2<T> extends AbstractListViewLayout<T>
 {
-	private Cache<Tuple<Integer,ListViewGroup<T>>, LayoutInfoGroup> mLayoutCache = new Cache<>(1000);
+	private Cache<Tuple<Integer, ListViewGroup<T>>, LayoutInfoGroup> mLayoutCache = new Cache<>(1000);
 
 	protected Dimension mPreferredSize;
 	protected Dimension mMinimumSize;
-	protected int mMaxItemsPerRow;
 	protected Orientation mOrientation;
 
 
 	public ListViewLayoutV2(ListView<T> aListView, int aMaxItemsPerRow)
 	{
 		mListView = aListView;
-		mMaxItemsPerRow = aMaxItemsPerRow;
 		mPreferredSize = new Dimension(1, 1);
 		mOrientation = Orientation.VERTICAL;
 	}
@@ -60,11 +58,13 @@ public class ListViewLayoutV2<T> extends AbstractListViewLayout<T>
 				return clip.intersects(aPosition.x, aPosition.y, aGroup.mDimension.width, aGroup.mDimension.height);
 			}
 
+
 			@Override
 			public boolean array(Point aPosition, LayoutInfoArray aArray)
 			{
 				return clip.intersects(aPosition.x, aPosition.y, aArray.mDimension.width, aArray.mDimension.height);
 			}
+
 
 			@Override
 			public Object item(int aX, int aY, int aWidth, int aHeight, LayoutInfoGroup aLayout, LayoutInfoArray aArray, T aItem)
@@ -76,35 +76,6 @@ public class ListViewLayoutV2<T> extends AbstractListViewLayout<T>
 				return null;
 			}
 		});
-
-//		int rowHeight = Math.min(mListView.getMaxRowHeight(), Math.max(mListView.getMinRowHeight(), mListView.getItemRenderer().getItemPreferredHeight(mListView)));
-//		Rectangle clip1 = new Rectangle(clip.x, clip.y - rowHeight, clip.width, rowHeight);
-//		Rectangle clip2 = new Rectangle(clip.x, clip.y + clip.height, clip.width, rowHeight);
-//
-//		visit(new Visitor<T>()
-//		{
-//			@Override
-//			public boolean group(Point aPosition, LayoutInfoGroup aGroup)
-//			{
-//				return clip1.intersects(aPosition.x, aPosition.y, aGroup.mDimension.width, aGroup.mDimension.height) || clip2.intersects(aPosition.x, aPosition.y, aGroup.mDimension.width, aGroup.mDimension.height);
-//			}
-//
-//			@Override
-//			public boolean array(Point aPosition, LayoutInfoArray aArray)
-//			{
-//				return clip1.intersects(aPosition.x, aPosition.y, aArray.mDimension.width, aArray.mDimension.height) || clip2.intersects(aPosition.x, aPosition.y, aArray.mDimension.width, aArray.mDimension.height);
-//			}
-//
-//			@Override
-//			public Object item(int aX, int aY, int aWidth, int aHeight, LayoutInfoGroup aLayout, LayoutInfoArray aArray, T aItem)
-//			{
-//				if (clip1.intersects(aX, aY, aWidth, aHeight) || clip2.intersects(aX, aY, aWidth, aHeight))
-//				{
-//					aItem.prepareLayout();
-//				}
-//				return null;
-//			}
-//		});
 	}
 
 
@@ -170,7 +141,6 @@ public class ListViewLayoutV2<T> extends AbstractListViewLayout<T>
 
 		ListViewItemRenderer<T> renderer = mListView.getItemRenderer();
 		Point itemSpacing = renderer.getItemSpacing(mListView);
-		Dimension itemDim = new Dimension();
 		int itemIndex = 0;
 
 		ArrayList<T> items = aGroup.getItems();
@@ -189,7 +159,7 @@ public class ListViewLayoutV2<T> extends AbstractListViewLayout<T>
 				{
 					T item = items.get(itemIndex);
 
-					renderer.getItemSize(mListView, item, itemDim);
+					Dimension itemDim = renderer.getItemSize(mListView, item);
 
 					int itemWidth;
 					if (arrayIndex == array.mItemCount - 1 && fullRow)
@@ -291,7 +261,7 @@ public class ListViewLayoutV2<T> extends AbstractListViewLayout<T>
 
 	private LayoutInfoGroup prepareVerticalLayout(ListViewGroup<T> aGroup, int aWidth)
 	{
-		LayoutInfoGroup grp = mLayoutCache.get(new Tuple<>(aWidth,aGroup));
+		LayoutInfoGroup grp = mLayoutCache.get(new Tuple<>(aWidth, aGroup));
 		if (grp != null)
 		{
 			return grp;
@@ -303,7 +273,6 @@ public class ListViewLayoutV2<T> extends AbstractListViewLayout<T>
 		Point itemSpacing = renderer.getItemSpacing(mListView);
 
 		ArrayList<LayoutInfoArray> layout = new ArrayList<>();
-		Dimension itemDim = new Dimension();
 		Dimension groupDimension = new Dimension(aWidth, 0);
 
 		int minRowHeight = mListView.getMinRowHeight();
@@ -311,12 +280,12 @@ public class ListViewLayoutV2<T> extends AbstractListViewLayout<T>
 
 		for (int itemIndex = 0, itemCount = items.size(); itemIndex < itemCount;)
 		{
-			Dimension arrayDim = new Dimension(0,mListView.getMinRowHeight());
+			Dimension arrayDim = new Dimension(0, mListView.getMinRowHeight());
 			int arrayLength = 0;
 
 			for (; itemIndex < itemCount && arrayDim.width < aWidth; arrayLength++, itemIndex++)
 			{
-				renderer.getItemSize(mListView, items.get(itemIndex), itemDim);
+				Dimension itemDim = renderer.getItemSize(mListView, items.get(itemIndex));
 
 				int oldArrayHeight = arrayDim.height == 0 ? itemDim.height : arrayDim.height;
 
@@ -329,7 +298,7 @@ public class ListViewLayoutV2<T> extends AbstractListViewLayout<T>
 		}
 
 		grp = new LayoutInfoGroup(layout, groupDimension);
-		mLayoutCache.put(new Tuple<>(aWidth,aGroup), grp, 1);
+		mLayoutCache.put(new Tuple<>(aWidth, aGroup), grp, 1);
 
 		return grp;
 	}
@@ -346,11 +315,13 @@ public class ListViewLayoutV2<T> extends AbstractListViewLayout<T>
 				return new Rectangle(aPosition.x, aPosition.y, aGroup.mDimension.width, aGroup.mDimension.height).contains(aLocation);
 			}
 
+
 			@Override
 			public boolean array(Point aPosition, LayoutInfoArray aArray)
 			{
 				return new Rectangle(aPosition.x, aPosition.y, aArray.mDimension.width, aArray.mDimension.height).contains(aLocation);
 			}
+
 
 			@Override
 			public Object item(int aX, int aY, int aWidth, int aHeight, LayoutInfoGroup aLayout, LayoutInfoArray aArray, T aItem)
@@ -379,7 +350,7 @@ public class ListViewLayoutV2<T> extends AbstractListViewLayout<T>
 	{
 		if (mListView.getWidth() == 0 || mListView.getModel().getItemCount() == 0)
 		{
-			return new Dimension(100,100);
+			return new Dimension(100, 100);
 		}
 
 		Rectangle bounds = new Rectangle();
@@ -393,7 +364,7 @@ public class ListViewLayoutV2<T> extends AbstractListViewLayout<T>
 				return false;
 			}
 		});
-		
+
 		return bounds.getSize();
 	}
 
@@ -401,7 +372,7 @@ public class ListViewLayoutV2<T> extends AbstractListViewLayout<T>
 	@Override
 	public Dimension getMinimumSize()
 	{
-		mMinimumSize = new Dimension(mListView.getItemRenderer().getItemMinimumWidth(mListView), 0);
+		mMinimumSize = new Dimension(mListView.getItemRenderer().getItemPreferredWidth(mListView), 0);
 
 		return mMinimumSize;
 	}
@@ -420,13 +391,14 @@ public class ListViewLayoutV2<T> extends AbstractListViewLayout<T>
 		{
 			return h.itemAfter;
 		}
-		
+
 		Rectangle currentBounds = new Rectangle();
 		getItemBoundsImpl(aItem, currentBounds, h);
 
 		Object result = visit(new Visitor<T>()
 		{
 			boolean visitedArray;
+
 
 			@Override
 			public Object item(int aX, int aY, int aWidth, int aHeight, LayoutInfoGroup aLayout, LayoutInfoArray aArray, T aItem)
@@ -466,7 +438,7 @@ public class ListViewLayoutV2<T> extends AbstractListViewLayout<T>
 				return null;
 			}
 		});
-		
+
 		if (result instanceof Boolean)
 		{
 			return null;
@@ -509,11 +481,13 @@ public class ListViewLayoutV2<T> extends AbstractListViewLayout<T>
 				return aRectangle.intersects(aPosition.x, aPosition.y, aGroup.mDimension.width, aGroup.mDimension.height);
 			}
 
+
 			@Override
 			public boolean array(Point aPosition, LayoutInfoArray aArray)
 			{
 				return aRectangle.intersects(aPosition.x, aPosition.y, aArray.mDimension.width, aArray.mDimension.height);
 			}
+
 
 			@Override
 			public Object item(int aX, int aY, int aWidth, int aHeight, LayoutInfoGroup aLayout, LayoutInfoArray aArray, T aItem)
@@ -529,8 +503,8 @@ public class ListViewLayoutV2<T> extends AbstractListViewLayout<T>
 
 		return aList;
 	}
-	
-	
+
+
 	class HierarchicalItemLocation
 	{
 		LayoutInfoGroup group;
@@ -572,6 +546,7 @@ public class ListViewLayoutV2<T> extends AbstractListViewLayout<T>
 				return true;
 			}
 
+
 			@Override
 			public boolean array(Point aPosition, LayoutInfoArray aArray)
 			{
@@ -588,6 +563,7 @@ public class ListViewLayoutV2<T> extends AbstractListViewLayout<T>
 				prevItem.set(null);
 				return true;
 			}
+
 
 			@Override
 			public Object item(int aX, int aY, int aWidth, int aHeight, LayoutInfoGroup aGroup, LayoutInfoArray aArray, T aItem)
@@ -613,7 +589,7 @@ public class ListViewLayoutV2<T> extends AbstractListViewLayout<T>
 				return null;
 			}
 		});
-		
+
 		return result;
 	}
 
@@ -627,7 +603,7 @@ public class ListViewLayoutV2<T> extends AbstractListViewLayout<T>
 		}
 
 		HierarchicalItemLocation h = findHierarchicalItemLocation(aTargetItem);
-		
+
 		if (!h.item)
 		{
 			return false;
@@ -641,13 +617,12 @@ public class ListViewLayoutV2<T> extends AbstractListViewLayout<T>
 //		System.out.println(t.arrayAfter);
 //		System.out.println(t.itemBefore);
 //		System.out.println(t.itemAfter);
-
 		getItemBoundsImpl(aTargetItem, aRectangle, h);
 
 		return true;
 	}
-	
-	
+
+
 	private void getItemBoundsImpl(T aTargetItem, Rectangle oRectangle, HierarchicalItemLocation h)
 	{
 		visit(new Visitor<T>()
@@ -658,11 +633,13 @@ public class ListViewLayoutV2<T> extends AbstractListViewLayout<T>
 				return aLayout == h.group;
 			}
 
+
 			@Override
 			public boolean array(Point aPosition, LayoutInfoArray aArray)
 			{
 				return aArray == h.array;
 			}
+
 
 			@Override
 			public Object item(int aX, int aY, int aWidth, int aHeight, LayoutInfoGroup aLayout, LayoutInfoArray aArray, T aItem)
@@ -698,10 +675,12 @@ public class ListViewLayoutV2<T> extends AbstractListViewLayout<T>
 			return true;
 		}
 
+
 		default boolean array(Point aPosition, LayoutInfoArray aArray)
 		{
 			return true;
 		}
+
 
 		default Object item(int x, int y, int aWidth, int aHeight, LayoutInfoGroup aLayout, LayoutInfoArray aArray, T aItem)
 		{

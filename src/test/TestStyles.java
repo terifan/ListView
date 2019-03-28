@@ -11,8 +11,8 @@ import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 import java.util.function.Function;
 import javax.imageio.ImageIO;
 import javax.swing.AbstractAction;
@@ -117,7 +117,7 @@ public class TestStyles
 				}
 
 				@Override
-				public void viewChanged(List<MyListItem> aVisibleItems, List<MyListItem> aItemsEnteringView, List<MyListItem> aItemsLeavingView)
+				public void viewChanged(Collection<MyListItem> aVisibleItems, Collection<MyListItem> aItemsEnteringView, Collection<MyListItem> aItemsLeavingView)
 				{
 					long time = System.currentTimeMillis() + 1000;
 

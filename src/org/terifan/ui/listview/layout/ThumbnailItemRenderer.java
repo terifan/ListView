@@ -118,9 +118,9 @@ public class ThumbnailItemRenderer<T> extends ListViewItemRenderer<T>
 
 
 	@Override
-	protected void getItemSize(ListView<T> aListView, T aItem, Dimension aDimension)
+	protected Dimension getItemSize(ListView<T> aListView, T aItem)
 	{
-		aDimension.setSize(getItemWidth(aListView, aItem), getItemHeight(aListView, aItem));
+		return new Dimension(getItemWidth(aListView, aItem), getItemHeight(aListView, aItem));
 	}
 
 

@@ -511,10 +511,8 @@ public class ListView<T> extends JComponent implements Scrollable
 		{
 			return getParent() instanceof JViewport && (((JViewport)getParent()).getWidth() > getMinimumSize().width);
 		}
-		else
-		{
-			return getParent() instanceof JViewport && (((JViewport)getParent()).getWidth() > getPreferredSize().width);
-		}
+
+		return getParent() instanceof JViewport && (((JViewport)getParent()).getWidth() > getPreferredSize().width);
 	}
 
 
@@ -1122,7 +1120,7 @@ public class ListView<T> extends JComponent implements Scrollable
 	}
 	
 	
-	protected void triggerViewportChange()
+	protected synchronized void triggerViewportChange()
 	{
 		ViewportMonitor monitor = mViewportMonitor;
 
@@ -1135,23 +1133,47 @@ public class ListView<T> extends JComponent implements Scrollable
 
 	private class ViewportMonitor<T>
 	{
-		ArrayList<T> mVisibleItems = new ArrayList<>();
-		
+		private ArrayList<T> mVisibleItems = new ArrayList<>();
+		private final ArrayList<T> mRemovedItems = new ArrayList<>();
+		private final ArrayList<T> mAddedItems = new ArrayList<>();
+
+
 		void register(ArrayList<T> aVisibleItems)
 		{
-			ArrayList<T> removedItems = new ArrayList<>(mVisibleItems);
-			ArrayList<T> addedItems = new ArrayList<>(aVisibleItems);
-
-			removedItems.removeAll(aVisibleItems);
-			addedItems.removeAll(mVisibleItems);
+			extractDifferences(aVisibleItems, mVisibleItems, mAddedItems);
+			extractDifferences(mVisibleItems, aVisibleItems, mRemovedItems);
 
 			mVisibleItems = aVisibleItems;
 
-			if (!removedItems.isEmpty() || !addedItems.isEmpty())
+			if (!mRemovedItems.isEmpty() || !mAddedItems.isEmpty())
 			{
 				for (ViewAdjustmentListener listener : mAdjustmentListeners)
 				{
-					listener.viewChanged(aVisibleItems, addedItems, removedItems);
+					listener.viewChanged(aVisibleItems, mAddedItems, mRemovedItems);
+				}
+			}
+		}
+
+
+		private void extractDifferences(ArrayList<T> aListA, ArrayList<T> aListB, ArrayList<T> aOutput)
+		{
+			aOutput.clear();
+
+			for (int i = 0; i < aListA.size(); i++)
+			{
+				T item = aListA.get(i);
+				boolean found = false;
+				for (int j = 0; j < aListB.size(); j++)
+				{
+					if (aListB.get(j) == item)
+					{
+						found = true;
+						break;
+					}
+				}
+				if (!found)
+				{
+					aOutput.add(item);
 				}
 			}
 		}
