@@ -6,42 +6,56 @@ import static java.lang.Thread.sleep;
 /**
  * Simple Timer implementation with the ability to pause.
  */
-public class Timer extends Thread implements AutoCloseable
+public class Timer implements AutoCloseable
 {
 	private boolean mPaused;
-	private boolean mCancel;
 	private Runnable mRunnable;
 	private long mPauseAt;
 	private long mDelay;
+	private WorkerThread mThread;
 
 
 	/**
 	 * Creates a Timer that repeatedly calls a Runnable
-	 * 
-	 * @param aRunnable 
-	 *   the Runnable being called
+	 *
+	 * @param aRunnable
+	 * the Runnable being called
 	 */
 	public Timer(Runnable aRunnable)
 	{
-		setDaemon(true);
-
 		mRunnable = aRunnable;
 		mPauseAt = Long.MAX_VALUE;
 	}
 
 
-	public Timer setRunnable(Runnable aRunnable)
+	public synchronized Timer start()
 	{
-		mRunnable = aRunnable;
+		if (mThread == null)
+		{
+			mThread = new WorkerThread();
+			mThread.start();
+		}
+		return this;
+	}
+
+
+	public synchronized Timer stop()
+	{
+		if (mThread != null)
+		{
+			mThread.mCancel = true;
+			mThread.wakeUp();
+			mThread = null;
+		}
 		return this;
 	}
 
 
 	/**
 	 * Sets an optional delay between calls to the Runnable.
-	 * 
-	 * @param aDelay 
-	 *    time in milliseconds
+	 *
+	 * @param aDelay
+	 * time in milliseconds
 	 */
 	public Timer setDelay(long aDelay)
 	{
@@ -52,9 +66,9 @@ public class Timer extends Thread implements AutoCloseable
 
 	/**
 	 * The timer will be paused at the time specified.
-	 * 
+	 *
 	 * @param aPauseAt
-	 *    time in milliseconds
+	 * time in milliseconds
 	 */
 	public Timer setPauseAt(long aPauseAt)
 	{
@@ -66,89 +80,96 @@ public class Timer extends Thread implements AutoCloseable
 	/**
 	 * Pauses or un-pauses the Timer.
 	 */
-	public Timer setPaused(boolean aPaused)
+	public synchronized Timer setPaused(boolean aPaused)
 	{
 		mPaused = aPaused;
-		synchronized (Runnable.class)
+		if (mThread != null && !mPaused)
 		{
-			Runnable.class.notify();
+			mThread.wakeUp();
 		}
 		return this;
 	}
 
 
 	/**
-	 * Cancels this Timer.
-	 */
-	public Timer cancel()
-	{
-		mCancel = true;
-		synchronized (Runnable.class)
-		{
-			Runnable.class.notify();
-		}
-		return this;
-	}
-
-
-	/**
-	 * Cancels this Timer.
+	 * Stops this Timer. Same as calling the <code>stop</code> method.
 	 */
 	@Override
 	public void close() throws Exception
 	{
-		cancel();
+		stop();
 	}
 
 
-	@Override
-	public void run()
+	private class WorkerThread extends Thread
 	{
-		while (!mCancel)
+		boolean mCancel;
+
+
+		public WorkerThread()
 		{
-			while (mPaused)
-			{
-				try
-				{
-					synchronized (Runnable.class)
-					{
-						Runnable.class.wait(1000);
-					}
-				}
-				catch (InterruptedException e)
-				{
-				}
-			}
+			setDaemon(true);
+		}
 
-			if (mCancel)
-			{
-				return;
-			}
 
-			try
+		void wakeUp()
+		{
+			synchronized (this)
 			{
-				mRunnable.run();
-			}
-			catch (Error | Exception e)
-			{
-			}
-
-			if (mDelay > 0)
-			{
-				try
-				{
-					sleep(mDelay);
-				}
-				catch (InterruptedException e)
-				{
-				}
-			}
-
-			if (System.currentTimeMillis() > mPauseAt)
-			{
-				mPaused = true;
-				mPauseAt = Long.MAX_VALUE;
+				notify();
 			}
 		}
-	}
+
+
+		@Override
+		public void run()
+		{
+			while (!mCancel)
+			{
+				while (mPaused)
+				{
+					try
+					{
+						synchronized (this)
+						{
+							wait(1000);
+						}
+					}
+					catch (InterruptedException e)
+					{
+					}
+				}
+
+				if (mCancel)
+				{
+					return;
+				}
+
+				try
+				{
+					mRunnable.run();
+				}
+				catch (Error | Exception e)
+				{
+				}
+
+				if (mDelay > 0)
+				{
+					try
+					{
+						sleep(mDelay);
+					}
+					catch (InterruptedException e)
+					{
+					}
+				}
+
+				if (System.currentTimeMillis() > mPauseAt)
+				{
+					mPaused = true;
+					mPauseAt = Long.MAX_VALUE;
+				}
+			}
+		}
+	};
 }
