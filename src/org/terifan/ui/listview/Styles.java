@@ -75,10 +75,10 @@ public class Styles
 	public Color headerForeground = new Color(0, 0, 0);
 	public Color headerForegroundArmed = new Color(0, 0, 0);
 
-	public Font item = new Font("Segoe UI", Font.PLAIN, 11);
-	public Font itemBold = new Font("Segoe UI", Font.BOLD, 11);
-	public Font header = new Font("Segoe UI", Font.PLAIN, 11);
-	public Font label = new Font("Segoe UI", Font.BOLD, 11);
+	public Font itemFont = new Font("Segoe UI", Font.PLAIN, 11);
+	public Font itemBoldFont = new Font("Segoe UI", Font.BOLD, 11);
+	public Font headerFont = new Font("Segoe UI", Font.PLAIN, 11);
+	public Font labelFont = new Font("Segoe UI", Font.BOLD, 11);
 
 	public BufferedImage headerBackground = Utilities.loadImage(ColumnHeaderRenderer.class, "column_header_background_normal.png");
 	public BufferedImage headerBackgroundRollover = Utilities.loadImage(ColumnHeaderRenderer.class, "column_header_background_normal.png");
@@ -137,10 +137,10 @@ public class Styles
 		groupWidth *= aDpiScale;
 		groupBarHeight *= aDpiScale;
 
-		item = item.deriveFont(item.getSize() * aDpiScale);
-		itemBold = itemBold.deriveFont(itemBold.getSize() * aDpiScale);
-		header = header.deriveFont(header.getSize() * aDpiScale);
-		label = label.deriveFont(label.getSize() * aDpiScale);
+		itemFont = itemFont.deriveFont(itemFont.getSize() * aDpiScale);
+		itemBoldFont = itemBoldFont.deriveFont(itemBoldFont.getSize() * aDpiScale);
+		headerFont = headerFont.deriveFont(headerFont.getSize() * aDpiScale);
+		labelFont = labelFont.deriveFont(labelFont.getSize() * aDpiScale);
 		barFont = barFont.deriveFont(barFont.getSize() * aDpiScale);
 		group = group.deriveFont(group.getSize() * aDpiScale);
 		groupCount = groupCount.deriveFont(groupCount.getSize() * aDpiScale);

@@ -175,8 +175,8 @@ public class CardItemRenderer<T> extends ListViewItemRenderer<T>
 		int y = aOriginY;
 
 		Color foreground = style.itemForeground;
-		Font plainFont = style.item;
-		Font boldFont = style.itemBold;
+		Font plainFont = style.itemFont;
+		Font boldFont = style.itemBoldFont;
 
 		for (int col = 0, rowIndex = 0; col < model.getColumnCount() && rowIndex < rowCount; col++)
 		{

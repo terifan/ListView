@@ -50,7 +50,7 @@ public class ColumnHeaderRenderer implements ListViewHeaderRenderer
 
 		((Graphics2D)aGraphics).setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_LCD_HRGB);
 
-		aGraphics.setFont(style.header);
+		aGraphics.setFont(style.headerFont);
 
 		if (aIsRollover && aIsArmed)
 		{

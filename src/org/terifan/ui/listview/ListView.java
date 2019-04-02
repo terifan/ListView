@@ -24,7 +24,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseWheelEvent;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import javax.swing.AbstractAction;
 import javax.swing.JComponent;
@@ -46,7 +45,8 @@ import org.terifan.ui.listview.util.ImageCacheKey;
 
 public class ListView<T> extends JComponent implements Scrollable
 {
-	private final HashMap<T, Object> mVisibleItems;
+	private static final long serialVersionUID = 1L;
+
 	private final Rectangle mSelectionRectangle;
 	private final HashSet<T> mSelectedItems;
 	private ListViewModel<T> mModel;
@@ -66,15 +66,17 @@ public class ListView<T> extends JComponent implements Scrollable
 	private String mPlaceholder;
 	private ListViewMouseListener mMouseListener;
 	private ListViewPopupFactory<T> mPopupFactory;
-	private Cache<ImageCacheKey, BufferedImage> mImageCache;
 	private ArrayList<ViewAdjustmentListener> mAdjustmentListeners;
-	private int mMinRowHeight;
-	private int mMaxRowHeight;
 	private SmoothScrollController mSmoothScroll;
 	private ViewportMonitor<T> mViewportMonitor;
 	private double mAdjustmentListenerExtraFactor;
 	private double mSmoothScrollSpeedMultiplier;
 	private MouseAdapter mSmoothScrollMouseAdapter;
+	private int mMinRowHeight;
+	private int mMaxRowHeight;
+
+	@Deprecated
+	private Cache<ImageCacheKey, BufferedImage> mImageCache;
 
 
 	public ListView()
@@ -90,10 +92,9 @@ public class ListView<T> extends JComponent implements Scrollable
 		mEventListeners = new ArrayList<>();
 		mImageCache = new Cache<>(1 * 1024 * 1024);
 		mSelectionRectangle = new Rectangle();
-		mVisibleItems = new HashMap<>();
 		mAdjustmentListeners = new ArrayList<>();
 		mSmoothScrollSpeedMultiplier = 1;
-		
+
 		mMinRowHeight = 0;
 		mMaxRowHeight = Integer.MAX_VALUE;
 
@@ -135,12 +136,14 @@ public class ListView<T> extends JComponent implements Scrollable
 	}
 
 
+	@Deprecated
 	public Cache<ImageCacheKey, BufferedImage> getImageCache()
 	{
 		return mImageCache;
 	}
 
 
+	@Deprecated
 	public void setImageCache(Cache<ImageCacheKey, BufferedImage> aImageCache)
 	{
 		mImageCache = aImageCache;
@@ -371,7 +374,7 @@ public class ListView<T> extends JComponent implements Scrollable
 
 		Graphics2D g = (Graphics2D)aGraphics;
 
-		g.setFont(mStyles.item);
+		g.setFont(mStyles.itemFont);
 		g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_LCD_HRGB);
 		g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
 
@@ -436,10 +439,10 @@ public class ListView<T> extends JComponent implements Scrollable
 						SwingUtilities.convertPointFromScreen(p1, ListView.this);
 						updateRollover(p1);
 					}
-					
+
 //					JScrollBar horizontalScrollBar = scrollPane.getHorizontalScrollBar();
 //					JScrollBar verticalScrollBar = scrollPane.getVerticalScrollBar();
-//					
+//
 //					Dimension totalSize = viewport.getView().getSize();
 //					int scrollX = horizontalScrollBar.getValue();
 //					int scrollY = verticalScrollBar.getValue();
@@ -449,7 +452,7 @@ public class ListView<T> extends JComponent implements Scrollable
 					triggerViewportChange();
 				}
 			});
-			
+
 			JPanel columnHeaderView = new JPanel(new BorderLayout());
 			columnHeaderView.add(new ListViewBar(this), BorderLayout.NORTH);
 			columnHeaderView.add(new ListViewHeader(this, ListViewHeader.COLUMN_HEADER), BorderLayout.SOUTH);
@@ -1013,7 +1016,7 @@ public class ListView<T> extends JComponent implements Scrollable
 				viewRect.y -= aExtraFactor * h;
 				viewRect.height += 2 * aExtraFactor * h;
 			}
-			
+
 			mLayout.getItemsIntersecting(viewRect, list);
 		}
 		else
@@ -1026,13 +1029,13 @@ public class ListView<T> extends JComponent implements Scrollable
 
 
 	/**
-	 * Add listeners receiving reports on items entering or leaving the view 
+	 * Add listeners receiving reports on items entering or leaving the view
 	 * of the ListView viewport assuming it is enclosed in a JScrollPane.
 	 */
 	public void addAdjustmentListener(ViewAdjustmentListener aAdjustmentListener)
 	{
 		mAdjustmentListeners.add(aAdjustmentListener);
-		
+
 		if (mViewportMonitor == null)
 		{
 			mViewportMonitor = new ViewportMonitor<>();
@@ -1118,8 +1121,8 @@ public class ListView<T> extends JComponent implements Scrollable
 	{
 		mAdjustmentListenerExtraFactor = aFactor;
 	}
-	
-	
+
+
 	protected synchronized void triggerViewportChange()
 	{
 		ViewportMonitor monitor = mViewportMonitor;
@@ -1178,13 +1181,13 @@ public class ListView<T> extends JComponent implements Scrollable
 			}
 		}
 	}
-	
-	
+
+
 	public boolean isSmoothScrollEnabled()
 	{
 		return mSmoothScrollMouseAdapter != null;
 	}
-	
+
 
 	public void setSmoothScrollEnabled(boolean aState)
 	{

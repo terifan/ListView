@@ -36,9 +36,15 @@ public class ListViewModel<T> implements Iterable<T>
 		mCollapsedGroups = new HashSet<>();
 	}
 
-	
+
 	/**
 	 * Creates a ListViewModel initialized with an EntityAccessor for the class provided.
+	 *
+	 * Same as:
+	 * <pre>
+	 *   ListViewModel model = new ListViewModel();
+	 *   model.setItemValueFunction(new EntityAccessor<>(aType));
+	 * </pre>
 	 */
 	public ListViewModel(Class aType)
 	{
@@ -133,7 +139,7 @@ public class ListViewModel<T> implements Iterable<T>
 	public T findItemByColumnValue(int aColumnIndex, Object aObject)
 	{
 		ListViewColumn<T> column = getColumn(aColumnIndex);
-		
+
 		for (T item : mItems)
 		{
 			if (getValueAt(item, column).equals(aObject))
@@ -155,7 +161,7 @@ public class ListViewModel<T> implements Iterable<T>
 	{
 		mItemIconFunction = aItemIconFunction;
 	}
-	
+
 
 	public ListViewIcon getItemIcon(T aItem)
 	{
@@ -448,8 +454,8 @@ public class ListViewModel<T> implements Iterable<T>
 	{
 		return mSortedColumn;
 	}
-	
-	
+
+
 	// -- Tree -----------------
 
 	public ListViewGroup<T> getRoot()

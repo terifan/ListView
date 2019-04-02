@@ -62,7 +62,7 @@ public class DetailItemValueRenderer<T> extends JComponent implements ListViewCe
 
 		Font oldFont = aGraphics.getFont();
 
-		Font font = style.item;
+		Font font = style.itemFont;
 		SelectionMode selectionMode = mListView.getSelectionMode();
 
 		aGraphics.setFont(font);
