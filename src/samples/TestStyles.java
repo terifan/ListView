@@ -1,4 +1,4 @@
-package test;
+package samples;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
