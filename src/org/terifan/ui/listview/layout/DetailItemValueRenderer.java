@@ -37,11 +37,13 @@ public class DetailItemValueRenderer<T> extends JComponent implements ListViewCe
 	{
 		setIconTextSpacing(4);
 		setOpaque(true);
+		setBackground(Color.WHITE);
+		setForeground(Color.BLACK);
 	}
 
 
 	@Override
-	public JComponent getListViewCellRendererComponent(ListView<T> aListView, T aItem, int aColumnIndex, boolean aIsSelected, boolean aIsFocused, boolean aIsRollover, boolean aIsSorted)
+	public JComponent getListViewCellRendererComponent(ListView<T> aListView, T aItem, int aItemIndex, int aColumnIndex, boolean aIsSelected, boolean aIsFocused, boolean aIsRollover, boolean aIsSorted)
 	{
 		mListView = aListView;
 		mItem = aItem;
@@ -90,13 +92,13 @@ public class DetailItemValueRenderer<T> extends JComponent implements ListViewCe
 			mIsSelected = false;
 		}
 
-		Color cellBackground = Colors.getCellBackground(mListView.getStyles(), mListView.getSelectionMode(), mIsSorted, mIsSelected, mIsRollover, mIsFocused, true);
-		Color textForeground = Colors.getTextForeground(mListView.getStyles(), mListView.getSelectionMode(), mIsSorted, mIsSelected, mIsRollover, mIsFocused, true);
+		Color cellBackground = Colors.getCellBackground(mListView.getStyles(), mListView.getSelectionMode(), mIsSorted, mIsSelected, mIsRollover, mIsFocused, true, getBackground());
+		Color textForeground = Colors.getTextForeground(mListView.getStyles(), mListView.getSelectionMode(), mIsSorted, mIsSelected, mIsRollover, mIsFocused, true, getForeground());
 
-		if (cellBackground != null && (mIsSorted || selectionMode != SelectionMode.ROW && selectionMode != SelectionMode.SINGLE_ROW))
+		if (cellBackground != null) // && (mIsSorted || selectionMode != SelectionMode.ROW && selectionMode != SelectionMode.SINGLE_ROW))
 		{
 			aGraphics.setColor(cellBackground);
-			aGraphics.fillRect(rect.x, rect.y, rect.width, rect.height + 1);
+			aGraphics.fillRect(rect.x, rect.y, rect.width, rect.height);
 		}
 
 		int rx = tr.x + column.getIconWidth() + computeIconTextSpacing(column);
@@ -132,26 +134,7 @@ public class DetailItemValueRenderer<T> extends JComponent implements ListViewCe
 				int ix = tr.x + 2 + (column.getIconWidth() - iw) / 2;
 				int iy = rect.y + (rect.height - ih) / 2;
 
-	//			if (mIsSelected)
-	//			{
-	//				Image image;
-	//
-	//				if (mCachedHighlightedIcons.containsKey(icon))
-	//				{
-	//					image = mCachedHighlightedIcons.get(icon);
-	//				}
-	//				else
-	//				{
-	//					image = Utilities.filterHighlight(((ImageIcon)icon).getImage(), style.itemSelectedBackground);
-	//					mCachedHighlightedIcons.put(icon, image, 1);
-	//				}
-	//
-	//				aGraphics.drawImage(image, ix, iy, null);
-	//			}
-	//			else
-				{
-					icon.drawIcon(aGraphics, ix, iy, iw, ih);
-				}
+				icon.drawIcon(aGraphics, ix, iy, iw, ih);
 			}
 		}
 

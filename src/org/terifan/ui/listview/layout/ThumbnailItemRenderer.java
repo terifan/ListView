@@ -125,7 +125,7 @@ public class ThumbnailItemRenderer<T> extends ListViewItemRenderer<T>
 
 
 	@Override
-	public void paintItem(Graphics2D aGraphics, int aOriginX, int aOriginY, int aWidth, int aHeight, ListView<T> aListView, T aItem)
+	public void paintItem(Graphics2D aGraphics, int aOriginX, int aOriginY, int aWidth, int aHeight, ListView<T> aListView, T aItem, int aItemIndex)
 	{
 //		aGraphics.setColor(new Color(new Random().nextInt(0xff),new Random().nextInt(0xff),new Random().nextInt(0xff),16));
 //		aGraphics.fillRect(aOriginX, aOriginY, aWidth, aHeight);

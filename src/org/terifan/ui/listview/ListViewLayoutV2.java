@@ -71,7 +71,7 @@ public class ListViewLayoutV2<T> extends AbstractListViewLayout<T>
 			{
 				if (clip.intersects(aX, aY, aWidth, aHeight))
 				{
-					renderer.paintItem(aGraphics, aX, aY, aWidth, aHeight, mListView, aItem);
+					renderer.paintItem(aGraphics, aX, aY, aWidth, aHeight, mListView, aItem, 0);
 				}
 				return null;
 			}

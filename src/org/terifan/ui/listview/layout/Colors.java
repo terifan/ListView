@@ -5,9 +5,15 @@ import org.terifan.ui.listview.SelectionMode;
 import org.terifan.ui.listview.Styles;
 
 
-class Colors
+public class Colors
 {
 	public static Color getTextForeground(Styles aStyle, SelectionMode aSelectionMode, boolean aIsSorted, boolean aIsSelected, boolean aIsRollover, boolean aIsFocused, boolean aIsListViewFocused)
+	{
+		return getTextForeground(aStyle, aSelectionMode, aIsSorted, aIsSelected, aIsRollover, aIsFocused, aIsListViewFocused, aStyle.itemForeground);
+	}
+
+
+	public static Color getTextForeground(Styles aStyle, SelectionMode aSelectionMode, boolean aIsSorted, boolean aIsSelected, boolean aIsRollover, boolean aIsFocused, boolean aIsListViewFocused, Color aDefaultColor)
 	{
 		if (aIsSelected)
 		{
@@ -29,11 +35,17 @@ class Colors
 		{
 			return aStyle.itemSortedForeground;
 		}
-		return aStyle.itemForeground;
+		return aDefaultColor;
 	}
 
 
 	public static Color getCellBackground(Styles style, SelectionMode aSelectionMode, boolean aIsSorted, boolean aIsSelected, boolean aIsRollover, boolean aIsFocused, boolean aListViewFocused)
+	{
+		return getCellBackground(style, aSelectionMode, aIsSorted, aIsSelected, aIsRollover, aIsFocused, aListViewFocused, style.itemBackground);
+	}
+
+
+	public static Color getCellBackground(Styles style, SelectionMode aSelectionMode, boolean aIsSorted, boolean aIsSelected, boolean aIsRollover, boolean aIsFocused, boolean aListViewFocused, Color aDefaultColor)
 	{
 		boolean b = aSelectionMode == SelectionMode.ITEM;
 
@@ -61,7 +73,7 @@ class Colors
 		{
 			return style.itemRolloverBackground;
 		}
-		return style.itemBackground;
+		return aDefaultColor;
 	}
 
 

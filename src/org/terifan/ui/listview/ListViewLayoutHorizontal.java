@@ -212,7 +212,7 @@ public class ListViewLayoutHorizontal<T> extends AbstractListViewLayout<T>
 
 					int itemHeight = renderer.getItemHeight(mListView, item);
 
-					renderer.paintItem(aGraphics, x, y, colWidth, itemHeight, mListView, item);
+					renderer.paintItem(aGraphics, x, y, colWidth, itemHeight, mListView, item, 0);
 
 					y += itemHeight;
 				}

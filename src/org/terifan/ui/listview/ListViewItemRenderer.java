@@ -16,7 +16,7 @@ public abstract class ListViewItemRenderer<T>
 	protected abstract Dimension getItemSize(ListView<T> aListView, T aItem);
 
 
-	protected abstract void paintItem(Graphics2D aGraphics, int aOriginX, int aOriginY, int aWidth, int aHeight, ListView<T> aListView, T aItem);
+	protected abstract void paintItem(Graphics2D aGraphics, int aOriginX, int aOriginY, int aWidth, int aHeight, ListView<T> aListView, T aItem, int aItemIndex);
 
 
 	protected abstract ListViewLayout<T> createListViewLayout(ListView<T> aListView);

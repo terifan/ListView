@@ -142,7 +142,7 @@ public class CardItemRenderer<T> extends ListViewItemRenderer<T>
 
 
 	@Override
-	public void paintItem(Graphics2D aGraphics, int aOriginX, int aOriginY, int aWidth, int aHeight, ListView<T> aListView, T aItem)
+	public void paintItem(Graphics2D aGraphics, int aOriginX, int aOriginY, int aWidth, int aHeight, ListView<T> aListView, T aItem, int aItemIndex)
 	{
 		Styles style = aListView.getStyles();
 		ListViewModel model = aListView.getModel();

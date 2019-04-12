@@ -108,7 +108,7 @@ public class DetailItemRenderer<T> extends ListViewItemRenderer<T>
 
 
 	@Override
-	public void paintItem(Graphics2D aGraphics, int aOriginX, int aOriginY, int aWidth, int aHeight, ListView<T> aListView, T aItem)
+	public void paintItem(Graphics2D aGraphics, int aOriginX, int aOriginY, int aWidth, int aHeight, ListView<T> aListView, T aItem, int aItemIndex)
 	{
 		Styles style = aListView.getStyles();
 
@@ -168,8 +168,8 @@ public class DetailItemRenderer<T> extends ListViewItemRenderer<T>
 			boolean sorted = model.getSortedColumn() == column;
 			boolean focus = isFocusOwner && selectionMode != SelectionMode.ROW && selectionMode != SelectionMode.SINGLE_ROW && aListView.getFocusItem() == aItem && model.getColumn(col).isFocusable();
 
-			Component c = getCellRenderer(aListView, aItem, col).getListViewCellRendererComponent(aListView, aItem, col, isSelected, focus, isRollover, sorted);
-			c.setBounds(x + 1, aOriginY, w - 1, aHeight - 1);
+			Component c = getCellRenderer(aListView, aItem, aItemIndex, col).getListViewCellRendererComponent(aListView, aItem, aItemIndex, col, isSelected, focus, isRollover, sorted);
+			c.setBounds(x, aOriginY, w, aHeight - style.itemHorizontalLineThickness);
 			c.paint(aGraphics);
 
 			x += w;
@@ -185,7 +185,7 @@ public class DetailItemRenderer<T> extends ListViewItemRenderer<T>
 		if (aListView.getFocusItem() == aItem && (selectionMode == SelectionMode.ROW || selectionMode == SelectionMode.SINGLE_ROW))
 		{
 			aGraphics.setColor(isFocusOwner ? style.focusRect : style.focusRectUnfocused);
-			Utilities.drawFocusRect(aGraphics, aOriginX, aOriginY, aWidth, aHeight - 1, false);
+			Utilities.drawFocusRect(aGraphics, aOriginX, aOriginY, aWidth, aHeight, false);
 		}
 	}
 
@@ -197,7 +197,7 @@ public class DetailItemRenderer<T> extends ListViewItemRenderer<T>
 	}
 
 
-	protected ListViewCellRenderer getCellRenderer(ListView<T> aListView, T aItem, int aColumnIndex)
+	protected ListViewCellRenderer getCellRenderer(ListView<T> aListView, T aItem, int aItemIndex, int aColumnIndex)
 	{
 		Object v = aListView.getModel().getValueAt(aItem, aColumnIndex);
 		if (v instanceof JComponent)
@@ -220,7 +220,7 @@ public class DetailItemRenderer<T> extends ListViewItemRenderer<T>
 
 
 		@Override
-		public JComponent getListViewCellRendererComponent(ListView<T> aListView, T aItem, int aColumnIndex, boolean aIsSelected, boolean aHasFocus, boolean aIsRollover, boolean aIsSorted)
+		public JComponent getListViewCellRendererComponent(ListView<T> aListView, T aItem, int aItemIndex, int aColumnIndex, boolean aIsSelected, boolean aHasFocus, boolean aIsRollover, boolean aIsSorted)
 		{
 			if (c.getParent() == null)
 			{

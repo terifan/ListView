@@ -23,9 +23,10 @@ public class ColumnHeaderRenderer implements ListViewHeaderRenderer
 	}
 
 
-	public void setExtendLastItem(boolean aExtendLastItem)
+	public ColumnHeaderRenderer setExtendLastItem(boolean aExtendLastItem)
 	{
 		mExtendLastItem = aExtendLastItem;
+		return this;
 	}
 
 

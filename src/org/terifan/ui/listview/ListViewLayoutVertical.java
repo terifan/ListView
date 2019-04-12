@@ -51,6 +51,7 @@ public class ListViewLayoutVertical<T> extends AbstractListViewLayout<T>
 		int y = 0;
 
 		SortedMap<Object, ListViewGroup> children = root.getChildren();
+		int itemIndex = 0;
 
 		if (children != null)
 		{
@@ -60,17 +61,18 @@ public class ListViewLayoutVertical<T> extends AbstractListViewLayout<T>
 			{
 				ListViewGroup group = children.get(key);
 
-				y = paintList(aGraphics, group, 0, y) + groupHeight;
+				y = paintList(aGraphics, group, 0, y, itemIndex) + groupHeight;
+				itemIndex += group.getItemCount();
 			}
 		}
 		else
 		{
-			paintItemList(aGraphics, root, 0, y);
+			paintItemList(aGraphics, root, 0, y, itemIndex);
 		}
 	}
 
 
-	private int paintList(Graphics2D aGraphics, ListViewGroup<T> aGroup, int aLevel, int aOriginY)
+	private int paintList(Graphics2D aGraphics, ListViewGroup<T> aGroup, int aLevel, int aOriginY, int aItemIndex)
 	{
 		int groupBarHeight = mListView.getStyles().groupBarHeight;
 		int verticalBarWidth = mListView.getStyles().verticalBarWidth;
@@ -100,12 +102,12 @@ public class ListViewLayoutVertical<T> extends AbstractListViewLayout<T>
 					{
 						ListViewGroup group = children.get(key);
 
-						y = paintList(aGraphics, group, aLevel + 1, y + groupBarHeight);
+						y = paintList(aGraphics, group, aLevel + 1, y + groupBarHeight, aItemIndex);
 					}
 				}
 				else
 				{
-					paintItemList(aGraphics, aGroup, aLevel, aOriginY + groupBarHeight);
+					paintItemList(aGraphics, aGroup, aLevel, aOriginY + groupBarHeight, aItemIndex);
 				}
 			}
 		}
@@ -126,7 +128,7 @@ public class ListViewLayoutVertical<T> extends AbstractListViewLayout<T>
 	}
 
 
-	private void paintItemList(Graphics2D aGraphics, ListViewGroup<T> aGroup, int aLevel, int aOriginY)
+	private void paintItemList(Graphics2D aGraphics, ListViewGroup<T> aGroup, int aLevel, int aOriginY, int aItemIndex)
 	{
 		int verticalBarWidth = mListView.getStyles().verticalBarWidth;
 
@@ -136,14 +138,14 @@ public class ListViewLayoutVertical<T> extends AbstractListViewLayout<T>
 		double itemWidth = getItemWidth();
 
 		Rectangle clip = aGraphics.getClipBounds();
-		
+
 		ListViewItemRenderer<T> renderer = mListView.getItemRenderer();
 		Point itemSpacing = renderer.getItemSpacing(mListView);
 
-		for (int itemIndex = 0, itemCount = items.size(); itemIndex < itemCount && y < clip.y + clip.height;)
+		for (int groupItemIndex = 0, groupItemCount = items.size(); groupItemIndex < groupItemCount && y < clip.y + clip.height; )
 		{
 			int rowHeight = 0;
-			for (int itemRowIndex = 0, arrayIndex = itemIndex; arrayIndex < itemCount && itemRowIndex < itemsPerRow; arrayIndex++, itemRowIndex++)
+			for (int itemRowIndex = 0, arrayIndex = groupItemIndex; arrayIndex < groupItemCount && itemRowIndex < itemsPerRow; arrayIndex++, itemRowIndex++)
 			{
 				T item = items.get(arrayIndex);
 				rowHeight = Math.max(rowHeight, renderer.getItemHeight(mListView, item) + itemSpacing.y);
@@ -154,13 +156,13 @@ public class ListViewLayoutVertical<T> extends AbstractListViewLayout<T>
 				double x = verticalBarWidth * aLevel;
 				double error = 0;
 
-				for (int itemRowIndex = 0; itemIndex < itemCount && itemRowIndex < itemsPerRow; itemIndex++, itemRowIndex++)
+				for (int itemRowIndex = 0; groupItemIndex < groupItemCount && itemRowIndex < itemsPerRow; groupItemIndex++, itemRowIndex++, aItemIndex++)
 				{
-					T item = items.get(itemIndex);
+					T item = items.get(groupItemIndex);
 
 					int tmpWidth = (int)(itemWidth + error);
 
-					renderer.paintItem(aGraphics, (int)x, y, tmpWidth, rowHeight - renderer.getItemSpacing(mListView).y, mListView, item);
+					renderer.paintItem(aGraphics, (int)x, y, tmpWidth, rowHeight - itemSpacing.y, mListView, item, aItemIndex);
 
 					x += tmpWidth + itemSpacing.x;
 					error += itemWidth - tmpWidth - itemSpacing.x;
@@ -168,7 +170,8 @@ public class ListViewLayoutVertical<T> extends AbstractListViewLayout<T>
 			}
 			else
 			{
-				itemIndex += itemsPerRow;
+				groupItemIndex += itemsPerRow;
+				aItemIndex += itemsPerRow;
 			}
 
 			y += rowHeight;
