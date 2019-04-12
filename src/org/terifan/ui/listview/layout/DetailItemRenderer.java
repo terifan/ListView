@@ -162,7 +162,7 @@ public class DetailItemRenderer<T> extends ListViewItemRenderer<T>
 
 			if (mExtendLastItem && col + 1 == model.getColumnCount())
 			{
-				w = aWidth;
+				w = aWidth - x;
 			}
 
 			boolean sorted = model.getSortedColumn() == column;
