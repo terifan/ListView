@@ -23,6 +23,7 @@ public class ListViewModel<T> implements Iterable<T>
 	protected ListViewColumn<T> mSortedColumn;
 	protected Function<T, ListViewIcon> mItemIconFunction;
 	protected BiFunction<T, ListViewColumn<T>, Object> mItemValueFunction;
+	protected BiFunction<T, Integer, String> mItemTreeFunction;
 
 
 	/**
@@ -182,7 +183,19 @@ public class ListViewModel<T> implements Iterable<T>
 
 	public void setItemValueFunction(BiFunction<T, ListViewColumn<T>, Object> aItemValueFunction)
 	{
-		this.mItemValueFunction = aItemValueFunction;
+		mItemValueFunction = aItemValueFunction;
+	}
+
+
+	public BiFunction<T, Integer, String> getItemTreeFunction()
+	{
+		return mItemTreeFunction;
+	}
+
+
+	public void setItemTreeFunction(BiFunction<T, Integer, String> aItemTreeFunction)
+	{
+		mItemTreeFunction = aItemTreeFunction;
 	}
 
 

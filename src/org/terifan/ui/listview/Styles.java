@@ -122,6 +122,8 @@ public class Styles
 	public int ITEM_SPACE_HOR = 4;
 	public int ITEM_SPACE_VER = 4;
 
+	public int treeIndentSize = 20;
+
 
 	public Styles()
 	{
@@ -136,6 +138,7 @@ public class Styles
 		columnDividerSpacing *= aDpiScale;
 		groupWidth *= aDpiScale;
 		groupBarHeight *= aDpiScale;
+		treeIndentSize *= aDpiScale;
 
 		itemFont = itemFont.deriveFont(itemFont.getSize() * aDpiScale);
 		itemBoldFont = itemBoldFont.deriveFont(itemBoldFont.getSize() * aDpiScale);

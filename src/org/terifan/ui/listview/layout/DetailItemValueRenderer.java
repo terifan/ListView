@@ -1,13 +1,16 @@
 package org.terifan.ui.listview.layout;
 
+import java.awt.BasicStroke;
 import org.terifan.ui.listview.util.TextRenderer;
 import org.terifan.ui.listview.util.Anchor;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Rectangle;
-import java.awt.image.BufferedImage;
+import java.awt.Stroke;
+import java.util.function.BiFunction;
 import javax.swing.JComponent;
 import org.terifan.ui.listview.ListView;
 import org.terifan.ui.listview.ListViewCellRenderer;
@@ -20,6 +23,16 @@ import org.terifan.ui.listview.util.Utilities;
 
 public class DetailItemValueRenderer<T> extends JComponent implements ListViewCellRenderer<T>
 {
+	private final static BasicStroke DOTTED_STROKE0 = new BasicStroke(1f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL, 0, new float[]
+	{
+		1f
+	}, 0.5f);
+
+	private final static BasicStroke DOTTED_STROKE1 = new BasicStroke(1f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL, 0, new float[]
+	{
+		1f
+	}, 1.5f);
+
 	private Rectangle mTempRectangle = new Rectangle();
 
 	protected ListView mListView;
@@ -60,17 +73,29 @@ public class DetailItemValueRenderer<T> extends JComponent implements ListViewCe
 	@Override
 	protected void paintComponent(Graphics aGraphics)
 	{
+		Graphics2D g = (Graphics2D)aGraphics;
 		Styles style = mListView.getStyles();
 
-		Font oldFont = aGraphics.getFont();
+		ListViewColumn column = mListView.getModel().getColumn(mColumnIndex);
+		BiFunction<T, Integer, String> itemTreeFunction = column.getModel().getItemTreeFunction();
+		int indentSize = mListView.getStyles().treeIndentSize;
 
+		String treePath = "";
+//		if (itemTreeFunction != null)
+//		{
+//			treePath = itemTreeFunction.apply(mItem, mColumnIndex);
+//		}
+//		if (treePath == null)
+//		{
+//			treePath = "";
+//		}
+
+		Font oldFont = g.getFont();
 		Font font = style.itemFont;
 		SelectionMode selectionMode = mListView.getSelectionMode();
 
-		aGraphics.setFont(font);
-		mFontMetrics = aGraphics.getFontMetrics(font);
-
-		ListViewColumn column = mListView.getModel().getColumn(mColumnIndex);
+		g.setFont(font);
+		mFontMetrics = g.getFontMetrics(font);
 
 		Rectangle rect = getBounds();
 		Rectangle tr = mTempRectangle;
@@ -95,31 +120,39 @@ public class DetailItemValueRenderer<T> extends JComponent implements ListViewCe
 		Color cellBackground = Colors.getCellBackground(mListView.getStyles(), mListView.getSelectionMode(), mIsSorted, mIsSelected, mIsRollover, mIsFocused, true, getBackground());
 		Color textForeground = Colors.getTextForeground(mListView.getStyles(), mListView.getSelectionMode(), mIsSorted, mIsSelected, mIsRollover, mIsFocused, true, getForeground());
 
-		if (cellBackground != null) // && (mIsSorted || selectionMode != SelectionMode.ROW && selectionMode != SelectionMode.SINGLE_ROW))
+		if (cellBackground != null)
 		{
-			aGraphics.setColor(cellBackground);
-			aGraphics.fillRect(rect.x, rect.y, rect.width, rect.height);
+			g.setColor(cellBackground);
+			g.fill(rect);
 		}
 
 		int rx = tr.x + column.getIconWidth() + computeIconTextSpacing(column);
 		int ry = rect.y;
 		int rw = tr.width - column.getIconWidth() - computeIconTextSpacing(column) + 1;
-		int rh = rect.height;//tr.height;
+		int rh = rect.height;
 
-		TextRenderer.drawString(aGraphics, s, rx, ry, rw, rh, Anchor.WEST, textForeground, null, false);
-
-		aGraphics.setColor(style.verticalLine);
-		for (int i = 1, thickness = style.itemVerticalLineThickness; i <= thickness; i++)
+		if (itemTreeFunction != null)
 		{
-			aGraphics.drawLine(rect.x + rect.width - i, rect.y, rect.x + rect.width - i, rect.y + rect.height - 1);
+//			drawTreePath(g, rx, ry, rh, indentSize, treePath);
+
+//			DetailViewTreeCode treeNode = treePath.isEmpty() ? null : DetailViewTreeCode.decode(treePath.charAt(treePath.length() - 1));
+//			if (treeNode != null && treeNode.getIcon() != 0)
+//			{
+//				g.setColor(new Color(255,0,0,128));
+//				g.fillRect(rx + (treePath.length() - 1) * indentSize, ry, 20, rh);
+//			}
+
+			rx += treePath.length() * indentSize;
+			tr.x += treePath.length() * indentSize;
 		}
 
-//		if (mIsRollover)
-//		{
-//			aGraphics.setColor(style.line);
-//			aGraphics.drawLine(rect.x, rect.y, rect.x+rect.width, rect.y);
-//			aGraphics.drawLine(rect.x, rect.y+rect.height-2, rect.x+rect.width, rect.y+rect.height-2);
-//		}
+		TextRenderer.drawString(g, s, rx + 2, ry, rw, rh, Anchor.WEST, textForeground, null, false);
+
+		g.setColor(style.verticalLine);
+		for (int i = 1, thickness = style.itemVerticalLineThickness; i <= thickness; i++)
+		{
+			g.drawLine(rect.x + rect.width - i, rect.y, rect.x + rect.width - i, rect.y + rect.height - 1);
+		}
 
 		if (column.getIconWidth() > 0)
 		{
@@ -134,23 +167,23 @@ public class DetailItemValueRenderer<T> extends JComponent implements ListViewCe
 				int ix = tr.x + 2 + (column.getIconWidth() - iw) / 2;
 				int iy = rect.y + (rect.height - ih) / 2;
 
-				icon.drawIcon(aGraphics, ix, iy, iw, ih);
+				icon.drawIcon(g, ix, iy, iw, ih);
 			}
 		}
 
-		if (mIsFocused) // && mListView.hasFocus())
+		if (mIsFocused)
 		{
 			if (selectionMode == SelectionMode.ITEM)
 			{
-				paintFocusRectangle(aGraphics, rx, ry, rw, rh - 1);
+				paintFocusRectangle(g, rx, ry, rw, rh - 1);
 			}
 			else
 			{
-				paintFocusRectangle(aGraphics, rect.x, rect.y, rect.width, rect.height - 1);
+				paintFocusRectangle(g, rect.x, rect.y, rect.width, rect.height - 1);
 			}
 		}
 
-		aGraphics.setFont(oldFont);
+		g.setFont(oldFont);
 	}
 
 
@@ -216,5 +249,90 @@ public class DetailItemValueRenderer<T> extends JComponent implements ListViewCe
 	protected int computeIconTextSpacing(ListViewColumn aColumn)
 	{
 		return aColumn.getIconWidth() > 0 ? mIconTextSpacing : 0;
+	}
+
+
+	private void drawTreePath(Graphics2D aGraphics, int aX, int aY, int aHeight, int aIndent, String aTreePath)
+	{
+		int x = aX + 2;
+		int y = aY;
+		int w = aIndent;
+		int h = aHeight;
+		int m = h / 2;
+
+		Stroke oldStroke = aGraphics.getStroke();
+		Color oldColor = aGraphics.getColor();
+
+		aGraphics.setColor(Color.BLACK);
+		aGraphics.setStroke((aY & 1) == 1 ? DOTTED_STROKE0 : DOTTED_STROKE1);
+
+//		for (int i = 0, sz = aTreePath.length(); i < sz; i++, x += w)
+//		{
+//			DetailViewTreeCode treeNode = DetailViewTreeCode.decode(aTreePath.charAt(i));
+//
+//			switch (treeNode)
+//			{
+//				case END:
+//				case END_P:
+//				case END_M:
+//					aGraphics.drawLine(x + 5, y, x + 5, y + m);
+//					aGraphics.setStroke((aY & 1) == 0 ? DOTTED_STROKE0 : DOTTED_STROKE1);
+//					aGraphics.drawLine(x + 5, y + m, x + w, y + m);
+//					break;
+//				case BRANCH:
+//				case BRANCH_P:
+//				case BRANCH_M:
+//					aGraphics.drawLine(x + 5, y, x + 5, y + h);
+//					aGraphics.setStroke((aY & 1) == 0 ? DOTTED_STROKE0 : DOTTED_STROKE1);
+//					aGraphics.drawLine(x + 5, y + m, x + w, y + m);
+//					break;
+//				case START:
+//				case START_M:
+//				case START_P:
+//					aGraphics.setStroke((aY & 1) == 0 ? DOTTED_STROKE0 : DOTTED_STROKE1);
+//					aGraphics.drawLine(x + 5, y + m, x + w, y + m);
+//					break;
+//				case PASS:
+//					aGraphics.drawLine(x + 5, y, x + 5, y + h);
+//					break;
+//				case HOR:
+//					aGraphics.drawLine(x, y + m, x + w, y + m);
+//					break;
+//				case SPACE:
+//					break;
+//			}
+//
+//			if (i == sz - 1)
+//			{
+//				drawElementTreeIcon(aGraphics, oldStroke, x + 1, y, m, 2);
+//			}
+//		}
+
+		aGraphics.setColor(oldColor);
+		aGraphics.setStroke(oldStroke);
+	}
+
+
+	private void drawElementTreeIcon(Graphics2D aGraphics, Stroke aOldStroke, int aX, int aY, int aRowHalfHeight, int aIcon)
+	{
+		Stroke oldStroke = aGraphics.getStroke();
+		Color oldColor = aGraphics.getColor();
+
+		aGraphics.setStroke(aOldStroke);
+
+		aGraphics.setColor(Color.WHITE);
+		aGraphics.fillRect(aX, aY + aRowHalfHeight - 4, 8, 8);
+
+		aGraphics.setColor(Color.BLACK);
+		aGraphics.drawRect(aX, aY + aRowHalfHeight - 4, 8, 8);
+		aGraphics.drawLine(aX + 2, aY + aRowHalfHeight, aX + 6, aY + aRowHalfHeight);
+
+		if (aIcon == 2)
+		{
+			aGraphics.drawLine(aX + 4, aY + aRowHalfHeight - 2, aX + 4, aY + aRowHalfHeight + 2);
+		}
+
+		aGraphics.setColor(oldColor);
+		aGraphics.setStroke(oldStroke);
 	}
 }
