@@ -11,8 +11,8 @@ import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
+import java.util.Set;
 import java.util.function.Function;
 import javax.imageio.ImageIO;
 import javax.swing.AbstractAction;
@@ -117,7 +117,7 @@ public class TestStyles
 				}
 
 				@Override
-				public void viewChanged(Collection<MyListItem> aVisibleItems, Collection<MyListItem> aItemsEnteringView, Collection<MyListItem> aItemsLeavingView)
+				public void viewChanged(Set<MyListItem> aVisibleItems, Set<MyListItem> aItemsEnteringView, Set<MyListItem> aItemsLeavingView)
 				{
 					long time = System.currentTimeMillis() + 1000;
 
@@ -130,7 +130,7 @@ public class TestStyles
 					timer.setPauseAt(time);
 				}
 			});
-			
+
 			JScrollPane scrollPane = new JScrollPane(mListView);
 
 			mListView.setSmoothScrollEnabled(true);
