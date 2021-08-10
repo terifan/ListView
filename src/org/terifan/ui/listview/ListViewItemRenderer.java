@@ -19,6 +19,9 @@ public abstract class ListViewItemRenderer<T>
 	protected abstract void paintItem(Graphics2D aGraphics, int aOriginX, int aOriginY, int aWidth, int aHeight, ListView<T> aListView, T aItem, int aItemIndex);
 
 
+	protected abstract void paintGroup(Graphics2D aGraphics, int aOriginX, int aOriginY, int aWidth, int aHeight, ListView<T> aListView, ListViewGroup<T> aGroup);
+
+
 	protected abstract ListViewLayout<T> createListViewLayout(ListView<T> aListView);
 
 

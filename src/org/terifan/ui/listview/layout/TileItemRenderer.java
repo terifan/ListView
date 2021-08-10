@@ -15,6 +15,7 @@ import java.awt.image.BufferedImage;
 import java.util.function.Function;
 import org.terifan.ui.listview.ListView;
 import org.terifan.ui.listview.ListViewColumn;
+import org.terifan.ui.listview.ListViewGroup;
 import org.terifan.ui.listview.ListViewIcon;
 import org.terifan.ui.listview.ListViewImageIcon;
 import org.terifan.ui.listview.ListViewItemRenderer;
@@ -165,6 +166,14 @@ public class TileItemRenderer<T> extends ListViewItemRenderer<T>
 		{
 			paintFocusIndicator(aGraphics, aListView, aItem, style, aOriginX, aOriginY, aWidth, aHeight, selected, focusOwner);
 		}
+	}
+
+
+	@Override
+	protected void paintGroup(Graphics2D aGraphics, int aOriginX, int aOriginY, int aWidth, int aHeight, ListView<T> aListView, ListViewGroup<T> aGroup)
+	{
+		aGraphics.setColor(Color.RED);
+		aGraphics.fillRect(aOriginX, aOriginY, aWidth, aHeight);
 	}
 
 

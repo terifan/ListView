@@ -814,10 +814,9 @@ public class ListView<T> extends JComponent implements Scrollable
 	 */
 	public ArrayList<T> getItems()
 	{
-		final ArrayList<T> list = new ArrayList<>(mModel.getItemCount());
+		ArrayList<T> list = new ArrayList<>(mModel.getItemCount());
 
-		ItemVisitor<T> visitor = aItem
-			->
+		ItemVisitor<T> visitor = aItem ->
 		{
 			list.add(aItem);
 			return null;

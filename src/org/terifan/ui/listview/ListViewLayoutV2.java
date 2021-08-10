@@ -20,7 +20,7 @@ public class ListViewLayoutV2<T> extends AbstractListViewLayout<T>
 	protected Orientation mOrientation;
 
 
-	public ListViewLayoutV2(ListView<T> aListView, int aMaxItemsPerRow)
+	public ListViewLayoutV2(ListView<T> aListView)
 	{
 		mListView = aListView;
 		mPreferredSize = new Dimension(1, 1);
@@ -53,9 +53,16 @@ public class ListViewLayoutV2<T> extends AbstractListViewLayout<T>
 		visit(new Visitor<T>()
 		{
 			@Override
-			public boolean group(Point aPosition, LayoutInfoGroup aGroup)
+			public boolean group(ListViewGroup<T> aGroup, Point aPosition, LayoutInfoGroup aGroupInfo)
 			{
-				return clip.intersects(aPosition.x, aPosition.y, aGroup.mDimension.width, aGroup.mDimension.height);
+				boolean b = clip.intersects(aPosition.x, aPosition.y, aGroupInfo.mDimension.width, aGroupInfo.mDimension.height);
+
+				if (b)
+				{
+					renderer.paintGroup(aGraphics, aPosition.x, aPosition.y, aGroupInfo.mDimension.width, aGroupInfo.mHeaderSize, mListView, aGroup);
+				}
+
+				return b;
 			}
 
 
@@ -106,7 +113,6 @@ public class ListViewLayoutV2<T> extends AbstractListViewLayout<T>
 					ListViewGroup group = children.get(key);
 
 					Object result = visitGroup(group, aLevel + 1, aPosition, aWidth, aHeight, aVisitor);
-
 					if (result != null)
 					{
 						return result;
@@ -119,14 +125,12 @@ public class ListViewLayoutV2<T> extends AbstractListViewLayout<T>
 				{
 					LayoutInfoGroup layout = prepareVerticalLayout(aGroup, aWidth);
 
-					if (aVisitor.group(aPosition, layout))
+					if (aVisitor.group(aGroup, aPosition, layout))
 					{
 						return visitVerticalList(aGroup, aPosition, aWidth, aVisitor, layout);
 					}
-					else
-					{
-						aPosition.y += layout.mDimension.height;
-					}
+
+					aPosition.y += layout.mDimension.height;
 				}
 			}
 		}
@@ -138,6 +142,8 @@ public class ListViewLayoutV2<T> extends AbstractListViewLayout<T>
 	private Object visitVerticalList(ListViewGroup<T> aGroup, Point aPosition, int aWidth, Visitor<T> aVisitor, LayoutInfoGroup aLayoutInfoGroup)
 	{
 		aWidth -= 4;
+
+		aPosition.y += aLayoutInfoGroup.mHeaderSize + mListView.getItemRenderer().getItemSpacing(mListView).y;
 
 		ListViewItemRenderer<T> renderer = mListView.getItemRenderer();
 		Point itemSpacing = renderer.getItemSpacing(mListView);
@@ -219,7 +225,7 @@ public class ListViewLayoutV2<T> extends AbstractListViewLayout<T>
 				{
 					LayoutInfoGroup layout = prepareVerticalLayout(aGroup, aWidth);
 
-					if (aVisitor.group(null, layout))
+					if (aVisitor.group(aGroup, null, layout))
 					{
 						return visitVerticalListX(aGroup, aVisitor, layout);
 					}
@@ -280,24 +286,26 @@ public class ListViewLayoutV2<T> extends AbstractListViewLayout<T>
 
 		for (int itemIndex = 0, itemCount = items.size(); itemIndex < itemCount;)
 		{
-			Dimension arrayDim = new Dimension(0, mListView.getMinRowHeight());
+			Dimension arrayDim = new Dimension();
 			int arrayLength = 0;
 
 			for (; itemIndex < itemCount && arrayDim.width < aWidth; arrayLength++, itemIndex++)
 			{
 				Dimension itemDim = renderer.getItemSize(mListView, items.get(itemIndex));
 
-				int oldArrayHeight = arrayDim.height == 0 ? itemDim.height : arrayDim.height;
-
-				arrayDim.height = Math.min(Math.max(Math.max(arrayDim.height, itemDim.height), minRowHeight), maxRowHeight);
-				arrayDim.width = arrayDim.width * arrayDim.height / oldArrayHeight + itemDim.width * arrayDim.height / itemDim.height;
+				arrayDim.height = Math.max(arrayDim.height, itemDim.height);
+				arrayDim.width += itemDim.width;
 			}
+
+			arrayDim.height = Math.min(Math.max(arrayDim.height, minRowHeight), maxRowHeight);
 
 			layout.add(new LayoutInfoArray(arrayLength, arrayDim));
 			groupDimension.height += arrayDim.height + itemSpacing.y;
 		}
 
-		grp = new LayoutInfoGroup(layout, groupDimension);
+		groupDimension.height += 50 + itemSpacing.y;
+
+		grp = new LayoutInfoGroup(layout, groupDimension, 50);
 		mLayoutCache.put(new Tuple<>(aWidth, aGroup), grp, 1);
 
 		return grp;
@@ -310,9 +318,9 @@ public class ListViewLayoutV2<T> extends AbstractListViewLayout<T>
 		return (LocationInfo)visit(new Visitor<T>()
 		{
 			@Override
-			public boolean group(Point aPosition, LayoutInfoGroup aGroup)
+			public boolean group(ListViewGroup<T> aGroup, Point aPosition, LayoutInfoGroup aGroupInfo)
 			{
-				return new Rectangle(aPosition.x, aPosition.y, aGroup.mDimension.width, aGroup.mDimension.height).contains(aLocation);
+				return new Rectangle(aPosition.x, aPosition.y, aGroupInfo.mDimension.width, aGroupInfo.mDimension.height).contains(aLocation);
 			}
 
 
@@ -358,7 +366,7 @@ public class ListViewLayoutV2<T> extends AbstractListViewLayout<T>
 		visit(new Visitor<T>()
 		{
 			@Override
-			public boolean group(Point aPosition, LayoutInfoGroup aLayout)
+			public boolean group(ListViewGroup<T> aGroup, Point aPosition, LayoutInfoGroup aLayout)
 			{
 				bounds.add(aPosition.x + aLayout.mDimension.width, aPosition.y + aLayout.mDimension.height);
 				return false;
@@ -476,9 +484,9 @@ public class ListViewLayoutV2<T> extends AbstractListViewLayout<T>
 		visit(new Visitor<T>()
 		{
 			@Override
-			public boolean group(Point aPosition, LayoutInfoGroup aGroup)
+			public boolean group(ListViewGroup<T> aGroup, Point aPosition, LayoutInfoGroup aGroupInfo)
 			{
-				return aRectangle.intersects(aPosition.x, aPosition.y, aGroup.mDimension.width, aGroup.mDimension.height);
+				return aRectangle.intersects(aPosition.x, aPosition.y, aGroupInfo.mDimension.width, aGroupInfo.mDimension.height);
 			}
 
 
@@ -532,16 +540,16 @@ public class ListViewLayoutV2<T> extends AbstractListViewLayout<T>
 		visitGroupX(mListView.getModel().getRoot(), mListView.getWidth(), new Visitor<T>()
 		{
 			@Override
-			public boolean group(Point aPosition, LayoutInfoGroup aGroup)
+			public boolean group(ListViewGroup<T> aGroup, Point aPosition, LayoutInfoGroup aGroupInfo)
 			{
 				if (result.item)
 				{
-					result.groupAfter = aGroup;
+					result.groupAfter = aGroupInfo;
 				}
 				else if (!result.item)
 				{
 					prevGroup2.set(prevGroup1.get());
-					prevGroup1.set(aGroup);
+					prevGroup1.set(aGroupInfo);
 				}
 				return true;
 			}
@@ -628,7 +636,7 @@ public class ListViewLayoutV2<T> extends AbstractListViewLayout<T>
 		visit(new Visitor<T>()
 		{
 			@Override
-			public boolean group(Point aPosition, LayoutInfoGroup aLayout)
+			public boolean group(ListViewGroup<T> aGroup, Point aPosition, LayoutInfoGroup aLayout)
 			{
 				return aLayout == h.group;
 			}
@@ -670,7 +678,7 @@ public class ListViewLayoutV2<T> extends AbstractListViewLayout<T>
 
 	private interface Visitor<T>
 	{
-		default boolean group(Point aPosition, LayoutInfoGroup aLayout)
+		default boolean group(ListViewGroup<T> aGroup, Point aPosition, LayoutInfoGroup aLayout)
 		{
 			return true;
 		}
@@ -693,12 +701,14 @@ public class ListViewLayoutV2<T> extends AbstractListViewLayout<T>
 	{
 		ArrayList<LayoutInfoArray> mArrays;
 		Dimension mDimension;
+		int mHeaderSize;
 
 
-		public LayoutInfoGroup(ArrayList<LayoutInfoArray> aArrays, Dimension aDimension)
+		public LayoutInfoGroup(ArrayList<LayoutInfoArray> aArrays, Dimension aDimension, int aHeaderSize)
 		{
 			mArrays = aArrays;
 			mDimension = aDimension;
+			mHeaderSize = aHeaderSize;
 		}
 	}
 

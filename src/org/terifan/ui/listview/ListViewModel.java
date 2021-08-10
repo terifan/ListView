@@ -763,6 +763,12 @@ public class ListViewModel<T> implements Iterable<T>
 	}
 
 
+	public void removeGroups()
+	{
+		mGroups.clear();
+	}
+
+
 	protected class ComparatorProxy<E> implements Comparator<E>
 	{
 		private int mColumnIndex;
