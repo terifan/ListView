@@ -8,6 +8,7 @@ import javax.swing.JComponent;
 import org.terifan.ui.listview.ListView;
 import org.terifan.ui.listview.ListViewCellRenderer;
 import org.terifan.ui.listview.ListViewColumn;
+import org.terifan.ui.listview.ListViewGroup;
 import org.terifan.ui.listview.ListViewItemRenderer;
 import org.terifan.ui.listview.ListViewLayout;
 import org.terifan.ui.listview.ListViewLayoutVertical;
@@ -187,6 +188,14 @@ public class DetailItemRenderer<T> extends ListViewItemRenderer<T>
 			aGraphics.setColor(isFocusOwner ? style.focusRect : style.focusRectUnfocused);
 			Utilities.drawFocusRect(aGraphics, aOriginX, aOriginY, aWidth, aHeight, false);
 		}
+	}
+
+
+	@Override
+	protected void paintGroup(Graphics2D aGraphics, int aOriginX, int aOriginY, int aWidth, int aHeight, ListView<T> aListView, ListViewGroup<T> aGroup)
+	{
+		aGraphics.setColor(Color.RED);
+		aGraphics.fillRect(aOriginX, aOriginY, aWidth, aHeight);
 	}
 
 

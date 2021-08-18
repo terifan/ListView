@@ -1,5 +1,6 @@
 package org.terifan.ui.listview.layout;
 
+import java.awt.Color;
 import org.terifan.ui.listview.ListViewLayoutHorizontal;
 import org.terifan.ui.listview.ListViewLayoutVertical;
 import java.awt.Dimension;
@@ -9,6 +10,7 @@ import java.util.Objects;
 import java.util.function.Function;
 import org.terifan.ui.listview.ListView;
 import org.terifan.ui.listview.ListViewColumn;
+import org.terifan.ui.listview.ListViewGroup;
 import org.terifan.ui.listview.ListViewIcon;
 import org.terifan.ui.listview.ListViewItemRenderer;
 import org.terifan.ui.listview.ListViewLayout;
@@ -137,14 +139,14 @@ public class ThumbnailItemRenderer<T> extends ListViewItemRenderer<T>
 		int y = aOriginY;
 		int w = aWidth;
 		int h = aHeight;
-		
+
 		int labelHeight = getLabelHeight(aItem);
-		
+
 		if (labelHeight < 0)
 		{
 			labelHeight = Math.abs(labelHeight * (aGraphics.getFontMetrics().getHeight() + 2));
 		}
-		
+
 		int itemHeight = mItemSize.height - labelHeight + mLabelHeight;
 
 		int sw = mItemSize.width + ITEM_PAD_HOR;
@@ -204,6 +206,14 @@ public class ThumbnailItemRenderer<T> extends ListViewItemRenderer<T>
 			aGraphics.setColor(aListView.getStyles().focusRect);
 			Utilities.drawFocusRect(aGraphics, sx, sy, sw, sh, false);
 		}
+	}
+
+
+	@Override
+	protected void paintGroup(Graphics2D aGraphics, int aOriginX, int aOriginY, int aWidth, int aHeight, ListView<T> aListView, ListViewGroup<T> aGroup)
+	{
+		aGraphics.setColor(Color.RED);
+		aGraphics.fillRect(aOriginX, aOriginY, aWidth, aHeight);
 	}
 
 

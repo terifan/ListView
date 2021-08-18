@@ -1,7 +1,6 @@
 package org.terifan.ui.listview;
 
 
-
 public class ListViewItemComparator<T>
 {
 	public int compare(ListViewModel<T> aModel, T o1, T o2)

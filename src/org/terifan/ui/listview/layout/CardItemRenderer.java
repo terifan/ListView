@@ -11,6 +11,7 @@ import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import org.terifan.ui.listview.ListView;
 import org.terifan.ui.listview.ListViewColumn;
+import org.terifan.ui.listview.ListViewGroup;
 import org.terifan.ui.listview.ListViewItemRenderer;
 import org.terifan.ui.listview.ListViewLayout;
 import org.terifan.ui.listview.ListViewModel;
@@ -151,7 +152,7 @@ public class CardItemRenderer<T> extends ListViewItemRenderer<T>
 		aOriginY += 6;
 		aWidth -= 6;
 		aHeight -= 6;
-		
+
 		int rh = mRowHeight + ROW_HEADER_PADDING;
 
 		BufferedImage backgroundImage;
@@ -215,6 +216,14 @@ public class CardItemRenderer<T> extends ListViewItemRenderer<T>
 				rowIndex++;
 			}
 		}
+	}
+
+
+	@Override
+	protected void paintGroup(Graphics2D aGraphics, int aOriginX, int aOriginY, int aWidth, int aHeight, ListView<T> aListView, ListViewGroup<T> aGroup)
+	{
+		aGraphics.setColor(Color.RED);
+		aGraphics.fillRect(aOriginX, aOriginY, aWidth, aHeight);
 	}
 
 

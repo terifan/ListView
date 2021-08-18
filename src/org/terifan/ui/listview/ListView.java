@@ -24,11 +24,13 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseWheelEvent;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import javax.swing.AbstractAction;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
+import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.JViewport;
 import javax.swing.KeyStroke;
@@ -66,14 +68,14 @@ public class ListView<T> extends JComponent implements Scrollable
 	private String mPlaceholder;
 	private ListViewMouseListener mMouseListener;
 	private ListViewPopupFactory<T> mPopupFactory;
-	private ArrayList<ViewAdjustmentListener> mAdjustmentListeners;
-	private SmoothScrollController mSmoothScroll;
 	private ViewportMonitor<T> mViewportMonitor;
 	private double mAdjustmentListenerExtraFactor;
-	private double mSmoothScrollSpeedMultiplier;
 	private MouseAdapter mSmoothScrollMouseAdapter;
 	private int mMinRowHeight;
 	private int mMaxRowHeight;
+	private double mSmoothScrollSpeedMultiplier;
+	private ArrayList<ViewAdjustmentListener> mAdjustmentListeners;
+	private SmoothScrollController mSmoothScroll;
 
 	@Deprecated
 	private Cache<ImageCacheKey, BufferedImage> mImageCache;
@@ -439,7 +441,7 @@ public class ListView<T> extends JComponent implements Scrollable
 						SwingUtilities.convertPointFromScreen(p1, ListView.this);
 						updateRollover(p1);
 					}
-
+//
 //					JScrollBar horizontalScrollBar = scrollPane.getHorizontalScrollBar();
 //					JScrollBar verticalScrollBar = scrollPane.getVerticalScrollBar();
 //
@@ -462,6 +464,10 @@ public class ListView<T> extends JComponent implements Scrollable
 			scrollPane.setCorner(ScrollPaneConstants.UPPER_LEFT_CORNER, new ListViewHeader(this, ListViewHeader.UPPER_LEFT_CORNER));
 			scrollPane.setCorner(ScrollPaneConstants.UPPER_RIGHT_CORNER, new ListViewHeader(this, ListViewHeader.UPPER_RIGHT_CORNER));
 			scrollPane.setBorder(null);
+
+			JScrollBar vsb = scrollPane.getVerticalScrollBar();
+			vsb.setUnitIncrement(mMinRowHeight);
+			vsb.setBlockIncrement(mMinRowHeight);
 		}
 	}
 
@@ -808,10 +814,9 @@ public class ListView<T> extends JComponent implements Scrollable
 	 */
 	public ArrayList<T> getItems()
 	{
-		final ArrayList<T> list = new ArrayList<>(mModel.getItemCount());
+		ArrayList<T> list = new ArrayList<>(mModel.getItemCount());
 
-		ItemVisitor<T> visitor = aItem
-			->
+		ItemVisitor<T> visitor = aItem ->
 		{
 			list.add(aItem);
 			return null;
@@ -1009,12 +1014,12 @@ public class ListView<T> extends JComponent implements Scrollable
 
 			if (aExtraFactor > 0)
 			{
-				int w = viewRect.width;
-				int h = viewRect.height;
-				viewRect.x -= aExtraFactor * w;
-				viewRect.width += 2 * aExtraFactor * w;
-				viewRect.y -= aExtraFactor * h;
-				viewRect.height += 2 * aExtraFactor * h;
+				int w = (int)(aExtraFactor * viewRect.width);
+				int h = (int)(aExtraFactor * viewRect.height);
+				viewRect.x -= w;
+				viewRect.y -= h;
+				viewRect.width += 2 * w;
+				viewRect.height += 2 * h;
 			}
 
 			mLayout.getItemsIntersecting(viewRect, list);
@@ -1136,39 +1141,38 @@ public class ListView<T> extends JComponent implements Scrollable
 
 	private class ViewportMonitor<T>
 	{
-		private ArrayList<T> mVisibleItems = new ArrayList<>();
-		private final ArrayList<T> mRemovedItems = new ArrayList<>();
-		private final ArrayList<T> mAddedItems = new ArrayList<>();
+		private HashSet<T> mVisibleItems = new HashSet<>();
+		private final HashSet<T> mRemovedItems = new HashSet<>();
+		private final HashSet<T> mAddedItems = new HashSet<>();
 
 
-		void register(ArrayList<T> aVisibleItems)
+		synchronized void register(ArrayList<T> aVisibleItems)
 		{
-			extractDifferences(aVisibleItems, mVisibleItems, mAddedItems);
-			extractDifferences(mVisibleItems, aVisibleItems, mRemovedItems);
-
-			mVisibleItems = aVisibleItems;
+			HashSet<T> v = new HashSet<>(aVisibleItems);
+			extractDifferences(v, mVisibleItems, mAddedItems);
+			extractDifferences(mVisibleItems, v, mRemovedItems);
+			mVisibleItems = v;
 
 			if (!mRemovedItems.isEmpty() || !mAddedItems.isEmpty())
 			{
 				for (ViewAdjustmentListener listener : mAdjustmentListeners)
 				{
-					listener.viewChanged(aVisibleItems, mAddedItems, mRemovedItems);
+					listener.viewChanged(mVisibleItems, mAddedItems, mRemovedItems);
 				}
 			}
 		}
 
 
-		private void extractDifferences(ArrayList<T> aListA, ArrayList<T> aListB, ArrayList<T> aOutput)
+		private void extractDifferences(Collection<T> aListA, Collection<T> aListB, Collection<T> aOutput)
 		{
 			aOutput.clear();
 
-			for (int i = 0; i < aListA.size(); i++)
+			for (T a : aListA)
 			{
-				T item = aListA.get(i);
 				boolean found = false;
-				for (int j = 0; j < aListB.size(); j++)
+				for (T b : aListB)
 				{
-					if (aListB.get(j) == item)
+					if (a == b)
 					{
 						found = true;
 						break;
@@ -1176,7 +1180,7 @@ public class ListView<T> extends JComponent implements Scrollable
 				}
 				if (!found)
 				{
-					aOutput.add(item);
+					aOutput.add(a);
 				}
 			}
 		}

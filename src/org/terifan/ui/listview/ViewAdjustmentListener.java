@@ -1,9 +1,9 @@
 package org.terifan.ui.listview;
 
-import java.util.Collection;
+import java.util.Set;
 
 
 public interface ViewAdjustmentListener<T>
 {
-	void viewChanged(Collection<T> aVisibleItems, Collection<T> aItemsEnteringView, Collection<T> aItemsLeavingView);
+	void viewChanged(Set<T> aVisibleItems, Set<T> aItemsEnteringView, Set<T> aItemsLeavingView);
 }

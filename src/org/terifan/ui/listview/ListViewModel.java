@@ -24,10 +24,12 @@ public class ListViewModel<T> implements Iterable<T>
 	protected Function<T, ListViewIcon> mItemIconFunction;
 	protected BiFunction<T, ListViewColumn<T>, Object> mItemValueFunction;
 	protected BiFunction<T, Integer, String> mItemTreeFunction;
+	private Comparator<T> mComparator;
+	private Comparator<T> mGroupComparator;
 
 
 	/**
-	 * Creates an unbound ListViewModel. It's necessary to call  the setItemValueFunction to provide a function to access item column values.
+	 * Creates an unbound ListViewModel. It's necessary to call the setItemValueFunction to provide a function to access item column values.
 	 */
 	public ListViewModel()
 	{
@@ -470,7 +472,6 @@ public class ListViewModel<T> implements Iterable<T>
 
 
 	// -- Tree -----------------
-
 	public ListViewGroup<T> getRoot()
 	{
 		if (mTree == null)
@@ -504,13 +505,48 @@ public class ListViewModel<T> implements Iterable<T>
 	}
 
 
+	public ListViewModel<T> setComparator(Comparator<T> aComparator)
+	{
+		mComparator = aComparator;
+		return this;
+	}
+
+
+	public ListViewModel<T> setGroupComparator(Comparator<T> aGroupComparator)
+	{
+		mGroupComparator = aGroupComparator;
+		return this;
+	}
+
+
 	protected void sortRecursive(ListViewGroup aParent, int aLevel)
 	{
 		SortedMap<Object, ListViewGroup> children = aParent.getChildren();
 
-		ArrayList list;
-		ListViewColumn column;
-		Comparator comparator;
+		if (mComparator != null)
+		{
+			if (children == null)
+			{
+				ArrayList<T> list = aParent.getItems();
+				Comparator<T> comparator = mComparator;
+
+				Collections.sort(list, comparator);
+			}
+			else
+			{
+				for (Object key : children.getKeys())
+				{
+					sortRecursive(children.get(key), aLevel + 1);
+				}
+
+				ArrayList<T> list = aParent.getChildren().getKeys();
+				Comparator<T> comparator = mGroupComparator != null ? mGroupComparator : mComparator;
+
+				Collections.sort(list, comparator);
+			}
+
+			return;
+		}
 
 		if (children == null)
 		{
@@ -518,9 +554,10 @@ public class ListViewModel<T> implements Iterable<T>
 			{
 				return;
 			}
-			column = mSortedColumn;
-			list = aParent.getItems();
-			comparator = column.getComparator();
+
+			ListViewColumn column = mSortedColumn;
+			ArrayList list = aParent.getItems();
+			Comparator comparator = column.getComparator();
 
 			Collections.sort(list, new ComparatorProxy(comparator, getColumnIndex(column), column.getSortOrder() == SortOrder.ASCENDING));
 		}
@@ -531,9 +568,9 @@ public class ListViewModel<T> implements Iterable<T>
 				sortRecursive(children.get(key), aLevel + 1);
 			}
 
-			column = mColumns.get(mGroups.get(aLevel));
-			list = aParent.getChildren().getKeys();
-			comparator = column.getGroupComparator() != null ? column.getGroupComparator() : column.getComparator();
+			ListViewColumn column = mColumns.get(mGroups.get(aLevel));
+			ArrayList list = aParent.getChildren().getKeys();
+			Comparator comparator = column.getGroupComparator() != null ? column.getGroupComparator() : column.getComparator();
 
 			Collections.sort(list, new ComparatorProxy(comparator, -1, column.getSortOrder() == SortOrder.ASCENDING));
 		}
@@ -723,6 +760,12 @@ public class ListViewModel<T> implements Iterable<T>
 		}
 
 		return null;
+	}
+
+
+	public void removeGroups()
+	{
+		mGroups.clear();
 	}
 
 
