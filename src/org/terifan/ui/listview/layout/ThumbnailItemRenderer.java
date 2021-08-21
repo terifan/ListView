@@ -19,7 +19,7 @@ import org.terifan.ui.listview.util.Anchor;
 import org.terifan.ui.listview.util.ImageResizer;
 import org.terifan.ui.listview.util.Orientation;
 import org.terifan.ui.listview.util.TextRenderer;
-import org.terifan.ui.listview.util.Utilities;
+import org.terifan.ui.listview.util.ListViewUtils;
 
 
 public class ThumbnailItemRenderer<T> extends ListViewItemRenderer<T>
@@ -204,7 +204,7 @@ public class ThumbnailItemRenderer<T> extends ListViewItemRenderer<T>
 		if (!selected && aListView.getFocusItem() == aItem)
 		{
 			aGraphics.setColor(aListView.getStyles().focusRect);
-			Utilities.drawFocusRect(aGraphics, sx, sy, sw, sh, false);
+			ListViewUtils.drawFocusRect(aGraphics, sx, sy, sw, sh, false);
 		}
 	}
 

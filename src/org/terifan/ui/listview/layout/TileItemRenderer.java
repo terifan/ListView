@@ -24,7 +24,7 @@ import org.terifan.ui.listview.ListViewModel;
 import org.terifan.ui.listview.util.Orientation;
 import org.terifan.ui.listview.Styles;
 import org.terifan.ui.listview.util.ImageResizer;
-import org.terifan.ui.listview.util.Utilities;
+import org.terifan.ui.listview.util.ListViewUtils;
 
 
 public class TileItemRenderer<T> extends ListViewItemRenderer<T>
@@ -181,7 +181,7 @@ public class TileItemRenderer<T> extends ListViewItemRenderer<T>
 	{
 		aGraphics.setColor(aFocusOwner ? aListView.getStyles().focusRect : aListView.getStyles().focusRectUnfocused);
 
-		Utilities.drawFocusRect(aGraphics, aOriginX, aOriginY, aWidth, aHeight, false);
+		ListViewUtils.drawFocusRect(aGraphics, aOriginX, aOriginY, aWidth, aHeight, false);
 	}
 
 

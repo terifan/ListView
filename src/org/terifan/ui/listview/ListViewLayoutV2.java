@@ -143,7 +143,7 @@ public class ListViewLayoutV2<T> extends AbstractListViewLayout<T>
 	{
 		aWidth -= 4;
 
-		aPosition.y += aLayoutInfoGroup.mHeaderSize + mListView.getItemRenderer().getItemSpacing(mListView).y;
+		aPosition.y += aLayoutInfoGroup.mHeaderSize;
 
 		ListViewItemRenderer<T> renderer = mListView.getItemRenderer();
 		Point itemSpacing = renderer.getItemSpacing(mListView);
@@ -303,9 +303,15 @@ public class ListViewLayoutV2<T> extends AbstractListViewLayout<T>
 			groupDimension.height += arrayDim.height + itemSpacing.y;
 		}
 
-		groupDimension.height += 50 + itemSpacing.y;
+		int gh = 0;
 
-		grp = new LayoutInfoGroup(layout, groupDimension, 50);
+		if (aGroup.getGroupKey() != null)
+		{
+			gh = 50 + itemSpacing.y;
+			groupDimension.height += gh;
+		}
+
+		grp = new LayoutInfoGroup(layout, groupDimension, gh);
 		mLayoutCache.put(new Tuple<>(aWidth, aGroup), grp, 1);
 
 		return grp;

@@ -18,7 +18,7 @@ import org.terifan.ui.listview.ListViewColumn;
 import org.terifan.ui.listview.ListViewIcon;
 import org.terifan.ui.listview.SelectionMode;
 import org.terifan.ui.listview.Styles;
-import org.terifan.ui.listview.util.Utilities;
+import org.terifan.ui.listview.util.ListViewUtils;
 
 
 public class DetailItemValueRenderer<T> extends JComponent implements ListViewCellRenderer<T>
@@ -230,7 +230,7 @@ public class DetailItemValueRenderer<T> extends JComponent implements ListViewCe
 	protected void paintFocusRectangle(Graphics aGraphics, int x, int y, int w, int h)
 	{
 		aGraphics.setColor(mListView.getStyles().focusRect);
-		Utilities.drawFocusRect(aGraphics, x, y, w, h, false);
+		ListViewUtils.drawFocusRect(aGraphics, x, y, w, h, false);
 	}
 
 

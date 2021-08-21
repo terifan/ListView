@@ -1,6 +1,6 @@
 package org.terifan.ui.listview;
 
-import org.terifan.ui.listview.util.Utilities;
+import org.terifan.ui.listview.util.ListViewUtils;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Font;
@@ -80,39 +80,39 @@ public class Styles
 	public Font headerFont = new Font("Segoe UI", Font.PLAIN, 11);
 	public Font labelFont = new Font("Segoe UI", Font.BOLD, 11);
 
-	public BufferedImage headerBackground = Utilities.loadImage(ColumnHeaderRenderer.class, "column_header_background_normal.png");
-	public BufferedImage headerBackgroundRollover = Utilities.loadImage(ColumnHeaderRenderer.class, "column_header_background_normal.png");
-	public BufferedImage headerBackgroundArmed = Utilities.loadImage(ColumnHeaderRenderer.class, "column_header_background_armed.png");
-	public BufferedImage headerBackgroundRolloverArmed = Utilities.loadImage(ColumnHeaderRenderer.class, "column_header_background_armed.png");
-	public BufferedImage headerBackgroundSorted = Utilities.loadImage(ColumnHeaderRenderer.class, "column_header_background_sorted.png");
-	public BufferedImage headerSeparator = Utilities.loadImage(ColumnHeaderRenderer.class, "column_header_seperator_normal.png");
-	public BufferedImage headerSeparatorArmed = Utilities.loadImage(ColumnHeaderRenderer.class, "column_header_seperator_armed.png");
+	public BufferedImage headerBackground = ListViewUtils.loadImage(ColumnHeaderRenderer.class, "column_header_background_normal.png");
+	public BufferedImage headerBackgroundRollover = ListViewUtils.loadImage(ColumnHeaderRenderer.class, "column_header_background_normal.png");
+	public BufferedImage headerBackgroundArmed = ListViewUtils.loadImage(ColumnHeaderRenderer.class, "column_header_background_armed.png");
+	public BufferedImage headerBackgroundRolloverArmed = ListViewUtils.loadImage(ColumnHeaderRenderer.class, "column_header_background_armed.png");
+	public BufferedImage headerBackgroundSorted = ListViewUtils.loadImage(ColumnHeaderRenderer.class, "column_header_background_sorted.png");
+	public BufferedImage headerSeparator = ListViewUtils.loadImage(ColumnHeaderRenderer.class, "column_header_seperator_normal.png");
+	public BufferedImage headerSeparatorArmed = ListViewUtils.loadImage(ColumnHeaderRenderer.class, "column_header_seperator_armed.png");
 
-	public BufferedImage groupCollapseIcon = Utilities.loadImage(ListViewGroupRenderer.class, "group_collapse_icon.png");
-	public BufferedImage groupExpandIcon = Utilities.loadImage(ListViewGroupRenderer.class, "group_expand_icon.png");
-	public BufferedImage sortAscendingIcon = Utilities.loadImage(ColumnHeaderRenderer.class, "sort_ascending_icon.png");
-	public BufferedImage sortDescendingIcon = Utilities.loadImage(ColumnHeaderRenderer.class, "sort_descending_icon.png");
+	public BufferedImage groupCollapseIcon = ListViewUtils.loadImage(ListViewGroupRenderer.class, "group_collapse_icon.png");
+	public BufferedImage groupExpandIcon = ListViewUtils.loadImage(ListViewGroupRenderer.class, "group_expand_icon.png");
+	public BufferedImage sortAscendingIcon = ListViewUtils.loadImage(ColumnHeaderRenderer.class, "sort_ascending_icon.png");
+	public BufferedImage sortDescendingIcon = ListViewUtils.loadImage(ColumnHeaderRenderer.class, "sort_descending_icon.png");
 
-	public BufferedImage cardBackgroundNormal = Utilities.loadImage(CardItemRenderer.class, "card_background_normal.png");
-	public BufferedImage cardBackgroundSelected = Utilities.loadImage(CardItemRenderer.class, "card_background_selected.png");
-	public BufferedImage cardHeaderNormal = Utilities.loadImage(CardItemRenderer.class, "card_header_normal.png");
-	public BufferedImage cardHeaderSelected = Utilities.loadImage(CardItemRenderer.class, "card_header_selected.png");
+	public BufferedImage cardBackgroundNormal = ListViewUtils.loadImage(CardItemRenderer.class, "card_background_normal.png");
+	public BufferedImage cardBackgroundSelected = ListViewUtils.loadImage(CardItemRenderer.class, "card_background_selected.png");
+	public BufferedImage cardHeaderNormal = ListViewUtils.loadImage(CardItemRenderer.class, "card_header_normal.png");
+	public BufferedImage cardHeaderSelected = ListViewUtils.loadImage(CardItemRenderer.class, "card_header_selected.png");
 
-	public BufferedImage thumbBorderNormal = Utilities.loadImage(ThumbnailItemRenderer.class, "thumb_border_1_normal.png");
-	public BufferedImage thumbBorderSelected = Utilities.loadImage(ThumbnailItemRenderer.class, "thumb_border_1_selected.png");
-	public BufferedImage thumbBorderSelectedBackground = Utilities.loadImage(ThumbnailItemRenderer.class, "thumb_border_1_selected_background.png");
-	public BufferedImage thumbBorderSelectedBackgroundFocused = Utilities.loadImage(ThumbnailItemRenderer.class, "thumb_border_1_selected_background_focused.png");
-	public BufferedImage thumbBorderSelectedBackgroundUnfocused = Utilities.loadImage(ThumbnailItemRenderer.class, "thumb_border_1_selected_background_unfocused.png");
+	public BufferedImage thumbBorderNormal = ListViewUtils.loadImage(ThumbnailItemRenderer.class, "thumb_border_1_normal.png");
+	public BufferedImage thumbBorderSelected = ListViewUtils.loadImage(ThumbnailItemRenderer.class, "thumb_border_1_selected.png");
+	public BufferedImage thumbBorderSelectedBackground = ListViewUtils.loadImage(ThumbnailItemRenderer.class, "thumb_border_1_selected_background.png");
+	public BufferedImage thumbBorderSelectedBackgroundFocused = ListViewUtils.loadImage(ThumbnailItemRenderer.class, "thumb_border_1_selected_background_focused.png");
+	public BufferedImage thumbBorderSelectedBackgroundUnfocused = ListViewUtils.loadImage(ThumbnailItemRenderer.class, "thumb_border_1_selected_background_unfocused.png");
 	public BufferedImage thumbPlaceholder;
 
-	public BufferedImage barNormal = Utilities.loadImage(ListViewBarRenderer.class, "bar_normal.png");
-	public BufferedImage barSelected = Utilities.loadImage(ListViewBarRenderer.class, "bar_selected.png");
+	public BufferedImage barNormal = ListViewUtils.loadImage(ListViewBarRenderer.class, "bar_normal.png");
+	public BufferedImage barSelected = ListViewUtils.loadImage(ListViewBarRenderer.class, "bar_selected.png");
 
 	public Font barFont = new Font("Ebrima", Font.BOLD, 14);
 	public Color barColor = new Color(21, 66, 139);
 
-	public Cursor cursorSplit = Toolkit.getDefaultToolkit().createCustomCursor(Utilities.loadImage(ListViewHeader.class, "cursor_split.png"), new Point(16,16), "split");
-	public Cursor cursorResize = Toolkit.getDefaultToolkit().createCustomCursor(Utilities.loadImage(ListViewHeader.class, "cursor_resize.png"), new Point(16,16), "resize");
+	public Cursor cursorSplit = Toolkit.getDefaultToolkit().createCustomCursor(ListViewUtils.loadImage(ListViewHeader.class, "cursor_split.png"), new Point(16,16), "split");
+	public Cursor cursorResize = Toolkit.getDefaultToolkit().createCustomCursor(ListViewUtils.loadImage(ListViewHeader.class, "cursor_resize.png"), new Point(16,16), "resize");
 
 	public Font placeholderFont = new Font("Segoe UI", Font.ITALIC, 12);
 	public Color placeholderColor = Color.BLACK;

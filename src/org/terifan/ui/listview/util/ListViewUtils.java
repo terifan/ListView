@@ -8,9 +8,9 @@ import java.net.URL;
 import javax.imageio.ImageIO;
 
 
-public final class Utilities
+public final class ListViewUtils
 {
-	private Utilities()
+	private ListViewUtils()
 	{
 	}
 

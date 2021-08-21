@@ -15,7 +15,7 @@ import org.terifan.ui.listview.ListViewLayoutVertical;
 import org.terifan.ui.listview.ListViewModel;
 import org.terifan.ui.listview.SelectionMode;
 import org.terifan.ui.listview.Styles;
-import org.terifan.ui.listview.util.Utilities;
+import org.terifan.ui.listview.util.ListViewUtils;
 
 
 public class DetailItemRenderer<T> extends ListViewItemRenderer<T>
@@ -186,7 +186,7 @@ public class DetailItemRenderer<T> extends ListViewItemRenderer<T>
 		if (aListView.getFocusItem() == aItem && (selectionMode == SelectionMode.ROW || selectionMode == SelectionMode.SINGLE_ROW))
 		{
 			aGraphics.setColor(isFocusOwner ? style.focusRect : style.focusRectUnfocused);
-			Utilities.drawFocusRect(aGraphics, aOriginX, aOriginY, aWidth, aHeight, false);
+			ListViewUtils.drawFocusRect(aGraphics, aOriginX, aOriginY, aWidth, aHeight, false);
 		}
 	}
 
