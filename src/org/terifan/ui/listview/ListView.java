@@ -506,10 +506,8 @@ public class ListView<T> extends JComponent implements Scrollable
 		{
 			return getParent() instanceof JViewport && (((JViewport)getParent()).getHeight() > getPreferredSize().height);
 		}
-		else
-		{
-			return getParent() instanceof JViewport && (((JViewport)getParent()).getHeight() > getMinimumSize().height);
-		}
+
+		return getParent() instanceof JViewport && (((JViewport)getParent()).getHeight() > getMinimumSize().height);
 	}
 
 
@@ -526,26 +524,24 @@ public class ListView<T> extends JComponent implements Scrollable
 
 
 	@Override
-	public int getScrollableUnitIncrement(Rectangle visibleRect, int orientation, int direction)
+	public int getScrollableUnitIncrement(Rectangle aVisibleRect, int aOrientation, int aDirection)
 	{
-		int v = orientation == SwingConstants.VERTICAL ? mItemRenderer.getItemPreferredHeight(this) : mItemRenderer.getItemPreferredWidth(this) + mItemRenderer.getItemSpacing(this).x;
+		int v = aOrientation == SwingConstants.VERTICAL ? mItemRenderer.getItemPreferredHeight(this) : mItemRenderer.getItemPreferredWidth(this) + mItemRenderer.getItemSpacing(this).x;
 		return (int)Math.ceil(v / 3.0);
 	}
 
 
 	@Override
-	public int getScrollableBlockIncrement(Rectangle visibleRect, int orientation, int direction)
+	public int getScrollableBlockIncrement(Rectangle aVisibleRect, int aOrientation, int aDirection)
 	{
 		if (getParent() instanceof JViewport)
 		{
 			JViewport vp = (JViewport)getParent();
-			return orientation == SwingConstants.VERTICAL ? vp.getHeight() : vp.getWidth();
+			return aOrientation == SwingConstants.VERTICAL ? vp.getHeight() : vp.getWidth();
 		}
-		else
-		{
-			int v = orientation == SwingConstants.VERTICAL ? mItemRenderer.getItemPreferredHeight(this) : mItemRenderer.getItemPreferredWidth(this) + mItemRenderer.getItemSpacing(this).x;
-			return (int)Math.ceil(v / 3.0);
-		}
+
+		int v = aOrientation == SwingConstants.VERTICAL ? mItemRenderer.getItemPreferredHeight(this) : mItemRenderer.getItemPreferredWidth(this) + mItemRenderer.getItemSpacing(this).x;
+		return (int)Math.ceil(v / 3.0);
 	}
 
 
