@@ -10,7 +10,6 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.function.BiFunction;
 import java.util.function.Function;
-import javax.swing.SortOrder;
 import org.terifan.ui.listview.util.EntityAccessor;
 
 

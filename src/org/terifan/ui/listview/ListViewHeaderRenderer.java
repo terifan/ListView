@@ -2,7 +2,6 @@ package org.terifan.ui.listview;
 
 import java.awt.Graphics;
 import java.io.Serializable;
-import javax.swing.SortOrder;
 
 
 public interface ListViewHeaderRenderer<T> extends Serializable

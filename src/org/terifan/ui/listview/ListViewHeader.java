@@ -8,7 +8,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 import javax.swing.JComponent;
-import javax.swing.SortOrder;
 import javax.swing.SwingUtilities;
 
 
@@ -202,37 +201,40 @@ public class ListViewHeader extends JComponent
 				ListViewModel model = mListView.getModel();
 				ListViewColumn column = model.getColumn(mArmedColumnIndex);
 
-				ListViewEvent event = new ListViewEvent(mListView, aEvent);
-				event.setListViewColumn(column);
-
-				mListView.fireSortedColumnWillChange(event);
-
-				if (model.getSortedColumn() == column)
+				if (column.getSortOrder() != SortOrder.DISABLED)
 				{
-					column.setSortOrder(column.getSortOrder() == SortOrder.ASCENDING ? SortOrder.DESCENDING : SortOrder.ASCENDING);
-				}
-				else
-				{
-					column.setSortOrder(column.getInitialSortOrder());
+					ListViewEvent event = new ListViewEvent(mListView, aEvent);
+					event.setListViewColumn(column);
 
-					model.setSortedColumn(column);
-				}
+					mListView.fireSortedColumnWillChange(event);
 
-				if (column.isGroupOnSort() && model.getGroupCount() > 0)
-				{
-					ListViewColumn newGroup = event.getListViewColumn();
-					if (!model.isGrouped(model.getColumnIndex(newGroup)))
+					if (model.getSortedColumn() == column)
 					{
-						ListViewColumn lastGroup = model.getColumn(model.getGroup(model.getGroupCount() - 1));
-						model.removeGroup(lastGroup);
-						model.addGroup(newGroup);
-						model.validate();
+						column.setSortOrder(column.getSortOrder() == SortOrder.ASCENDING ? SortOrder.DESCENDING : SortOrder.ASCENDING);
 					}
+					else
+					{
+						column.setSortOrder(column.getInitialSortOrder());
+
+						model.setSortedColumn(column);
+					}
+
+					if (column.isGroupOnSort() && model.getGroupCount() > 0)
+					{
+						ListViewColumn newGroup = event.getListViewColumn();
+						if (!model.isGrouped(model.getColumnIndex(newGroup)))
+						{
+							ListViewColumn lastGroup = model.getColumn(model.getGroup(model.getGroupCount() - 1));
+							model.removeGroup(lastGroup);
+							model.addGroup(newGroup);
+							model.validate();
+						}
+					}
+
+					model.sort();
+
+					mListView.fireSortedColumnChanged(event);
 				}
-
-				model.sort();
-
-				mListView.fireSortedColumnChanged(event);
 
 				repaint();
 				mListView.repaint();

@@ -7,7 +7,6 @@ import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
-import javax.swing.SortOrder;
 import org.terifan.ui.listview.util.Anchor;
 import org.terifan.ui.listview.util.ImageResizer;
 import org.terifan.ui.listview.util.TextRenderer;

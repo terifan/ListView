@@ -4,7 +4,6 @@ import org.terifan.ui.listview.util.Alignment;
 import java.awt.Font;
 import java.util.Comparator;
 import java.util.HashMap;
-import javax.swing.SortOrder;
 
 
 public class ListViewColumn<T>
