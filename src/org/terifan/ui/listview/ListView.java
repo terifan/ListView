@@ -464,6 +464,7 @@ public class ListView<T> extends JComponent implements Scrollable
 			scrollPane.setCorner(ScrollPaneConstants.UPPER_LEFT_CORNER, new ListViewHeader(this, ListViewHeader.UPPER_LEFT_CORNER));
 			scrollPane.setCorner(ScrollPaneConstants.UPPER_RIGHT_CORNER, new ListViewHeader(this, ListViewHeader.UPPER_RIGHT_CORNER));
 			scrollPane.setBorder(null);
+			scrollPane.setWheelScrollingEnabled(true);
 
 			JScrollBar vsb = scrollPane.getVerticalScrollBar();
 			vsb.setUnitIncrement(mMinRowHeight);

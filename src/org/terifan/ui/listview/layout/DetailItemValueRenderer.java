@@ -80,15 +80,11 @@ public class DetailItemValueRenderer<T> extends JComponent implements ListViewCe
 		BiFunction<T, Integer, String> itemTreeFunction = column.getModel().getItemTreeFunction();
 		int indentSize = mListView.getStyles().treeIndentSize;
 
-		String treePath = "";
-//		if (itemTreeFunction != null)
-//		{
-//			treePath = itemTreeFunction.apply(mItem, mColumnIndex);
-//		}
-//		if (treePath == null)
-//		{
-//			treePath = "";
-//		}
+		String treePath = null;
+		if (itemTreeFunction != null)
+		{
+			treePath = itemTreeFunction.apply(mItem, mColumnIndex);
+		}
 
 		Font oldFont = g.getFont();
 		Font font = style.itemFont;
@@ -131,9 +127,9 @@ public class DetailItemValueRenderer<T> extends JComponent implements ListViewCe
 		int rw = tr.width - column.getIconWidth() - computeIconTextSpacing(column) + 1;
 		int rh = rect.height;
 
-		if (itemTreeFunction != null)
+		if (treePath != null)
 		{
-//			drawTreePath(g, rx, ry, rh, indentSize, treePath);
+			drawTreePath(g, tr.x, ry, rh, indentSize, treePath);
 
 //			DetailViewTreeCode treeNode = treePath.isEmpty() ? null : DetailViewTreeCode.decode(treePath.charAt(treePath.length() - 1));
 //			if (treeNode != null && treeNode.getIcon() != 0)
@@ -187,7 +183,7 @@ public class DetailItemValueRenderer<T> extends JComponent implements ListViewCe
 	}
 
 
-	protected String computeLabelRect(ListViewColumn column, String value, int col, int x, int y, int w, int h, boolean aIncludeIcon, Rectangle aDestRectangle)
+	protected String computeLabelRect(ListViewColumn column, String value, int col, int x, int y, int w, int h, boolean aIncludeIcon, Rectangle oBounds)
 	{
 		String s = TextRenderer.clipString(value, mFontMetrics, Math.max(w - 4 - computeIconTextSpacing(column) - column.getIconWidth(), 1));
 		int sw = mFontMetrics.stringWidth(s);
@@ -208,20 +204,20 @@ public class DetailItemValueRenderer<T> extends JComponent implements ListViewCe
 
 		if (aIncludeIcon)
 		{
-			aDestRectangle.x = x;
-			aDestRectangle.width = sw + column.getIconWidth() + computeIconTextSpacing(column) + 3;
+			oBounds.x = x;
+			oBounds.width = sw + column.getIconWidth() + computeIconTextSpacing(column) + 3;
 		}
 		else
 		{
-			aDestRectangle.x = x + column.getIconWidth() + computeIconTextSpacing(column);
-			aDestRectangle.width = sw + 3;
+			oBounds.x = x + column.getIconWidth() + computeIconTextSpacing(column);
+			oBounds.width = sw + 3;
 		}
 
-		aDestRectangle.y = y + (h - mFontMetrics.getHeight()) / 2;
-		aDestRectangle.height = mFontMetrics.getHeight() + 1;
+		oBounds.y = y + (h - mFontMetrics.getHeight()) / 2;
+		oBounds.height = mFontMetrics.getHeight() + 1;
 
-		aDestRectangle.y = Math.max(aDestRectangle.y, y);
-		aDestRectangle.height = Math.min(aDestRectangle.y + aDestRectangle.height, y + h) - aDestRectangle.y;
+		oBounds.y = Math.max(oBounds.y, y);
+		oBounds.height = Math.min(oBounds.y + oBounds.height, y + h) - oBounds.y;
 
 		return s;
 	}
@@ -263,50 +259,60 @@ public class DetailItemValueRenderer<T> extends JComponent implements ListViewCe
 		Stroke oldStroke = aGraphics.getStroke();
 		Color oldColor = aGraphics.getColor();
 
-		aGraphics.setColor(Color.BLACK);
+		aGraphics.setColor(Color.GRAY);
 		aGraphics.setStroke((aY & 1) == 1 ? DOTTED_STROKE0 : DOTTED_STROKE1);
 
-//		for (int i = 0, sz = aTreePath.length(); i < sz; i++, x += w)
-//		{
-//			DetailViewTreeCode treeNode = DetailViewTreeCode.decode(aTreePath.charAt(i));
-//
-//			switch (treeNode)
-//			{
-//				case END:
-//				case END_P:
-//				case END_M:
-//					aGraphics.drawLine(x + 5, y, x + 5, y + m);
-//					aGraphics.setStroke((aY & 1) == 0 ? DOTTED_STROKE0 : DOTTED_STROKE1);
-//					aGraphics.drawLine(x + 5, y + m, x + w, y + m);
-//					break;
-//				case BRANCH:
-//				case BRANCH_P:
-//				case BRANCH_M:
-//					aGraphics.drawLine(x + 5, y, x + 5, y + h);
-//					aGraphics.setStroke((aY & 1) == 0 ? DOTTED_STROKE0 : DOTTED_STROKE1);
-//					aGraphics.drawLine(x + 5, y + m, x + w, y + m);
-//					break;
-//				case START:
-//				case START_M:
-//				case START_P:
-//					aGraphics.setStroke((aY & 1) == 0 ? DOTTED_STROKE0 : DOTTED_STROKE1);
-//					aGraphics.drawLine(x + 5, y + m, x + w, y + m);
-//					break;
-//				case PASS:
-//					aGraphics.drawLine(x + 5, y, x + 5, y + h);
-//					break;
-//				case HOR:
-//					aGraphics.drawLine(x, y + m, x + w, y + m);
-//					break;
-//				case SPACE:
-//					break;
-//			}
-//
-//			if (i == sz - 1)
-//			{
-//				drawElementTreeIcon(aGraphics, oldStroke, x + 1, y, m, 2);
-//			}
-//		}
+		for (int i = 0, sz = aTreePath.length(); i < sz; i++, x += w)
+		{
+			switch (aTreePath.charAt(i))
+			{
+				// .|
+				// .+-
+				// .
+				case '/':
+					aGraphics.drawLine(x + 5, y, x + 5, y + m);
+					aGraphics.setStroke((aY & 1) == 0 ? DOTTED_STROKE0 : DOTTED_STROKE1);
+					aGraphics.drawLine(x + 5, y + m, x + w, y + m);
+					break;
+				// .|
+				// .+--
+				// .|
+				case 'o':
+				case '+':
+					aGraphics.drawLine(x + 5, y, x + 5, y + h);
+					aGraphics.setStroke((aY & 1) == 0 ? DOTTED_STROKE0 : DOTTED_STROKE1);
+					aGraphics.drawLine(x + 5, y + m, x + w, y + m);
+					break;
+				// .
+				// ---
+				// .
+				case '-':
+					aGraphics.setStroke((aY & 1) == 0 ? DOTTED_STROKE0 : DOTTED_STROKE1);
+					aGraphics.drawLine(x + 5, y + m, x + w, y + m);
+					break;
+				// .|
+				// .|
+				// .|
+				case '|':
+					aGraphics.drawLine(x + 5, y, x + 5, y + h);
+					break;
+				// .
+				// .--
+				// .
+				case '*':
+					aGraphics.drawLine(x, y + m, x + w, y + m);
+					break;
+				case ' ':
+					break;
+				default:
+					System.err.println("Bad indentation code: \"" + aTreePath + "\"");
+			}
+
+			if (i == sz - 1 && (aTreePath.charAt(i) == '-' || aTreePath.charAt(i) == '+'))
+			{
+				drawElementTreeIcon(aGraphics, oldStroke, x + 1, y, m, aTreePath.charAt(i) == '+' ? 2 : 1);
+			}
+		}
 
 		aGraphics.setColor(oldColor);
 		aGraphics.setStroke(oldStroke);
