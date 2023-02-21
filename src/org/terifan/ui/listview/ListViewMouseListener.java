@@ -4,6 +4,7 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseWheelEvent;
 import java.util.ArrayList;
 import java.util.HashSet;
 import javax.swing.SwingUtilities;
@@ -152,6 +153,13 @@ class ListViewMouseListener<T> extends MouseAdapter
 		{
 			processDragged(aEvent);
 		}
+	}
+
+
+	@Override
+	public void mouseWheelMoved(MouseWheelEvent aEvent)
+	{
+		mListView.smoothScroll(aEvent.getWheelRotation());
 	}
 
 

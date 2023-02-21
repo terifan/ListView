@@ -99,13 +99,12 @@ public class ListView<T> extends JComponent implements Scrollable
 
 		mMinRowHeight = 0;
 		mMaxRowHeight = Integer.MAX_VALUE;
+		mMouseListener = new ListViewMouseListener(this);
 
 		super.setOpaque(true);
 		super.setFocusable(true);
 		super.setBackground(mStyles.itemBackground);
 		super.setForeground(mStyles.itemForeground);
-
-		mMouseListener = new ListViewMouseListener(this);
 		super.addMouseListener(mMouseListener);
 		super.addMouseMotionListener(mMouseListener);
 		super.addKeyListener(new ListViewKeyListener(this));
@@ -466,9 +465,12 @@ public class ListView<T> extends JComponent implements Scrollable
 			scrollPane.setBorder(null);
 			scrollPane.setWheelScrollingEnabled(true);
 
-			JScrollBar vsb = scrollPane.getVerticalScrollBar();
-			vsb.setUnitIncrement(mMinRowHeight);
-			vsb.setBlockIncrement(mMinRowHeight);
+			if (mMinRowHeight > 0)
+			{
+				JScrollBar vsb = scrollPane.getVerticalScrollBar();
+				vsb.setUnitIncrement(mMinRowHeight);
+//				vsb.setBlockIncrement(mMinRowHeight);
+			}
 		}
 	}
 
@@ -1077,12 +1079,21 @@ public class ListView<T> extends JComponent implements Scrollable
 
 	public void smoothScroll(double aPreciseWheelRotation)
 	{
-		SmoothScrollController ss = mSmoothScroll;
-		if (ss == null)
+		if (mSmoothScrollMouseAdapter == null)
 		{
-			mSmoothScroll = ss = new SmoothScrollController(this, 10, (int)(mSmoothScrollSpeedMultiplier * (mItemRenderer.getItemPreferredHeight(this) + mItemRenderer.getItemSpacing(this).y)), 500);
+			Rectangle bounds = getVisibleRect();
+			bounds.y += aPreciseWheelRotation * getEnclosingScrollPane().getVerticalScrollBar().getUnitIncrement();
+			scrollRectToVisible(bounds);
 		}
-		ss.smoothScroll(aPreciseWheelRotation);
+		else
+		{
+			SmoothScrollController ss = mSmoothScroll;
+			if (ss == null)
+			{
+				mSmoothScroll = ss = new SmoothScrollController(this, 10, (int)(mSmoothScrollSpeedMultiplier * (mItemRenderer.getItemPreferredHeight(this) + mItemRenderer.getItemSpacing(this).y)), 500);
+			}
+			ss.smoothScroll(aPreciseWheelRotation);
+		}
 	}
 
 
