@@ -120,7 +120,7 @@ public class DetailItemValueRenderer<T> extends JComponent implements ListViewCe
 		}
 
 //		Color background = getBackground();
-		Color background = (mListView.getModel().indexOf(mItem) & 1) == 0 ? getBackground() : new Color(250, 250, 250);
+		Color background = (mListView.getModel().indexOf(mItem) & 1) == 0 ? getBackground() : new Color(242, 242, 242);
 
 		Color cellBackground = Colors.getCellBackground(mListView.getStyles(), mListView.getSelectionMode(), mIsSorted, mIsSelected, mIsRollover, mIsFocused, true, background);
 		Color textForeground = Colors.getTextForeground(mListView.getStyles(), mListView.getSelectionMode(), mIsSorted, mIsSelected, mIsRollover, mIsFocused, true, getForeground());
