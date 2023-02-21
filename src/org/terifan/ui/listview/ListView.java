@@ -79,6 +79,8 @@ public class ListView<T> extends JComponent implements Scrollable
 
 	@Deprecated
 	private transient Cache<ImageCacheKey, BufferedImage> mImageCache;
+	private boolean mTreePathVisible;
+	private boolean mTreePathDotted;
 
 
 	public ListView()
@@ -667,9 +669,10 @@ public class ListView<T> extends JComponent implements Scrollable
 	}
 
 
-	public synchronized void addListViewListener(ListViewListener aListViewListener)
+	public synchronized ListView<T> addListViewListener(ListViewListener aListViewListener)
 	{
 		mEventListeners.add(aListViewListener);
+		return this;
 	}
 
 
@@ -1148,6 +1151,33 @@ public class ListView<T> extends JComponent implements Scrollable
 			monitor.register(getVisibleItems(mAdjustmentListenerExtraFactor));
 		}
 	}
+
+
+	public boolean isTreePathVisible()
+	{
+		return mTreePathVisible;
+	}
+
+
+	public ListView<T> setTreePathVisible(boolean aTreePathVisible)
+	{
+		mTreePathVisible = aTreePathVisible;
+		return this;
+	}
+
+
+	public boolean isTreePathDotted()
+	{
+		return mTreePathDotted;
+	}
+
+
+	public ListView<T> setTreePathDotted(boolean aTreePathDotted)
+	{
+		mTreePathDotted = aTreePathDotted;
+		return this;
+	}
+
 
 
 	private class ViewportMonitor<T>

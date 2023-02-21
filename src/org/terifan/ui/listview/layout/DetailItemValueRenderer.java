@@ -47,7 +47,6 @@ public class DetailItemValueRenderer<T> extends JComponent implements ListViewCe
 	protected FontMetrics mFontMetrics;
 	protected int mIconTextSpacing;
 	protected Color mTreeColor;
-	protected boolean mDottedTree;
 
 
 	public DetailItemValueRenderer()
@@ -57,7 +56,6 @@ public class DetailItemValueRenderer<T> extends JComponent implements ListViewCe
 		setBackground(Color.WHITE);
 		setForeground(Color.BLACK);
 		mTreeColor = Color.GRAY;
-		mDottedTree = true;
 	}
 
 
@@ -138,7 +136,10 @@ public class DetailItemValueRenderer<T> extends JComponent implements ListViewCe
 
 		if (treePath != null)
 		{
-			drawTreePath(g, tr.x, ry, rh, indentSize, treePath);
+			if (mListView.isTreePathVisible())
+			{
+				drawTreePath(g, tr.x, ry, rh, indentSize, treePath);
+			}
 
 //			DetailViewTreeCode treeNode = treePath.isEmpty() ? null : DetailViewTreeCode.decode(treePath.charAt(treePath.length() - 1));
 //			if (treeNode != null && treeNode.getIcon() != 0)
@@ -263,6 +264,7 @@ public class DetailItemValueRenderer<T> extends JComponent implements ListViewCe
 		int w = aIndent;
 		int h = aHeight;
 		int m = h / 2;
+		boolean treePathDotted = mListView.isTreePathDotted();
 
 		Stroke oldStroke = aGraphics.getStroke();
 		Color oldColor = aGraphics.getColor();
@@ -271,7 +273,7 @@ public class DetailItemValueRenderer<T> extends JComponent implements ListViewCe
 
 		for (int i = 0, sz = aTreePath.length(); i < sz; i++, x += w)
 		{
-			if (mDottedTree)
+			if (treePathDotted)
 			{
 				aGraphics.setStroke((aY & 1) == 1 ? DOTTED_STROKE0 : DOTTED_STROKE1);
 			}
@@ -285,7 +287,7 @@ public class DetailItemValueRenderer<T> extends JComponent implements ListViewCe
 				case '/':
 				case '#':
 					aGraphics.drawLine(x + 5, y - 1, x + 5, y + m);
-					if (mDottedTree)
+					if (treePathDotted)
 					{
 						aGraphics.setStroke((aY & 1) == 1 ? DOTTED_STROKE0 : DOTTED_STROKE1);
 					}
@@ -298,7 +300,7 @@ public class DetailItemValueRenderer<T> extends JComponent implements ListViewCe
 				case '+':
 				case '-':
 					aGraphics.drawLine(x + 5, y - 1, x + 5, y + h);
-					if (mDottedTree)
+					if (treePathDotted)
 					{
 						aGraphics.setStroke((aY & 1) == 1 ? DOTTED_STROKE0 : DOTTED_STROKE1);
 					}
