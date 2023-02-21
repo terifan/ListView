@@ -15,6 +15,8 @@ import org.terifan.ui.listview.util.TextRenderer;
 
 public class ColumnHeaderRenderer implements ListViewHeaderRenderer
 {
+	private final static long serialVersionUID = 1L;
+
 	protected boolean mExtendLastItem;
 
 
@@ -93,14 +95,14 @@ public class ColumnHeaderRenderer implements ListViewHeaderRenderer
 
 		Color fg = aIsArmed ? style.headerForegroundArmed : style.headerForeground;
 		Color bg = null;
-		int tx = x + (aIsArmed ? 1 : 0) + 1;
+		int tx = x + (aIsArmed ? 1 : 0) + 1 + 5;
 		int ty = y + (aIsArmed ? 1 : 0) + 1;
 		int tw = w - (aSorting != SortOrder.UNSORTED ? 10 + sortIcon.getWidth() : 0) - 2;
 		Rectangle rect = TextRenderer.drawString(aGraphics, aColumn.getLabel(), tx, ty, tw, h, Anchor.WEST, fg, bg, false);
 
 		if (aSorting != SortOrder.UNSORTED)
 		{
-			aGraphics.drawImage(sortIcon, x + (aIsArmed ? 1 : 0) + rect.width + 5, (h - sortIcon.getHeight()) / 2 + (aIsArmed ? 1 : 0), null);
+			aGraphics.drawImage(sortIcon, x + (aIsArmed ? 1 : 0) + rect.width + 5 + 5, (h - sortIcon.getHeight()) / 2 + (aIsArmed ? 1 : 0), null);
 		}
 
 		if (!aLastColumn || !getExtendLastItem())

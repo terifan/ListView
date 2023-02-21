@@ -3,6 +3,8 @@ package org.terifan.ui.listview;
 
 public abstract class AbstractListViewLayout<T> implements ListViewLayout<T>
 {
+	private final static long serialVersionUID = 1L;
+
 	protected ListView<T> mListView;
 
 

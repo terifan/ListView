@@ -14,6 +14,8 @@ import javax.swing.SwingUtilities;
 
 public class ListViewHeader extends JComponent
 {
+	private final static long serialVersionUID = 1L;
+
 	public final static String COLUMN_HEADER = "column_header";
 	public final static String ROW_HEADER = "row_header";
 	public final static String UPPER_LEFT_CORNER = "upper_left_corner";
@@ -118,7 +120,7 @@ public class ListViewHeader extends JComponent
 
 						x += w;
 					}
-				}	
+				}
 				if (getWidth() - x > 0)
 				{
 					renderer.paintColumnHeaderTrailing(mListView, aGraphics, x, 0, getWidth() - x, getHeight());

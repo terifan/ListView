@@ -8,6 +8,8 @@ import javax.swing.JComponent;
 
 public class ListViewBar extends JComponent
 {
+	private final static long serialVersionUID = 1L;
+
 	private ListView mListView;
 
 

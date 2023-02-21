@@ -296,6 +296,7 @@ public class DetailItemValueRenderer<T> extends JComponent implements ListViewCe
 				// .|
 				case 'o':
 				case '+':
+				case '-':
 					aGraphics.drawLine(x + 5, y - 1, x + 5, y + h);
 					if (mDottedTree)
 					{
@@ -306,13 +307,13 @@ public class DetailItemValueRenderer<T> extends JComponent implements ListViewCe
 				// .
 				// ---
 				// .
-				case '-':
-					if (mDottedTree)
-					{
-						aGraphics.setStroke((aY & 1) == 1 ? DOTTED_STROKE0 : DOTTED_STROKE1);
-					}
-					aGraphics.drawLine(x + 5, y + m, x + w, y + m);
-					break;
+//				case '-':
+//					if (mDottedTree)
+//					{
+//						aGraphics.setStroke((aY & 1) == 1 ? DOTTED_STROKE0 : DOTTED_STROKE1);
+//					}
+//					aGraphics.drawLine(x + 5, y + m, x + w, y + m);
+//					break;
 				// .|
 				// .|
 				// .|

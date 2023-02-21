@@ -12,6 +12,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class ListViewLayoutVertical<T> extends AbstractListViewLayout<T>
 {
+	private final static long serialVersionUID = 1L;
+
 	protected Dimension mPreferredSize;
 	protected Dimension mMinimumSize;
 	protected int mMaxItemsPerRow;

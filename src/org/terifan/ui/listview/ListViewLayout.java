@@ -13,25 +13,36 @@ public interface ListViewLayout<T> extends Serializable
 {
 	Orientation getLayoutOrientation();
 
+
 	void paint(Graphics2D aGraphics);
+
 
 	Dimension getPreferredSize();
 
+
 	Dimension getMinimumSize();
+
 
 	LocationInfo<T> getLocationInfo(Point aLocation);
 
+
 	int getMarginLeft();
+
 
 	T getItemRelativeTo(T aItem, int aDiffX, int aDiffY);
 
+
 	ArrayList<T> getItemsIntersecting(T aFromItem, T aToItem);
+
 
 	ArrayList<T> getItemsIntersecting(Rectangle aRectangle, ArrayList<T> aList);
 
+
 	boolean getItemBounds(T aItem, Rectangle aRectangle);
 
+
 	T getFirstItem();
+
 
 	T getLastItem();
 }

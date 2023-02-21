@@ -15,6 +15,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class ListViewLayoutHorizontal<T> extends AbstractListViewLayout<T>
 {
+	private final static long serialVersionUID = 1L;
+
 	protected Dimension mPreferredSize;
 
 
