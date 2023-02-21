@@ -21,6 +21,7 @@ import org.terifan.ui.listview.util.ListViewUtils;
 public class DetailItemRenderer<T> extends ListViewItemRenderer<T>
 {
 	protected boolean mExtendLastItem;
+	protected int mExtraHeight;
 
 
 	public DetailItemRenderer<T> setExtendLastItem(boolean aExtendLastItem)
@@ -33,6 +34,19 @@ public class DetailItemRenderer<T> extends ListViewItemRenderer<T>
 	public boolean getExtendLastItem()
 	{
 		return mExtendLastItem;
+	}
+
+
+	public DetailItemRenderer<T> setExtraHeight(int aExtraHeight)
+	{
+		mExtraHeight = aExtraHeight;
+		return this;
+	}
+
+
+	public int getExtraHeight()
+	{
+		return mExtraHeight;
 	}
 
 
@@ -70,7 +84,7 @@ public class DetailItemRenderer<T> extends ListViewItemRenderer<T>
 	@Override
 	public int getItemMinimumHeight(ListView aListView)
 	{
-		return aListView.getStyles().itemHeight;
+		return aListView.getStyles().itemHeight + mExtraHeight;
 	}
 
 
@@ -98,7 +112,7 @@ public class DetailItemRenderer<T> extends ListViewItemRenderer<T>
 	@Override
 	public int getItemHeight(ListView<T> aListView, T aItem)
 	{
-		return aListView.getStyles().itemHeight;
+		return aListView.getStyles().itemHeight + mExtraHeight;
 	}
 
 
