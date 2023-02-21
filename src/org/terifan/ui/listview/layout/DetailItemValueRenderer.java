@@ -44,6 +44,8 @@ public class DetailItemValueRenderer<T> extends JComponent implements ListViewCe
 	protected int mColumnIndex;
 	protected FontMetrics mFontMetrics;
 	protected int mIconTextSpacing;
+	protected Color mTreeColor;
+	protected boolean mDottedTree;
 
 
 	public DetailItemValueRenderer()
@@ -52,6 +54,8 @@ public class DetailItemValueRenderer<T> extends JComponent implements ListViewCe
 		setOpaque(true);
 		setBackground(Color.WHITE);
 		setForeground(Color.BLACK);
+		mTreeColor = Color.GRAY;
+		mDottedTree = true;
 	}
 
 
@@ -113,7 +117,10 @@ public class DetailItemValueRenderer<T> extends JComponent implements ListViewCe
 			mIsSelected = false;
 		}
 
-		Color cellBackground = Colors.getCellBackground(mListView.getStyles(), mListView.getSelectionMode(), mIsSorted, mIsSelected, mIsRollover, mIsFocused, true, getBackground());
+//		Color background = getBackground();
+		Color background = (mListView.getModel().indexOf(mItem) & 1) == 0 ? getBackground() : new Color(250, 250, 250);
+
+		Color cellBackground = Colors.getCellBackground(mListView.getStyles(), mListView.getSelectionMode(), mIsSorted, mIsSelected, mIsRollover, mIsFocused, true, background);
 		Color textForeground = Colors.getTextForeground(mListView.getStyles(), mListView.getSelectionMode(), mIsSorted, mIsSelected, mIsRollover, mIsFocused, true, getForeground());
 
 		if (cellBackground != null)
@@ -137,7 +144,6 @@ public class DetailItemValueRenderer<T> extends JComponent implements ListViewCe
 //				g.setColor(new Color(255,0,0,128));
 //				g.fillRect(rx + (treePath.length() - 1) * indentSize, ry, 20, rh);
 //			}
-
 			rx += treePath.length() * indentSize;
 			tr.x += treePath.length() * indentSize;
 		}
@@ -259,19 +265,28 @@ public class DetailItemValueRenderer<T> extends JComponent implements ListViewCe
 		Stroke oldStroke = aGraphics.getStroke();
 		Color oldColor = aGraphics.getColor();
 
-		aGraphics.setColor(Color.GRAY);
-		aGraphics.setStroke((aY & 1) == 1 ? DOTTED_STROKE0 : DOTTED_STROKE1);
+		aGraphics.setColor(mTreeColor);
 
 		for (int i = 0, sz = aTreePath.length(); i < sz; i++, x += w)
 		{
-			switch (aTreePath.charAt(i))
+			if (mDottedTree)
+			{
+				aGraphics.setStroke((aY & 1) == 1 ? DOTTED_STROKE0 : DOTTED_STROKE1);
+			}
+
+			char c = aTreePath.charAt(i);
+			switch (c)
 			{
 				// .|
 				// .+-
 				// .
 				case '/':
-					aGraphics.drawLine(x + 5, y, x + 5, y + m);
-					aGraphics.setStroke((aY & 1) == 0 ? DOTTED_STROKE0 : DOTTED_STROKE1);
+				case '#':
+					aGraphics.drawLine(x + 5, y - 1, x + 5, y + m);
+					if (mDottedTree)
+					{
+						aGraphics.setStroke((aY & 1) == 1 ? DOTTED_STROKE0 : DOTTED_STROKE1);
+					}
 					aGraphics.drawLine(x + 5, y + m, x + w, y + m);
 					break;
 				// .|
@@ -279,22 +294,28 @@ public class DetailItemValueRenderer<T> extends JComponent implements ListViewCe
 				// .|
 				case 'o':
 				case '+':
-					aGraphics.drawLine(x + 5, y, x + 5, y + h);
-					aGraphics.setStroke((aY & 1) == 0 ? DOTTED_STROKE0 : DOTTED_STROKE1);
+					aGraphics.drawLine(x + 5, y - 1, x + 5, y + h);
+					if (mDottedTree)
+					{
+						aGraphics.setStroke((aY & 1) == 1 ? DOTTED_STROKE0 : DOTTED_STROKE1);
+					}
 					aGraphics.drawLine(x + 5, y + m, x + w, y + m);
 					break;
 				// .
 				// ---
 				// .
 				case '-':
-					aGraphics.setStroke((aY & 1) == 0 ? DOTTED_STROKE0 : DOTTED_STROKE1);
+					if (mDottedTree)
+					{
+						aGraphics.setStroke((aY & 1) == 1 ? DOTTED_STROKE0 : DOTTED_STROKE1);
+					}
 					aGraphics.drawLine(x + 5, y + m, x + w, y + m);
 					break;
 				// .|
 				// .|
 				// .|
 				case '|':
-					aGraphics.drawLine(x + 5, y, x + 5, y + h);
+					aGraphics.drawLine(x + 5, y - 1, x + 5, y + h + 1);
 					break;
 				// .
 				// .--
@@ -308,9 +329,9 @@ public class DetailItemValueRenderer<T> extends JComponent implements ListViewCe
 					System.err.println("Bad indentation code: \"" + aTreePath + "\"");
 			}
 
-			if (i == sz - 1 && (aTreePath.charAt(i) == '-' || aTreePath.charAt(i) == '+'))
+			if (i == sz - 1 && (c == '-' || c == '+' || c == '/'))
 			{
-				drawElementTreeIcon(aGraphics, oldStroke, x + 1, y, m, aTreePath.charAt(i) == '+' ? 2 : 1);
+				drawElementTreeIcon(aGraphics, oldStroke, x + 1, y, m, c == '+' ? 2 : 1);
 			}
 		}
 

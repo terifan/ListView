@@ -23,9 +23,10 @@ public class DetailItemRenderer<T> extends ListViewItemRenderer<T>
 	protected boolean mExtendLastItem;
 
 
-	public void setExtendLastItem(boolean aExtendLastItem)
+	public DetailItemRenderer<T> setExtendLastItem(boolean aExtendLastItem)
 	{
 		mExtendLastItem = aExtendLastItem;
+		return this;
 	}
 
 
