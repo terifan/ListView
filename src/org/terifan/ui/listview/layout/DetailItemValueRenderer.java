@@ -33,10 +33,12 @@ public class DetailItemValueRenderer<T> extends JComponent implements ListViewCe
 		1f
 	}, 1.5f);
 
+	private final static long serialVersionUID = 1L;
+
 	private Rectangle mTempRectangle = new Rectangle();
 
 	protected ListView mListView;
-	protected T mItem;
+	protected transient T mItem;
 	protected boolean mIsSelected;
 	protected boolean mIsFocused;
 	protected boolean mIsRollover;

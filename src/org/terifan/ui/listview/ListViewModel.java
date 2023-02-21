@@ -1,5 +1,6 @@
 package org.terifan.ui.listview;
 
+import java.io.Serializable;
 import org.terifan.ui.listview.util.SortedMap;
 import java.util.Iterator;
 import java.util.ArrayList;
@@ -13,8 +14,10 @@ import javax.swing.SortOrder;
 import org.terifan.ui.listview.util.EntityAccessor;
 
 
-public class ListViewModel<T> implements Iterable<T>
+public class ListViewModel<T> implements Iterable<T>, Serializable
 {
+	private final static long serialVersionUID = 1L;
+
 	protected final ArrayList<ListViewColumn> mColumns;
 	protected final ArrayList<Integer> mGroups;
 	protected final ArrayList<T> mItems;

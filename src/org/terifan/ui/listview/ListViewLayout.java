@@ -5,10 +5,11 @@ import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.io.Serializable;
 import java.util.ArrayList;
 
 
-public interface ListViewLayout<T>
+public interface ListViewLayout<T> extends Serializable
 {
 	Orientation getLayoutOrientation();
 

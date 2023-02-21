@@ -1,11 +1,14 @@
 package org.terifan.ui.listview;
 
+import java.io.Serializable;
 import org.terifan.ui.listview.util.SortedMap;
 import java.util.ArrayList;
 
 
-public class ListViewGroup<T>
+public class ListViewGroup<T> implements Serializable
 {
+	private final static long serialVersionUID = 1L;
+
 	protected final ListViewModel<T> mModel;
 	protected final ListViewGroup<T> mParent;
 	protected final Object mGroupKey;

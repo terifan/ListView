@@ -3,12 +3,15 @@ package org.terifan.ui.listview;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
+import java.io.Serializable;
 import javax.swing.Icon;
 import org.terifan.ui.listview.util.ImageResizer;
 
 
-public class ListViewBarRenderer
+public class ListViewBarRenderer implements Serializable
 {
+	private final static long serialVersionUID = 1L;
+
 	private String mTitle;
 	private Icon mIcon;
 

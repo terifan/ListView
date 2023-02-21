@@ -7,12 +7,15 @@ import java.awt.Font;
 import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
+import java.io.Serializable;
 import org.terifan.ui.listview.layout.CardItemRenderer;
 import org.terifan.ui.listview.layout.ThumbnailItemRenderer;
 
 
-public class Styles
+public class Styles implements Serializable
 {
+	private final static long serialVersionUID = 1L;
+
 	public int itemHeight = 19;
 	public int horizontalBarHeight = 22;
 	public int verticalBarWidth = 15;

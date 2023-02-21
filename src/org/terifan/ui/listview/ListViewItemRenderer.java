@@ -3,10 +3,14 @@ package org.terifan.ui.listview;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Point;
+import java.io.Serializable;
 
 
-public abstract class ListViewItemRenderer<T>
+public abstract class ListViewItemRenderer<T> implements Serializable
 {
+	private final static long serialVersionUID = 1L;
+
+
 	protected abstract int getItemPreferredWidth(ListView<T> aListView);
 
 

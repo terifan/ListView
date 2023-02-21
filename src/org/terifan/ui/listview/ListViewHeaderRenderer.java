@@ -1,10 +1,11 @@
 package org.terifan.ui.listview;
 
 import java.awt.Graphics;
+import java.io.Serializable;
 import javax.swing.SortOrder;
 
 
-public interface ListViewHeaderRenderer<T>
+public interface ListViewHeaderRenderer<T> extends Serializable
 {
 	default void paintRowHeader(ListView<T> aListView, Graphics aGraphics, int aX, int aY, int aW, int aH, boolean aIsSelected, boolean aIsArmed, boolean aIsRollover)
 	{

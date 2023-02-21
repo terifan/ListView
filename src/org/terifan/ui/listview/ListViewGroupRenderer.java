@@ -3,10 +3,14 @@ package org.terifan.ui.listview;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
+import java.io.Serializable;
 
 
-public class ListViewGroupRenderer<T>
+public class ListViewGroupRenderer<T> implements Serializable
 {
+	private final static long serialVersionUID = 1L;
+
+
 	public void paintGroup(ListView<T> aListView, Graphics2D aGraphics, int aOriginX, int aOriginY, int aWidth, int aHeight, ListViewGroup<T> aGroup)
 	{
 		Font oldFont = aGraphics.getFont();

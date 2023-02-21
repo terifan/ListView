@@ -51,9 +51,9 @@ public class ListView<T> extends JComponent implements Scrollable
 
 	private final Rectangle mSelectionRectangle;
 	private final HashSet<T> mSelectedItems;
+	private transient LocationInfo<T> mRolloverInfo;
+	private transient T mFocusItem;
 	private ListViewModel<T> mModel;
-	private LocationInfo<T> mRolloverInfo;
-	private T mFocusItem;
 	private ListViewHeaderRenderer mHeaderRenderer;
 	private ListViewBarRenderer mBarRenderer;
 	private ListViewItemRenderer mItemRenderer;
@@ -62,23 +62,23 @@ public class ListView<T> extends JComponent implements Scrollable
 	private boolean mRolloverEnabled;
 	private boolean mIsConfigured;
 	private Styles mStyles;
-	private T mAnchorItem;
+	private transient T mAnchorItem;
 	private ArrayList<ListViewListener> mEventListeners;
 	private ListViewGroupRenderer mGroupRenderer;
 	private String mPlaceholder;
-	private ListViewMouseListener mMouseListener;
-	private ListViewPopupFactory<T> mPopupFactory;
-	private ViewportMonitor<T> mViewportMonitor;
+	private transient ListViewMouseListener mMouseListener;
+	private transient ListViewPopupFactory<T> mPopupFactory;
+	private transient ViewportMonitor<T> mViewportMonitor;
+	private transient MouseAdapter mSmoothScrollMouseAdapter;
 	private double mAdjustmentListenerExtraFactor;
-	private MouseAdapter mSmoothScrollMouseAdapter;
 	private int mMinRowHeight;
 	private int mMaxRowHeight;
 	private double mSmoothScrollSpeedMultiplier;
 	private ArrayList<ViewAdjustmentListener> mAdjustmentListeners;
-	private SmoothScrollController mSmoothScroll;
+	private transient SmoothScrollController mSmoothScroll;
 
 	@Deprecated
-	private Cache<ImageCacheKey, BufferedImage> mImageCache;
+	private transient Cache<ImageCacheKey, BufferedImage> mImageCache;
 
 
 	public ListView()
@@ -414,6 +414,32 @@ public class ListView<T> extends JComponent implements Scrollable
 	}
 
 
+	private transient ChangeListener changeListener = new ChangeListener()
+	{
+		@Override
+		public void stateChanged(ChangeEvent e)
+		{
+			if (mRolloverEnabled)
+			{
+				Point p1 = MouseInfo.getPointerInfo().getLocation();
+				SwingUtilities.convertPointFromScreen(p1, ListView.this);
+				updateRollover(p1);
+			}
+
+//			JScrollBar horizontalScrollBar = scrollPane.getHorizontalScrollBar();
+//			JScrollBar verticalScrollBar = scrollPane.getVerticalScrollBar();
+//
+//			Dimension totalSize = viewport.getView().getSize();
+//			int scrollX = horizontalScrollBar.getValue();
+//			int scrollY = verticalScrollBar.getValue();
+//			boolean dragged = verticalScrollBar.getValueIsAdjusting() || horizontalScrollBar.getValueIsAdjusting();
+//			Dimension visibleSize = viewport.getSize();
+
+			triggerViewportChange();
+		}
+	};
+
+
 	public void configureEnclosingScrollPane()
 	{
 		mIsConfigured = true;
@@ -429,30 +455,7 @@ public class ListView<T> extends JComponent implements Scrollable
 				return;
 			}
 
-			viewport.addChangeListener(new ChangeListener()
-			{
-				@Override
-				public void stateChanged(ChangeEvent e)
-				{
-					if (mRolloverEnabled)
-					{
-						Point p1 = MouseInfo.getPointerInfo().getLocation();
-						SwingUtilities.convertPointFromScreen(p1, ListView.this);
-						updateRollover(p1);
-					}
-//
-//					JScrollBar horizontalScrollBar = scrollPane.getHorizontalScrollBar();
-//					JScrollBar verticalScrollBar = scrollPane.getVerticalScrollBar();
-//
-//					Dimension totalSize = viewport.getView().getSize();
-//					int scrollX = horizontalScrollBar.getValue();
-//					int scrollY = verticalScrollBar.getValue();
-//					boolean dragged = verticalScrollBar.getValueIsAdjusting() || horizontalScrollBar.getValueIsAdjusting();
-//					Dimension visibleSize = viewport.getSize();
-
-					triggerViewportChange();
-				}
-			});
+			viewport.addChangeListener(changeListener);
 
 			JPanel columnHeaderView = new JPanel(new BorderLayout());
 			columnHeaderView.add(new ListViewBar(this), BorderLayout.NORTH);
@@ -979,7 +982,7 @@ public class ListView<T> extends JComponent implements Scrollable
 //		return aItem.getIcon() != null;
 //	}
 
-	private FocusListener mFocusListener = new FocusAdapter()
+	private transient FocusListener mFocusListener = new FocusAdapter()
 	{
 		@Override
 		public void focusGained(FocusEvent aE)
