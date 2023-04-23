@@ -59,6 +59,8 @@ public class TestStyles
 
 			Collections.shuffle(files);
 
+			System.out.println("Loading " + files.size() + " files");
+
 			for (File file : files)
 			{
 				AnimatedListViewImageIcon icon;
