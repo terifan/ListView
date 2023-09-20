@@ -59,6 +59,10 @@ public class Colors
 			{
 				return style.itemSelectedBackground;
 			}
+			if (aIsSorted)
+			{
+				return style.itemSortedSelectedBackground;
+			}
 			return style.itemSelectedUnfocusedBackground;
 		}
 		if (aIsSorted && (!aIsSelected || b))

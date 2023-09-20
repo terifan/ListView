@@ -117,11 +117,11 @@ public class DetailItemValueRenderer<T> extends JComponent implements ListViewCe
 			mIsSelected = false;
 		}
 
-//		Color background = getBackground();
-		Color background = (mListView.getModel().indexOf(mItem) & 1) == 0 ? getBackground() : new Color(242, 242, 242);
+		Color background = mListView.getStyles().itemBackground;
+//		Color background = (mListView.getModel().indexOf(mItem) & 1) == 0 ? getBackground() : new Color(242, 242, 242);
 
 		Color cellBackground = Colors.getCellBackground(mListView.getStyles(), mListView.getSelectionMode(), mIsSorted, mIsSelected, mIsRollover, mIsFocused, true, background);
-		Color textForeground = Colors.getTextForeground(mListView.getStyles(), mListView.getSelectionMode(), mIsSorted, mIsSelected, mIsRollover, mIsFocused, true, getForeground());
+		Color textForeground = Colors.getTextForeground(mListView.getStyles(), mListView.getSelectionMode(), mIsSorted, mIsSelected, mIsRollover, mIsFocused, true, mListView.getStyles().itemForeground);
 
 		if (cellBackground != null)
 		{
@@ -153,7 +153,7 @@ public class DetailItemValueRenderer<T> extends JComponent implements ListViewCe
 
 		TextRenderer.drawString(g, s, rx + 2, ry, rw, rh, Anchor.WEST, textForeground, null, false);
 
-		g.setColor(style.verticalLine);
+		g.setColor(mIsSelected ? style.verticalLineSelected : style.verticalLine);
 		for (int i = 1, thickness = style.itemVerticalLineThickness; i <= thickness; i++)
 		{
 			g.drawLine(rect.x + rect.width - i, rect.y, rect.x + rect.width - i, rect.y + rect.height - 1);

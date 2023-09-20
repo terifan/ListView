@@ -105,8 +105,6 @@ public class ListView<T> extends JComponent implements Scrollable
 
 		super.setOpaque(true);
 		super.setFocusable(true);
-		super.setBackground(mStyles.itemBackground);
-		super.setForeground(mStyles.itemForeground);
 		super.addMouseListener(mMouseListener);
 		super.addMouseMotionListener(mMouseListener);
 		super.addKeyListener(new ListViewKeyListener(this));
@@ -156,6 +154,21 @@ public class ListView<T> extends JComponent implements Scrollable
 	public Styles getStyles()
 	{
 		return mStyles;
+	}
+
+
+	public ListView<T> setStyles(Styles aStyles)
+	{
+		mStyles = aStyles;
+		return refreshStyle();
+	}
+
+
+	public ListView<T> refreshStyle()
+	{
+		super.setBackground(mStyles.itemBackground);
+		super.setForeground(mStyles.itemForeground);
+		return this;
 	}
 
 

@@ -8,37 +8,37 @@ public interface ListViewHeaderRenderer<T> extends Serializable
 {
 	default void paintRowHeader(ListView<T> aListView, Graphics aGraphics, int aX, int aY, int aW, int aH, boolean aIsSelected, boolean aIsArmed, boolean aIsRollover)
 	{
-		aGraphics.setColor(aListView.getBackground());
+		aGraphics.setColor(aListView.getStyles().groupBarBackground);
 		aGraphics.fillRect(aX, aY, aW, aH);
 	}
 
 	default void paintColumnHeader(ListView<T> aListView, ListViewColumn<T> aColumn, Graphics aGraphics, int aX, int aY, int aW, int aH, boolean aIsSelected, boolean aIsArmed, boolean aIsRollover, SortOrder aSorting, boolean aFirstColumn, boolean aLastColumn)
 	{
-		aGraphics.setColor(aListView.getBackground());
+		aGraphics.setColor(aListView.getStyles().groupBarBackground);
 		aGraphics.fillRect(aX, aY, aW, aH);
 	}
 
 	default void paintColumnHeaderLeading(ListView<T> aListView, Graphics aGraphics, int aX, int aY, int aW, int aH)
 	{
-		aGraphics.setColor(aListView.getBackground());
+		aGraphics.setColor(aListView.getStyles().groupBarBackground);
 		aGraphics.fillRect(aX, aY, aW, aH);
 	}
 
 	default void paintColumnHeaderTrailing(ListView<T> aListView, Graphics aGraphics, int aX, int aY, int aW, int aH)
 	{
-		aGraphics.setColor(aListView.getBackground());
+		aGraphics.setColor(aListView.getStyles().groupBarBackground);
 		aGraphics.fillRect(aX, aY, aW, aH);
 	}
 
 	default void paintUpperLeftCorner(ListView<T> aListView, Graphics aGraphics, int aX, int aY, int aW, int aH)
 	{
-		aGraphics.setColor(aListView.getBackground());
+		aGraphics.setColor(aListView.getStyles().groupBarBackground);
 		aGraphics.fillRect(aX, aY, aW, aH);
 	}
 
 	default void paintUpperRightCorner(ListView<T> aListView, Graphics aGraphics, int aX, int aY, int aW, int aH)
 	{
-		aGraphics.setColor(aListView.getBackground());
+		aGraphics.setColor(aListView.getStyles().groupBarBackground);
 		aGraphics.fillRect(aX, aY, aW, aH);
 	}
 

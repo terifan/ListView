@@ -23,73 +23,81 @@ public class Styles implements Serializable
 	public int columnDividerSpacing = 19;
 	public int columnDividerWidth = 3;
 
-	public Color itemForeground = new Color(0, 0, 0);
-	public Color itemBackground = new Color(255, 255, 255);
-	public Color itemRolloverForeground = new Color(0, 0, 0);
-	public Color itemRolloverBackground = new Color(252, 252, 252);
-	public Color itemSelectedForeground = new Color(0, 0, 0);
-	public Color itemSelectedBackground = new Color(189, 217, 252);
-	public Color itemSelectedRolloverForeground = new Color(0, 0, 0);
-	public Color itemSelectedRolloverBackground = new Color(186, 195, 221);
-	public Color itemSelectedUnfocusedForeground = new Color(0, 0, 0);
-	public Color itemSelectedUnfocusedBackground = new Color(212, 208, 200);
-	public Color itemSortedForeground = new Color(0, 0, 0);
-	public Color itemSortedBackground = new Color(242, 248, 255);
-	public Color itemSortedRolloverForeground = new Color(0, 0, 0);
-	public Color itemSortedRolloverBackground = new Color(252, 252, 255);
+	public Color itemForeground;
+	public Color itemBackground;
+	public Color itemRolloverForeground;
+	public Color itemRolloverBackground;
+	public Color itemSelectedForeground;
+	public Color itemSelectedBackground;
+	public Color itemSelectedRolloverForeground;
+	public Color itemSelectedRolloverBackground;
+	public Color itemSelectedUnfocusedForeground;
+	public Color itemSelectedUnfocusedBackground;
+	public Color itemSortedForeground;
+	public Color itemSortedBackground;
+	public Color itemSortedRolloverForeground;
+	public Color itemSortedRolloverBackground;
 
-	public Color focusRect = new Color(140, 200, 255);
-	public Color focusRectUnfocused = new Color(200, 200, 200);
+	public Color focusRect;
+	public Color focusRectUnfocused;
 
-	public Color itemLabelForeground = new Color(0, 0, 0);
-	public Color itemLabelBackground = new Color(242, 248, 255);
-	public Color itemLabelForegroundRollover = new Color(0, 0, 0);
-	public Color itemLabelBackgroundRollover = new Color(242, 248, 255);
-	public Color itemLabelForegroundSelected = new Color(0, 0, 0);
-	public Color itemLabelBackgroundSelected = new Color(242, 248, 255);
+	public Color itemLabelForeground;
+	public Color itemLabelBackground;
+	public Color itemLabelForegroundRollov;
+	public Color itemLabelBackgroundRollov;
+	public Color itemLabelForegroundSelected;
+	public Color itemLabelBackgroundSelected;
+
+	public Color groupForeground;
+	public Color groupCountForeground;
+	public Color groupBarBackground;
+	public Color groupRolloverForeground;
+	public Color groupRolloverBackground;
+	public Color groupSelectedForeground;
+	public Color groupSelectedBackground;
+	public Color groupSelectedRolloverForeground;
+	public Color groupSelectedRolloverBackground;
+	public Color groupSelectedUnfocusedForeground;
+	public Color groupSelectedUnfocusedBackground;
+
+	public Color groupHorizontalLi;
+	public Color horizontalLi;
+	public Color verticalLi;
+	public Color indentLi;
+	public Color indent;
+
+	public Color headerBord;
+	public Color headerForeground;
+	public Color headerForegroundArmed;
+
+	public Color itemLabelForegroundRollover;
+	public Color itemLabelBackgroundRollover;
+	public Color groupHorizontalLine;
+	public Color horizontalLine;
+	public Color verticalLine;
+	public Color verticalLineSelected;
+	public Color indentLine;
+	public Color headerBorder;
+
+	public Color headerBackground;
+	public Color headerBackgroundSelected;
+	public Color headerBackgroundArmed;
+	public Color headerBackgroundRollover;
+	public Color headerBackgroundRolloverArmed;
+	public Color headerBackgroundSorted;
 
 	public int groupWidth = 50;
 	public int groupBarHeight = 50;
 	public int groupLineThickness = 2;
 	public Font group = new Font("Segoe UI light", Font.PLAIN, 26);
 	public Font groupCount = new Font("Segoe UI", Font.PLAIN, 11);
-	public Color groupForeground = new Color(53, 90, 180);
-	public Color groupCountForeground = new Color(110, 110, 110);
-	public Color groupBarBackground = new Color(255, 255, 255);
-	public Color groupRolloverForeground = new Color(55, 100, 160);
-	public Color groupRolloverBackground = new Color(230, 240, 250);
-	public Color groupSelectedForeground = new Color(0, 0, 0);
-	public Color groupSelectedBackground = new Color(166, 175, 201);
-	public Color groupSelectedRolloverForeground = new Color(0, 0, 0);
-	public Color groupSelectedRolloverBackground = new Color(186, 195, 221);
-	public Color groupSelectedUnfocusedForeground = new Color(132, 132, 132);
-	public Color groupSelectedUnfocusedBackground = new Color(212, 208, 200);
-
-	public Color groupHorizontalLine = new Color(232, 242, 255);
-	public Color horizontalLine = new Color(240, 240, 240);
-	public Color verticalLine = new Color(227, 239, 255);
-	public Color indentLine = new Color(255, 255, 255);
-	public Color indent = new Color(253, 238, 201);
-
 	public int itemHorizontalLineThickness = 1;
 	public int itemVerticalLineThickness = 0;
-
-	public Color headerBorder = new Color(213, 213, 213);
-	public Color headerForeground = new Color(0, 0, 0);
-	public Color headerForegroundArmed = new Color(0, 0, 0);
 
 	public Font itemFont = new Font("Segoe UI", Font.PLAIN, 11);
 	public Font itemBoldFont = new Font("Segoe UI", Font.BOLD, 11);
 	public Font headerFont = new Font("Segoe UI", Font.PLAIN, 11);
 	public Font labelFont = new Font("Segoe UI", Font.BOLD, 11);
-
-	public BufferedImage headerBackground = ListViewUtils.loadImage(ColumnHeaderRenderer.class, "column_header_background_normal.png");
-	public BufferedImage headerBackgroundRollover = ListViewUtils.loadImage(ColumnHeaderRenderer.class, "column_header_background_normal.png");
-	public BufferedImage headerBackgroundArmed = ListViewUtils.loadImage(ColumnHeaderRenderer.class, "column_header_background_armed.png");
-	public BufferedImage headerBackgroundRolloverArmed = ListViewUtils.loadImage(ColumnHeaderRenderer.class, "column_header_background_armed.png");
-	public BufferedImage headerBackgroundSorted = ListViewUtils.loadImage(ColumnHeaderRenderer.class, "column_header_background_sorted.png");
-	public BufferedImage headerSeparator = ListViewUtils.loadImage(ColumnHeaderRenderer.class, "column_header_seperator_normal.png");
-	public BufferedImage headerSeparatorArmed = ListViewUtils.loadImage(ColumnHeaderRenderer.class, "column_header_seperator_armed.png");
 
 	public BufferedImage groupCollapseIcon = ListViewUtils.loadImage(ListViewGroupRenderer.class, "group_collapse_icon.png");
 	public BufferedImage groupExpandIcon = ListViewUtils.loadImage(ListViewGroupRenderer.class, "group_expand_icon.png");
@@ -126,10 +134,132 @@ public class Styles implements Serializable
 	public int ITEM_SPACE_VER = 4;
 
 	public int treeIndentSize = 20;
+	public Color itemSortedSelectedBackground;
 
 
 	public Styles()
 	{
+		light();
+//		dark();
+	}
+
+
+	public void light()
+	{
+		itemForeground = new Color(0, 0, 0);
+		itemBackground = new Color(255, 255, 255);
+		itemRolloverForeground = new Color(0, 0, 0);
+		itemRolloverBackground = new Color(252, 252, 252);
+		itemSelectedForeground = new Color(0, 0, 0);
+		itemSelectedBackground = new Color(189, 217, 252);
+		itemSelectedRolloverForeground = new Color(0, 0, 0);
+		itemSelectedRolloverBackground = new Color(186, 195, 221);
+		itemSelectedUnfocusedForeground = new Color(0, 0, 0);
+		itemSelectedUnfocusedBackground = new Color(212, 208, 200);
+		itemSortedForeground = new Color(0, 0, 0);
+		itemSortedBackground = new Color(242, 248, 255);
+		itemSortedRolloverForeground = new Color(0, 0, 0);
+		itemSortedRolloverBackground = new Color(252, 252, 255);
+		itemSortedSelectedBackground = new Color(50, 50, 50);
+
+		focusRect = new Color(140, 200, 255);
+		focusRectUnfocused = new Color(200, 200, 200);
+
+		itemLabelForeground = new Color(0, 0, 0);
+		itemLabelBackground = new Color(242, 248, 255);
+		itemLabelForegroundRollover = new Color(0, 0, 0);
+		itemLabelBackgroundRollover = new Color(242, 248, 255);
+		itemLabelForegroundSelected = new Color(0, 0, 0);
+		itemLabelBackgroundSelected = new Color(242, 248, 255);
+
+		groupForeground = new Color(53, 90, 180);
+		groupCountForeground = new Color(110, 110, 110);
+		groupBarBackground = new Color(255, 255, 255);
+		groupRolloverForeground = new Color(55, 100, 160);
+		groupRolloverBackground = new Color(230, 240, 250);
+		groupSelectedForeground = new Color(0, 0, 0);
+		groupSelectedBackground = new Color(166, 175, 201);
+		groupSelectedRolloverForeground = new Color(0, 0, 0);
+		groupSelectedRolloverBackground = new Color(186, 195, 221);
+		groupSelectedUnfocusedForeground = new Color(132, 132, 132);
+		groupSelectedUnfocusedBackground = new Color(212, 208, 200);
+
+		groupHorizontalLine = new Color(232, 242, 255);
+		horizontalLine = new Color(240, 240, 240);
+		verticalLine = new Color(227, 239, 255);
+		verticalLineSelected = new Color(227, 239, 255);
+		indentLine = new Color(255, 255, 255);
+		indent = new Color(253, 238, 201);
+
+		headerBorder = new Color(213, 213, 213);
+		headerForeground = new Color(0, 0, 0);
+		headerForegroundArmed = new Color(0, 0, 0);
+		headerBackground = new Color(255, 255, 255);
+		headerBackgroundSelected = new Color(255, 255, 255);
+		headerBackgroundArmed = new Color(255, 255, 255);
+		headerBackgroundRollover = new Color(255, 255, 255);
+		headerBackgroundRolloverArmed = new Color(255, 255, 255);
+		headerBackgroundSorted = new Color(255, 255, 255);
+	}
+
+
+	public void dark()
+	{
+		itemForeground = new Color(220, 220, 220);
+		itemBackground = new Color(0, 0, 0);
+		itemRolloverForeground = new Color(255, 255, 255);
+		itemRolloverBackground = new Color(5, 5, 5);
+		itemSelectedForeground = new Color(240, 245, 255);
+		itemSelectedBackground = new Color(10, 40, 60);
+		itemSelectedRolloverForeground = new Color(255, 255, 255);
+		itemSelectedRolloverBackground = new Color(10, 60, 10);
+		itemSelectedUnfocusedForeground = new Color(255, 255, 255);
+		itemSelectedUnfocusedBackground = new Color(60, 10, 0);
+		itemSortedForeground = new Color(255, 255, 255);
+		itemSortedBackground = new Color(30, 30, 30);
+		itemSortedRolloverForeground = new Color(255, 255, 255);
+		itemSortedRolloverBackground = new Color(50, 50, 50);
+		itemSortedSelectedBackground = new Color(50, 50, 50);
+
+		focusRect = new Color(140, 200, 255);
+		focusRectUnfocused = new Color(200, 200, 200);
+
+		itemLabelForeground = new Color(255, 255, 255);
+		itemLabelBackground = new Color(60, 0, 0);
+		itemLabelForegroundRollover = new Color(255, 255, 255);
+		itemLabelBackgroundRollover = new Color(0, 60, 0);
+		itemLabelForegroundSelected = new Color(255, 255, 255);
+		itemLabelBackgroundSelected = new Color(0, 0, 60);
+
+		groupForeground = new Color(200, 220, 250);
+		groupCountForeground = new Color(110, 110, 110);
+		groupBarBackground = new Color(20, 20, 30);
+		groupRolloverForeground = new Color(55, 100, 160);
+		groupRolloverBackground = new Color(10, 30, 60);
+		groupSelectedForeground = new Color(255, 255, 255);
+		groupSelectedBackground = new Color(10, 30, 60);
+		groupSelectedRolloverForeground = new Color(255, 255, 255);
+		groupSelectedRolloverBackground = new Color(10, 30, 60);
+		groupSelectedUnfocusedForeground = new Color(132, 132, 132);
+		groupSelectedUnfocusedBackground = new Color(10, 30, 60);
+
+		groupHorizontalLine = new Color(50, 50, 70);
+		horizontalLine = new Color(32, 32, 32);
+		verticalLine = new Color(20, 20, 40);
+		verticalLineSelected = new Color(5, 35, 50);
+		indentLine = new Color(64, 64, 64);
+		indent = new Color(3, 13, 23);
+
+		headerBorder = new Color(50, 60, 70);
+		headerForeground = new Color(255, 255, 255);
+		headerForegroundArmed = new Color(255, 255, 255);
+
+		headerBackground = new Color(0,0,0);
+		headerBackgroundSelected = new Color(30, 30, 30);
+		headerBackgroundArmed = new Color(30, 30, 130);
+		headerBackgroundRollover = new Color(50, 50, 50);
+		headerBackgroundRolloverArmed = new Color(30, 30, 30);
+		headerBackgroundSorted = new Color(30, 30, 30);
 	}
 
 
