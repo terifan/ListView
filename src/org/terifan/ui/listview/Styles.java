@@ -230,9 +230,9 @@ public class Styles implements Serializable
 		itemLabelForegroundSelected = new Color(255, 255, 255);
 		itemLabelBackgroundSelected = new Color(0, 0, 60);
 
-		groupForeground = new Color(200, 220, 250);
+		groupForeground = new Color(220, 220, 220);
 		groupCountForeground = new Color(110, 110, 110);
-		groupBarBackground = new Color(20, 20, 30);
+		groupBarBackground = new Color(28, 28, 28);
 		groupRolloverForeground = new Color(55, 100, 160);
 		groupRolloverBackground = new Color(10, 30, 60);
 		groupSelectedForeground = new Color(255, 255, 255);
@@ -241,8 +241,8 @@ public class Styles implements Serializable
 		groupSelectedRolloverBackground = new Color(10, 30, 60);
 		groupSelectedUnfocusedForeground = new Color(132, 132, 132);
 		groupSelectedUnfocusedBackground = new Color(10, 30, 60);
+		groupHorizontalLine = new Color(40, 40, 40);
 
-		groupHorizontalLine = new Color(50, 50, 70);
 		horizontalLine = new Color(32, 32, 32);
 		verticalLine = new Color(20, 20, 40);
 		verticalLineSelected = new Color(5, 35, 50);
