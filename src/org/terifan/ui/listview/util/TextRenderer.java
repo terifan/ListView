@@ -5,7 +5,9 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Rectangle;
+import java.awt.RenderingHints;
 import java.awt.font.FontRenderContext;
 import java.awt.font.LineMetrics;
 import java.awt.geom.AffineTransform;
@@ -14,11 +16,21 @@ import java.util.ArrayList;
 
 public class TextRenderer
 {
-	private static FontRenderContext FRC = new FontRenderContext(new AffineTransform(), true, false);
+	private static FontRenderContext FRC = new FontRenderContext(new AffineTransform(), true, true);
 
 
 	private TextRenderer()
 	{
+	}
+
+
+	/**/public/**/ static void enableTextAntialiasing(Graphics aGraphics)
+	{
+		if (aGraphics instanceof Graphics2D)
+		{
+			((Graphics2D)aGraphics).setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_LCD_HRGB);
+			((Graphics2D)aGraphics).setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON);
+		}
 	}
 
 

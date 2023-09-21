@@ -30,13 +30,13 @@ public class ListViewBarRenderer implements Serializable
 		BufferedImage scaledImage = ImageResizer.getScaledImage(style.barNormal, w, h, 0, 5, 0, 5, false, aListView.getImageCache());
 		aGraphics.drawImage(scaledImage, x, y, null);
 
-		mIcon.paintIcon(aListView, aGraphics, x+15-mIcon.getIconWidth()/2, y+13-mIcon.getIconHeight()/2);
+		mIcon.paintIcon(aListView, aGraphics, x + 15 - mIcon.getIconWidth() / 2, y + 13 - mIcon.getIconHeight() / 2);
 
 		Font oldFont = aGraphics.getFont();
 
 		aGraphics.setFont(style.barFont);
 		aGraphics.setColor(style.barColor);
-		aGraphics.drawString(mTitle, x+31, y+18);
+		aGraphics.drawString(mTitle, x + 31, y + 18);
 
 		aGraphics.setFont(oldFont);
 	}

@@ -7,13 +7,7 @@ import org.terifan.ui.listview.Styles;
 
 public class Colors
 {
-	public static Color getTextForeground(Styles aStyle, SelectionMode aSelectionMode, boolean aIsSorted, boolean aIsSelected, boolean aIsRollover, boolean aIsFocused, boolean aIsListViewFocused)
-	{
-		return getTextForeground(aStyle, aSelectionMode, aIsSorted, aIsSelected, aIsRollover, aIsFocused, aIsListViewFocused, aStyle.itemForeground);
-	}
-
-
-	public static Color getTextForeground(Styles aStyle, SelectionMode aSelectionMode, boolean aIsSorted, boolean aIsSelected, boolean aIsRollover, boolean aIsFocused, boolean aIsListViewFocused, Color aDefaultColor)
+	public static Color getTextForeground(Styles aStyle, SelectionMode aSelectionMode, boolean aIsSorted, boolean aIsSelected, boolean aIsRollover, boolean aIsCellFocused, boolean aIsComponentFocus, Color aDefaultColor)
 	{
 		if (aIsSelected)
 		{
@@ -21,7 +15,11 @@ public class Colors
 			{
 				return aStyle.itemSelectedRolloverForeground;
 			}
-			if (aIsListViewFocused)
+			if (aIsSorted)
+			{
+				return aStyle.itemSortedSelectedBackground;
+			}
+			if (aIsComponentFocus)
 			{
 				return aStyle.itemSelectedForeground;
 			}
@@ -39,13 +37,7 @@ public class Colors
 	}
 
 
-	public static Color getCellBackground(Styles style, SelectionMode aSelectionMode, boolean aIsSorted, boolean aIsSelected, boolean aIsRollover, boolean aIsFocused, boolean aListViewFocused)
-	{
-		return getCellBackground(style, aSelectionMode, aIsSorted, aIsSelected, aIsRollover, aIsFocused, aListViewFocused, style.itemBackground);
-	}
-
-
-	public static Color getCellBackground(Styles style, SelectionMode aSelectionMode, boolean aIsSorted, boolean aIsSelected, boolean aIsRollover, boolean aIsFocused, boolean aListViewFocused, Color aDefaultColor)
+	public static Color getCellBackground(Styles aStyle, SelectionMode aSelectionMode, boolean aIsSorted, boolean aIsSelected, boolean aIsRollover, boolean aIsCellFocused, boolean aIsComponentFocus, Color aDefaultColor)
 	{
 		boolean b = aSelectionMode == SelectionMode.ITEM;
 
@@ -53,56 +45,30 @@ public class Colors
 		{
 			if (aIsRollover)
 			{
-				return style.itemSelectedRolloverBackground;
-			}
-			if (aListViewFocused)
-			{
-				return style.itemSelectedBackground;
+				return aStyle.itemSelectedRolloverBackground;
 			}
 			if (aIsSorted)
 			{
-				return style.itemSortedSelectedBackground;
+				return aStyle.itemSortedSelectedBackground;
 			}
-			return style.itemSelectedUnfocusedBackground;
+			if (aIsComponentFocus)
+			{
+				return aStyle.itemSelectedBackground;
+			}
+			return aStyle.itemSelectedUnfocusedBackground;
 		}
 		if (aIsSorted && (!aIsSelected || b))
 		{
 			if (aIsRollover)
 			{
-				return style.itemSortedRolloverBackground;
+				return aStyle.itemSortedRolloverBackground;
 			}
-			return style.itemSortedBackground;
+			return aStyle.itemSortedBackground;
 		}
 		if (aIsRollover)
 		{
-			return style.itemRolloverBackground;
+			return aStyle.itemRolloverBackground;
 		}
 		return aDefaultColor;
-	}
-
-
-	public static Color getItemBackground(Styles style, SelectionMode aSelectionMode, boolean aIsSortedColumn, boolean aIsSelected, boolean aIsRollover, boolean aIsFocused, boolean aListViewFocused)
-	{
-		if (aSelectionMode != SelectionMode.ITEM)
-		{
-			return null;
-		}
-		if (aIsSelected)
-		{
-			if (aIsRollover)
-			{
-				return style.itemSelectedRolloverBackground;
-			}
-			if (aListViewFocused)
-			{
-				return style.itemSelectedBackground;
-			}
-			return style.itemSelectedUnfocusedBackground;
-		}
-		if (aIsRollover)
-		{
-			return style.itemRolloverBackground;
-		}
-		return null;
 	}
 }

@@ -5,6 +5,7 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import javax.swing.JComponent;
+import javax.swing.SwingUtilities;
 import org.terifan.ui.listview.ListView;
 import org.terifan.ui.listview.ListViewCellRenderer;
 import org.terifan.ui.listview.ListViewColumn;
@@ -131,37 +132,13 @@ public class DetailItemRenderer<T> extends ListViewItemRenderer<T>
 		int x = aOriginX;
 		boolean isSelected = aListView.isItemSelected(aItem);
 		boolean isRollover = aListView.getRolloverItem() == aItem;
-		boolean isFocusOwner = aListView.isFocusOwner();
+		boolean focusComponent = SwingUtilities.getWindowAncestor(aListView).isFocused();
 		ListViewModel model = aListView.getModel();
 		SelectionMode selectionMode = aListView.getSelectionMode();
 
 		if (selectionMode == SelectionMode.ROW || selectionMode == SelectionMode.SINGLE_ROW)
 		{
-			Color c;
-			if (isSelected)
-			{
-				if (isRollover)
-				{
-					c = style.itemSelectedRolloverBackground;
-				}
-				else if (isFocusOwner)
-				{
-					c = style.itemSelectedBackground;
-				}
-				else
-				{
-					c = style.itemSelectedUnfocusedBackground;
-				}
-			}
-			else if (isRollover)
-			{
-				c = style.itemRolloverBackground;
-			}
-			else
-			{
-				c = style.itemBackground;
-			}
-			aGraphics.setColor(c);
+			aGraphics.setColor(Colors.getCellBackground(style, selectionMode, false, isSelected, isRollover, focusComponent, focusComponent, style.itemBackground));
 			aGraphics.fillRect(aOriginX, aOriginY, aWidth, aHeight);
 		}
 
@@ -182,9 +159,9 @@ public class DetailItemRenderer<T> extends ListViewItemRenderer<T>
 			}
 
 			boolean sorted = model.getSortedColumn() == column;
-			boolean focus = isFocusOwner && selectionMode != SelectionMode.ROW && selectionMode != SelectionMode.SINGLE_ROW && aListView.getFocusItem() == aItem && model.getColumn(col).isFocusable();
+			boolean focusCell = selectionMode != SelectionMode.ROW && selectionMode != SelectionMode.SINGLE_ROW && aListView.getFocusItem() == aItem && model.getColumn(col).isFocusable();
 
-			Component c = getCellRenderer(aListView, aItem, aItemIndex, col).getListViewCellRendererComponent(aListView, aItem, aItemIndex, col, isSelected, focus, isRollover, sorted);
+			Component c = getCellRenderer(aListView, aItem, aItemIndex, col).getListViewCellRendererComponent(aListView, aItem, aItemIndex, col, isSelected, focusCell, focusComponent, isRollover, sorted);
 			c.setBounds(x, aOriginY, w, aHeight - style.itemHorizontalLineThickness);
 			c.paint(aGraphics);
 
@@ -198,9 +175,9 @@ public class DetailItemRenderer<T> extends ListViewItemRenderer<T>
 			aGraphics.drawLine(aOriginX, aOriginY + aHeight - thickness, aOriginX + aWidth, aOriginY + aHeight - 1);
 		}
 
-		if (aListView.getFocusItem() == aItem && (selectionMode == SelectionMode.ROW || selectionMode == SelectionMode.SINGLE_ROW))
+		if (aListView.isFocusOwner() && aListView.getFocusItem() == aItem && (selectionMode == SelectionMode.ROW || selectionMode == SelectionMode.SINGLE_ROW))
 		{
-			aGraphics.setColor(isFocusOwner ? style.focusRect : style.focusRectUnfocused);
+			aGraphics.setColor(focusComponent ? style.focusRect : style.focusRectUnfocused);
 			ListViewUtils.drawFocusRect(aGraphics, aOriginX, aOriginY, aWidth, aHeight, false);
 		}
 	}
@@ -244,14 +221,15 @@ public class DetailItemRenderer<T> extends ListViewItemRenderer<T>
 
 
 		@Override
-		public JComponent getListViewCellRendererComponent(ListView<T> aListView, T aItem, int aItemIndex, int aColumnIndex, boolean aIsSelected, boolean aHasFocus, boolean aIsRollover, boolean aIsSorted)
+		public JComponent getListViewCellRendererComponent(ListView<T> aListView, T aItem, int aItemIndex, int aColumnIndex, boolean aIsSelected, boolean aIsCellFocused, boolean aIsComponentFocus, boolean aIsRollover, boolean aIsSorted)
 		{
 			if (c.getParent() == null)
 			{
 				aListView.add(c);
 			}
-			c.setForeground(Colors.getTextForeground(aListView.getStyles(), aListView.getSelectionMode(), aIsSorted, aIsSelected, aIsRollover, aHasFocus, true));
-			c.setBackground(Colors.getCellBackground(aListView.getStyles(), aListView.getSelectionMode(), aIsSorted, aIsSelected, aIsRollover, aHasFocus, true));
+			Styles style = aListView.getStyles();
+			c.setForeground(Colors.getTextForeground(style, aListView.getSelectionMode(), aIsSorted, aIsSelected, aIsRollover, aIsCellFocused, aIsComponentFocus, style.itemForeground));
+			c.setBackground(Colors.getCellBackground(style, aListView.getSelectionMode(), aIsSorted, aIsSelected, aIsRollover, aIsCellFocused, aIsComponentFocus, style.itemBackground));
 			c.setFont(aListView.getFont());
 
 			return c;

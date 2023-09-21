@@ -19,6 +19,7 @@ import org.terifan.ui.listview.ListViewIcon;
 import org.terifan.ui.listview.SelectionMode;
 import org.terifan.ui.listview.Styles;
 import org.terifan.ui.listview.util.ListViewUtils;
+import static org.terifan.ui.listview.util.TextRenderer.enableTextAntialiasing;
 
 
 public class DetailItemValueRenderer<T> extends JComponent implements ListViewCellRenderer<T>
@@ -35,16 +36,14 @@ public class DetailItemValueRenderer<T> extends JComponent implements ListViewCe
 
 	private final static long serialVersionUID = 1L;
 
-	private Rectangle mTempRectangle = new Rectangle();
-
 	protected ListView mListView;
 	protected transient T mItem;
 	protected boolean mIsSelected;
-	protected boolean mIsFocused;
+	protected boolean mIsCellFocused;
+	protected boolean mIsComponentFocused;
 	protected boolean mIsRollover;
 	protected boolean mIsSorted;
 	protected int mColumnIndex;
-	protected FontMetrics mFontMetrics;
 	protected int mIconTextSpacing;
 	protected Color mTreeColor;
 
@@ -60,12 +59,13 @@ public class DetailItemValueRenderer<T> extends JComponent implements ListViewCe
 
 
 	@Override
-	public JComponent getListViewCellRendererComponent(ListView<T> aListView, T aItem, int aItemIndex, int aColumnIndex, boolean aIsSelected, boolean aIsFocused, boolean aIsRollover, boolean aIsSorted)
+	public JComponent getListViewCellRendererComponent(ListView<T> aListView, T aItem, int aItemIndex, int aColumnIndex, boolean aIsSelected, boolean aIsCellFocused, boolean aIsComponentFocused, boolean aIsRollover, boolean aIsSorted)
 	{
 		mListView = aListView;
 		mItem = aItem;
 		mIsSelected = aIsSelected;
-		mIsFocused = aIsFocused;
+		mIsCellFocused = aIsCellFocused;
+		mIsComponentFocused = aIsComponentFocused;
 		mIsRollover = aIsRollover;
 		mIsSorted = aIsSorted;
 		mColumnIndex = aColumnIndex;
@@ -79,10 +79,17 @@ public class DetailItemValueRenderer<T> extends JComponent implements ListViewCe
 	{
 		Graphics2D g = (Graphics2D)aGraphics;
 		Styles style = mListView.getStyles();
+		Font oldFont = g.getFont();
 
 		ListViewColumn column = mListView.getModel().getColumn(mColumnIndex);
 		BiFunction<T, Integer, String> itemTreeFunction = column.getModel().getItemTreeFunction();
-		int indentSize = mListView.getStyles().treeIndentSize;
+		int indentSize = style.treeIndentSize;
+		SelectionMode selectionMode = mListView.getSelectionMode();
+
+		if (mIsSelected && !column.isFocusable() && selectionMode != SelectionMode.ROW && selectionMode != SelectionMode.SINGLE_ROW)
+		{
+			mIsSelected = false;
+		}
 
 		String treePath = null;
 		if (itemTreeFunction != null)
@@ -90,15 +97,15 @@ public class DetailItemValueRenderer<T> extends JComponent implements ListViewCe
 			treePath = itemTreeFunction.apply(mItem, mColumnIndex);
 		}
 
-		Font oldFont = g.getFont();
 		Font font = style.itemFont;
-		SelectionMode selectionMode = mListView.getSelectionMode();
 
 		g.setFont(font);
-		mFontMetrics = g.getFontMetrics(font);
+		enableTextAntialiasing(g);
+
+		FontMetrics fm = g.getFontMetrics(font);
 
 		Rectangle rect = getBounds();
-		Rectangle tr = mTempRectangle;
+		Rectangle tr = new Rectangle();
 
 		Object value = mListView.getModel().getValueAt(mItem, column);
 		if (column.getFormatter() != null)
@@ -110,18 +117,10 @@ public class DetailItemValueRenderer<T> extends JComponent implements ListViewCe
 			value = " ";
 		}
 
-		String s = computeLabelRect(column, value.toString(), mColumnIndex, rect.x, rect.y, rect.width, rect.height, true, tr);
+		String s = computeLabelRect(column, value.toString(), mColumnIndex, rect.x, rect.y, rect.width, rect.height, true, tr, fm);
 
-		if (mIsSelected && !column.isFocusable() && selectionMode != SelectionMode.ROW && selectionMode != SelectionMode.SINGLE_ROW)
-		{
-			mIsSelected = false;
-		}
-
-		Color background = mListView.getStyles().itemBackground;
-//		Color background = (mListView.getModel().indexOf(mItem) & 1) == 0 ? getBackground() : new Color(242, 242, 242);
-
-		Color cellBackground = Colors.getCellBackground(mListView.getStyles(), mListView.getSelectionMode(), mIsSorted, mIsSelected, mIsRollover, mIsFocused, true, background);
-		Color textForeground = Colors.getTextForeground(mListView.getStyles(), mListView.getSelectionMode(), mIsSorted, mIsSelected, mIsRollover, mIsFocused, true, mListView.getStyles().itemForeground);
+		Color cellBackground = Colors.getCellBackground(style, mListView.getSelectionMode(), mIsSorted, mIsSelected, mIsRollover, mIsCellFocused, mIsComponentFocused, style.itemBackground);
+		Color textForeground = Colors.getTextForeground(style, mListView.getSelectionMode(), mIsSorted, mIsSelected, mIsRollover, mIsCellFocused, mIsComponentFocused, style.itemForeground);
 
 		if (cellBackground != null)
 		{
@@ -129,9 +128,10 @@ public class DetailItemValueRenderer<T> extends JComponent implements ListViewCe
 			g.fill(rect);
 		}
 
-		int rx = tr.x + column.getIconWidth() + computeIconTextSpacing(column);
+		int cw = column.getIconWidth() + computeIconTextSpacing(column);
+		int rx = tr.x + cw;
 		int ry = rect.y;
-		int rw = tr.width - column.getIconWidth() - computeIconTextSpacing(column) + 1;
+		int rw = tr.width - cw + 1;
 		int rh = rect.height;
 
 		if (treePath != null)
@@ -147,11 +147,12 @@ public class DetailItemValueRenderer<T> extends JComponent implements ListViewCe
 //				g.setColor(new Color(255,0,0,128));
 //				g.fillRect(rx + (treePath.length() - 1) * indentSize, ry, 20, rh);
 //			}
+
 			rx += treePath.length() * indentSize;
 			tr.x += treePath.length() * indentSize;
 		}
 
-		TextRenderer.drawString(g, s, rx + 2, ry, rw, rh, Anchor.WEST, textForeground, null, false);
+		TextRenderer.drawString(g, s, rx + 2, ry, rw, rh, Anchor.WEST, textForeground, cellBackground, false);
 
 		g.setColor(mIsSelected ? style.verticalLineSelected : style.verticalLine);
 		for (int i = 1, thickness = style.itemVerticalLineThickness; i <= thickness; i++)
@@ -176,7 +177,7 @@ public class DetailItemValueRenderer<T> extends JComponent implements ListViewCe
 			}
 		}
 
-		if (mIsFocused)
+		if (mIsCellFocused)
 		{
 			if (selectionMode == SelectionMode.ITEM)
 			{
@@ -192,43 +193,47 @@ public class DetailItemValueRenderer<T> extends JComponent implements ListViewCe
 	}
 
 
-	protected String computeLabelRect(ListViewColumn column, String value, int col, int x, int y, int w, int h, boolean aIncludeIcon, Rectangle oBounds)
+	protected String computeLabelRect(ListViewColumn aColumn, String aValue, int col, int x, int y, int w, int h, boolean aIncludeIcon, Rectangle oBounds, FontMetrics aFontMetrics)
 	{
-		String s = TextRenderer.clipString(value, mFontMetrics, Math.max(w - 4 - computeIconTextSpacing(column) - column.getIconWidth(), 1));
-		int sw = mFontMetrics.stringWidth(s);
+		int cw = computeIconTextSpacing(aColumn);
+		int iw = aColumn.getIconWidth();
 
-		switch (column.getAlignment())
+		String clippedLabel = TextRenderer.clipString(aValue, aFontMetrics, Math.max(w - cw - iw, 1));
+
+		int sw = aFontMetrics.stringWidth(clippedLabel);
+
+		switch (aColumn.getAlignment())
 		{
 			case LEFT:
 				break;
 			case CENTER:
-				x += Math.max(0, (w - (sw + column.getIconWidth() + computeIconTextSpacing(column))) / 2);
+				x += Math.max(0, (w - (sw + iw + cw)) / 2);
 				break;
 			case RIGHT:
-				x += Math.max(0, w - sw - column.getIconWidth() - computeIconTextSpacing(column) - 5);
+				x += Math.max(0, w - sw - iw - cw - 5);
 				break;
 			default:
-				throw new IllegalStateException("Unsupported alignment: " + column.getAlignment());
+				throw new IllegalStateException("Unsupported alignment: " + aColumn.getAlignment());
 		}
 
 		if (aIncludeIcon)
 		{
 			oBounds.x = x;
-			oBounds.width = sw + column.getIconWidth() + computeIconTextSpacing(column) + 3;
+			oBounds.width = sw + iw + cw;
 		}
 		else
 		{
-			oBounds.x = x + column.getIconWidth() + computeIconTextSpacing(column);
-			oBounds.width = sw + 3;
+			oBounds.x = x + iw + cw;
+			oBounds.width = sw;
 		}
 
-		oBounds.y = y + (h - mFontMetrics.getHeight()) / 2;
-		oBounds.height = mFontMetrics.getHeight() + 1;
+		oBounds.y = y + (h - aFontMetrics.getHeight()) / 2;
+		oBounds.height = aFontMetrics.getHeight() + 1;
 
 		oBounds.y = Math.max(oBounds.y, y);
 		oBounds.height = Math.min(oBounds.y + oBounds.height, y + h) - oBounds.y;
 
-		return s;
+		return clippedLabel;
 	}
 
 

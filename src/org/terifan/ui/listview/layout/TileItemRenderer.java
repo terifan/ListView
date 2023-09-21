@@ -29,7 +29,7 @@ import org.terifan.ui.listview.util.ListViewUtils;
 
 public class TileItemRenderer<T> extends ListViewItemRenderer<T>
 {
-	protected final static FontRenderContext FRC = new FontRenderContext(new AffineTransform(), false, false);
+	protected final static FontRenderContext FRC = new FontRenderContext(new AffineTransform(), true, true);
 
 
 	/**

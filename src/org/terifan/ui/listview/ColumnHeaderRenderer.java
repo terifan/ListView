@@ -3,13 +3,11 @@ package org.terifan.ui.listview;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
-import java.awt.Graphics2D;
 import java.awt.Rectangle;
-import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import org.terifan.ui.listview.util.Anchor;
-import org.terifan.ui.listview.util.ImageResizer;
 import org.terifan.ui.listview.util.TextRenderer;
+import static org.terifan.ui.listview.util.TextRenderer.enableTextAntialiasing;
 
 
 public class ColumnHeaderRenderer implements ListViewHeaderRenderer
@@ -50,9 +48,9 @@ public class ColumnHeaderRenderer implements ListViewHeaderRenderer
 		Styles style = aListView.getStyles();
 		Font oldFont = aGraphics.getFont();
 
-		((Graphics2D)aGraphics).setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_LCD_HRGB);
-
 		aGraphics.setFont(style.headerFont);
+
+		enableTextAntialiasing(aGraphics);
 
 		aGraphics.setColor(aIsRollover && aIsArmed ? style.headerBackgroundRolloverArmed : aIsRollover ? style.headerBackgroundRollover : aIsSelected ? style.headerBackgroundSelected : aSorting != null && aSorting != SortOrder.UNSORTED ? style.headerBackgroundSorted : style.headerBackground);
 		aGraphics.fillRect(x, y, w, h);

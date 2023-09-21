@@ -46,6 +46,8 @@ public class Styles implements Serializable
 	public Color itemSelectedUnfocusedBackground;
 	public Color itemSortedForeground;
 	public Color itemSortedBackground;
+	public Color itemSortedSelectedForeground;
+	public Color itemSortedSelectedBackground;
 	public Color itemSortedRolloverForeground;
 	public Color itemSortedRolloverBackground;
 
@@ -99,7 +101,6 @@ public class Styles implements Serializable
 
 	public Color barColor;
 	public Color placeholderColor;
-	public Color itemSortedSelectedBackground;
 
 	public Font group = new Font("Segoe UI light", Font.PLAIN, 26);
 	public Font groupCount = new Font("Segoe UI", Font.PLAIN, 11);
@@ -157,7 +158,8 @@ public class Styles implements Serializable
 		itemSortedBackground = new Color(242, 248, 255);
 		itemSortedRolloverForeground = new Color(0, 0, 0);
 		itemSortedRolloverBackground = new Color(252, 252, 255);
-		itemSortedSelectedBackground = new Color(50, 50, 50);
+		itemSortedSelectedForeground = new Color(50, 50, 50);
+		itemSortedSelectedBackground = new Color(255, 255, 255);
 
 		focusRect = new Color(140, 200, 255);
 		focusRectUnfocused = new Color(200, 200, 200);
@@ -211,13 +213,14 @@ public class Styles implements Serializable
 		itemSelectedForeground = new Color(240, 245, 255);
 		itemSelectedBackground = new Color(10, 40, 60);
 		itemSelectedRolloverForeground = new Color(255, 255, 255);
-		itemSelectedRolloverBackground = new Color(10, 60, 10);
+		itemSelectedRolloverBackground = new Color(10, 160, 10);
 		itemSelectedUnfocusedForeground = new Color(255, 255, 255);
-		itemSelectedUnfocusedBackground = new Color(60, 10, 0);
+		itemSelectedUnfocusedBackground = new Color(40, 40, 40);
 		itemSortedForeground = new Color(255, 255, 255);
 		itemSortedBackground = new Color(28, 28, 28);
 		itemSortedRolloverForeground = new Color(255, 255, 255);
 		itemSortedRolloverBackground = new Color(50, 50, 50);
+		itemSortedSelectedForeground = new Color(255, 255, 255);
 		itemSortedSelectedBackground = new Color(50, 50, 50);
 
 		focusRect = new Color(140, 200, 255);

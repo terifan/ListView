@@ -5,5 +5,5 @@ import javax.swing.JComponent;
 
 public interface ListViewCellRenderer<T>
 {
-	JComponent getListViewCellRendererComponent(ListView<T> aListView, T aItem, int aItemIndex, int aColumnIndex, boolean aIsSelected, boolean aHasFocus, boolean aIsRollover, boolean aIsSorted);
+	JComponent getListViewCellRendererComponent(ListView<T> aListView, T aItem, int aItemIndex, int aColumnIndex, boolean aIsSelected, boolean aIsCellFocused, boolean aIsComponentFocus, boolean aIsRollover, boolean aIsSorted);
 }
