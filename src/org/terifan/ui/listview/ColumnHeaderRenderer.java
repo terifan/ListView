@@ -55,9 +55,13 @@ public class ColumnHeaderRenderer implements ListViewHeaderRenderer
 		aGraphics.setFont(style.headerFont);
 
 		aGraphics.setColor(aIsRollover && aIsArmed ? style.headerBackgroundRolloverArmed : aIsRollover ? style.headerBackgroundRollover : aIsSelected ? style.headerBackgroundSelected : aSorting != null && aSorting != SortOrder.UNSORTED ? style.headerBackgroundSorted : style.headerBackground);
-		aGraphics.fillRect(x, y, w, h - 1);
-		aGraphics.setColor(style.headerBorder);
-		aGraphics.drawLine(x, y + h - 1, x + w, y + h - 1);
+		aGraphics.fillRect(x, y, w, h);
+
+		if (style.headerBorderThickness > 0)
+		{
+			aGraphics.setColor(style.headerBorder);
+			aGraphics.fillRect(x, y + h - style.headerBorderThickness, x + w, style.headerBorderThickness);
+		}
 
 		BufferedImage sortIcon = aSorting == SortOrder.ASCENDING ? style.sortAscendingIcon : style.sortDescendingIcon;
 
@@ -67,7 +71,7 @@ public class ColumnHeaderRenderer implements ListViewHeaderRenderer
 		int ty = y + (aIsArmed ? 1 : 0) + 1;
 		int tw = w - (aSorting != SortOrder.UNSORTED ? 10 + sortIcon.getWidth() : 0) - 2;
 
-		Rectangle rect = TextRenderer.drawString(aGraphics, aColumn.getLabel(), tx, ty, tw, h, Anchor.WEST, fg, bg, false);
+		Rectangle rect = TextRenderer.drawString(aGraphics, aColumn.getLabel(), tx, ty, tw, h - style.headerBorderThickness, Anchor.WEST, fg, bg, false);
 
 		if (aSorting != SortOrder.UNSORTED)
 		{
@@ -93,8 +97,12 @@ public class ColumnHeaderRenderer implements ListViewHeaderRenderer
 
 			aGraphics.setColor(aListView.getStyles().headerBackground);
 			aGraphics.fillRect(x, y, w, h);
-			aGraphics.setColor(style.headerBorder);
-			aGraphics.drawLine(x, y + h - 1, x + w, y + h - 1);
+
+			if (style.headerBorderThickness > 0)
+			{
+				aGraphics.setColor(style.headerBorder);
+				aGraphics.fillRect(x, y + h - style.headerBorderThickness, x + w, style.headerBorderThickness);
+			}
 		}
 	}
 
@@ -108,8 +116,12 @@ public class ColumnHeaderRenderer implements ListViewHeaderRenderer
 
 			aGraphics.setColor(aListView.getStyles().headerBackground);
 			aGraphics.fillRect(x, y, w, h);
-			aGraphics.setColor(style.headerBorder);
-			aGraphics.drawLine(x, y + h - 1, x + w, y + h - 1);
+
+			if (style.headerBorderThickness > 0)
+			{
+				aGraphics.setColor(style.headerBorder);
+				aGraphics.fillRect(x, y + h - style.headerBorderThickness, x + w, style.headerBorderThickness);
+			}
 		}
 	}
 
@@ -123,8 +135,12 @@ public class ColumnHeaderRenderer implements ListViewHeaderRenderer
 
 			aGraphics.setColor(aListView.getStyles().headerBackground);
 			aGraphics.fillRect(x, y, w, h);
-			aGraphics.setColor(style.headerBorder);
-			aGraphics.drawLine(x, y + h - 1, x + w, y + h - 1);
+
+			if (style.headerBorderThickness > 0)
+			{
+				aGraphics.setColor(style.headerBorder);
+				aGraphics.fillRect(x, y + h - style.headerBorderThickness, x + w, style.headerBorderThickness);
+			}
 		}
 	}
 
@@ -138,8 +154,12 @@ public class ColumnHeaderRenderer implements ListViewHeaderRenderer
 
 			aGraphics.setColor(aListView.getStyles().headerBackground);
 			aGraphics.fillRect(x, y, w, h);
-			aGraphics.setColor(style.headerBorder);
-			aGraphics.drawLine(x, y + h - 1, x + w, y + h - 1);
+
+			if (style.headerBorderThickness > 0)
+			{
+				aGraphics.setColor(style.headerBorder);
+				aGraphics.fillRect(x, y + h - style.headerBorderThickness, x + w, style.headerBorderThickness);
+			}
 		}
 	}
 

@@ -3,11 +3,13 @@ package org.terifan.ui.listview;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
+import javax.swing.Icon;
 
 
 public class ListViewImageIcon implements ListViewIcon
 {
 	private BufferedImage mImage;
+	private Icon mIcon;
 	private Color mBackgroundColor;
 
 
@@ -17,9 +19,21 @@ public class ListViewImageIcon implements ListViewIcon
 	}
 
 
+	public ListViewImageIcon(Icon aIcon)
+	{
+		mIcon = aIcon;
+	}
+
+
 	public BufferedImage getImage()
 	{
 		return mImage;
+	}
+
+
+	public Icon getIcon()
+	{
+		return mIcon;
 	}
 
 
@@ -39,14 +53,14 @@ public class ListViewImageIcon implements ListViewIcon
 	@Override
 	public int getWidth()
 	{
-		return mImage.getWidth();
+		return mIcon != null ? mIcon.getIconWidth() : mImage.getWidth();
 	}
 
 
 	@Override
 	public int getHeight()
 	{
-		return mImage.getHeight();
+		return mIcon != null ? mIcon.getIconHeight() : mImage.getHeight();
 	}
 
 
@@ -59,6 +73,13 @@ public class ListViewImageIcon implements ListViewIcon
 			aGraphics.fillRect(aX, aY, aW, aH);
 		}
 
-		aGraphics.drawImage(mImage, aX, aY, aW, aH, null);
+		if (mIcon != null)
+		{
+			mIcon.paintIcon(null, aGraphics, aX + (aW - mIcon.getIconWidth()) / 2, aY + (aH - mIcon.getIconHeight()) / 2);
+		}
+		else
+		{
+			aGraphics.drawImage(mImage, aX, aY, aW, aH, null);
+		}
 	}
 }
