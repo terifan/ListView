@@ -221,7 +221,7 @@ public class Styles implements Serializable
 		itemSortedRolloverForeground = new Color(255, 255, 255);
 		itemSortedRolloverBackground = new Color(50, 50, 50);
 		itemSortedSelectedForeground = new Color(255, 255, 255);
-		itemSortedSelectedBackground = new Color(50, 50, 50);
+		itemSortedSelectedBackground = new Color(0, 30, 50);
 
 		focusRect = new Color(140, 200, 255);
 		focusRectUnfocused = new Color(200, 200, 200);
