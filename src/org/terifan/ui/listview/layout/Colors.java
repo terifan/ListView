@@ -17,7 +17,7 @@ public class Colors
 			}
 			if (aIsSorted)
 			{
-				return aStyle.itemSortedSelectedBackground;
+				return aStyle.itemSortedSelectedForeground;
 			}
 			if (aIsComponentFocus)
 			{

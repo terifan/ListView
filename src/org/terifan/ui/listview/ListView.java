@@ -483,6 +483,8 @@ public class ListView<T> extends JComponent implements Scrollable
 			scrollPane.setBorder(null);
 			scrollPane.setWheelScrollingEnabled(true);
 
+			viewport.setBackground(mStyles.itemBackground);
+
 			if (mMinRowHeight > 0)
 			{
 				JScrollBar vsb = scrollPane.getVerticalScrollBar();

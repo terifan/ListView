@@ -5,6 +5,7 @@ import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 import org.terifan.ui.listview.ListView;
 import org.terifan.ui.listview.ListViewModel;
+import org.terifan.ui.listview.Styles;
 
 
 public class TestMini
@@ -26,6 +27,7 @@ public class TestMini
 			}
 
 			ListView<MyListItem> listView = new ListView<>(model);
+			listView.getStyles().installDark();
 
 			JFrame frame = new JFrame();
 			frame.add(new JScrollPane(listView), BorderLayout.CENTER);

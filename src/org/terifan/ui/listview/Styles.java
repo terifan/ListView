@@ -137,12 +137,12 @@ public class Styles implements Serializable
 
 	public Styles()
 	{
-		light();
+		installLight();
 //		dark();
 	}
 
 
-	public void light()
+	public void installLight()
 	{
 		itemForeground = new Color(0, 0, 0);
 		itemBackground = new Color(255, 255, 255);
@@ -204,7 +204,7 @@ public class Styles implements Serializable
 	}
 
 
-	public void dark()
+	public void installDark()
 	{
 		itemForeground = new Color(220, 220, 220);
 		itemBackground = new Color(32, 32, 32);
