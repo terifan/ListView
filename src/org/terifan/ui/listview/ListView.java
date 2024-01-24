@@ -1194,6 +1194,16 @@ public class ListView<T> extends JComponent implements Scrollable
 	}
 
 
+	public ListView<T> setExtendLastItem(boolean aState)
+	{
+		if (mItemRenderer instanceof DetailItemRenderer)
+		{
+			((DetailItemRenderer)mItemRenderer).setExtendLastItem(aState);
+		}
+		return this;
+	}
+
+
 
 	private class ViewportMonitor<T>
 	{
