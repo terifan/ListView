@@ -310,10 +310,15 @@ public class ListView<T> extends JComponent implements Scrollable
 
 	public ListView<T> setFocusItem(T aItem, boolean aSetAnchor)
 	{
+		Object old = mFocusItem;
 		mFocusItem = aItem;
 		if (aSetAnchor)
 		{
 			mAnchorItem = aItem;
+		}
+		if (mFocusItem != old)
+		{
+			fireSelectionFocusChanged(new ListViewEvent(this, null));
 		}
 
 		return this;
@@ -702,6 +707,15 @@ public class ListView<T> extends JComponent implements Scrollable
 		for (ListViewListener listener : mEventListeners)
 		{
 			listener.selectionChanged(aEvent);
+		}
+	}
+
+
+	protected synchronized void fireSelectionFocusChanged(ListViewEvent aEvent)
+	{
+		for (ListViewListener listener : mEventListeners)
+		{
+			listener.focusChanged(aEvent);
 		}
 	}
 
