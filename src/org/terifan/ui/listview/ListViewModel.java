@@ -383,19 +383,19 @@ public class ListViewModel<T> implements Iterable<T>, Serializable
 
 	// -- Columns -----------------
 
-	public ListViewColumn addColumn(String aKey)
+	public ListViewColumn<T> addColumn(String aKey)
 	{
 		return addColumn(aKey, aKey, 50);
 	}
 
 
-	public ListViewColumn addColumn(String aKey, int aWidth)
+	public ListViewColumn<T> addColumn(String aKey, int aWidth)
 	{
 		return addColumn(aKey, aKey, aWidth);
 	}
 
 
-	public ListViewColumn addColumn(String aKey, String aLabel, int aWidth)
+	public ListViewColumn<T> addColumn(String aKey, String aLabel, int aWidth)
 	{
 		ListViewColumn column = new ListViewColumn(this, aKey, aLabel, aWidth);
 		mColumns.add(column);
@@ -435,7 +435,7 @@ public class ListViewModel<T> implements Iterable<T>, Serializable
 	}
 
 
-	public ListViewColumn getColumn(String aColumnKey)
+	public ListViewColumn<T> getColumn(String aColumnKey)
 	{
 		for (ListViewColumn c : mColumns)
 		{
@@ -775,10 +775,10 @@ public class ListViewModel<T> implements Iterable<T>, Serializable
 	{
 		private int mColumnIndex;
 		private boolean mAscending;
-		private Comparator mComparator;
+		private Comparator<E> mComparator;
 
 
-		public ComparatorProxy(Comparator aComparator, int aColumnIndex, boolean aAscending)
+		public ComparatorProxy(Comparator<E> aComparator, int aColumnIndex, boolean aAscending)
 		{
 			mComparator = aComparator;
 			mColumnIndex = aColumnIndex;
@@ -794,6 +794,11 @@ public class ListViewModel<T> implements Iterable<T>, Serializable
 				E t = t1;
 				t1 = t2;
 				t2 = t;
+			}
+
+			if (mComparator != null)
+			{
+				return mComparator.compare(t1, t2);
 			}
 
 			Object v1 = t1;
@@ -818,14 +823,9 @@ public class ListViewModel<T> implements Iterable<T>, Serializable
 				return 0;
 			}
 
-			if (mComparator != null)
+			if (v1 instanceof Comparable v)
 			{
-				return mComparator.compare(v1, v2);
-			}
-
-			if (v1 instanceof Comparable)
-			{
-				return ((Comparable)v1).compareTo(v2);
+				return v.compareTo(v2);
 			}
 
 			ListViewColumn sci = ListViewModel.this.getSortedColumn();
@@ -835,9 +835,9 @@ public class ListViewModel<T> implements Iterable<T>, Serializable
 				throw new IllegalStateException("Sorted column is null");
 			}
 
-			if (v1 instanceof Number)
+			if (v1 instanceof Number v)
 			{
-				return Long.compare(((Number)v1).longValue(), ((Number)v2).longValue());
+				return Long.compare(v.longValue(), ((Number)v2).longValue());
 			}
 
 			return v1.toString().compareToIgnoreCase(v2.toString());

@@ -198,7 +198,7 @@ public class ListViewColumn<T>
 	}
 
 
-	public ListViewColumn setKey(String aKey)
+	public ListViewColumn<T> setKey(String aKey)
 	{
 		mKey = aKey;
 		return this;
@@ -218,7 +218,7 @@ public class ListViewColumn<T>
 	}
 
 
-	public Comparator getComparator()
+	public Comparator<T> getComparator()
 	{
 		return mComparator;
 	}
