@@ -12,6 +12,7 @@ import java.awt.Rectangle;
 import java.awt.Stroke;
 import java.util.function.BiFunction;
 import javax.swing.JComponent;
+import org.terifan.ui.listview.Formatter;
 import org.terifan.ui.listview.ListView;
 import org.terifan.ui.listview.ListViewCellRenderer;
 import org.terifan.ui.listview.ListViewColumn;
@@ -108,9 +109,10 @@ public class DetailItemValueRenderer<T> extends JComponent implements ListViewCe
 		Rectangle tr = new Rectangle();
 
 		Object value = mListView.getModel().getValueAt(mItem, column);
-		if (column.getFormatter() != null)
+		Formatter<T> formatter = column.getFormatter();
+		if (formatter != null)
 		{
-			value = column.getFormatter().format(value);
+			value = formatter.format(mItem);
 		}
 		if (value == null)
 		{

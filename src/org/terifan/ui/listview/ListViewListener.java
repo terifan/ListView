@@ -7,6 +7,9 @@ public interface ListViewListener<T>
 	void selectionChanged(ListViewEvent<T> aEvent);
 
 
+	default void focusChanged(ListViewEvent<T> aEvent) {};
+
+
 	default void selectionAction(ListViewEvent<T> aEvent) {};
 
 

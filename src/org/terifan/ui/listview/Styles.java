@@ -102,14 +102,18 @@ public class Styles implements Serializable
 	public Color barColor;
 	public Color placeholderColor;
 
-	public Font group = new Font("Segoe UI light", Font.PLAIN, 26);
-	public Font groupCount = new Font("Segoe UI", Font.PLAIN, 11);
-	public Font itemFont = new Font("Segoe UI", Font.PLAIN, 11);
-	public Font itemBoldFont = new Font("Segoe UI", Font.BOLD, 11);
-	public Font headerFont = new Font("Segoe UI", Font.PLAIN, 11);
-	public Font labelFont = new Font("Segoe UI", Font.BOLD, 11);
-	public Font barFont = new Font("Ebrima", Font.BOLD, 14);
-	public Font placeholderFont = new Font("Segoe UI", Font.ITALIC, 12);
+	private static final String SEGOE_UI = "Segoe UI";
+	private static final String EBRIMA = "Ebrima";
+	private static final String SEGOE_UI_LIGHT = "Segoe UI light";
+
+	public Font group = new Font(SEGOE_UI_LIGHT, Font.PLAIN, 26);
+	public Font groupCount = new Font(SEGOE_UI, Font.PLAIN, 11);
+	public Font itemFont = new Font(SEGOE_UI, Font.PLAIN, 11);
+	public Font itemBoldFont = new Font(SEGOE_UI, Font.BOLD, 11);
+	public Font headerFont = new Font(SEGOE_UI, Font.PLAIN, 11);
+	public Font labelFont = new Font(SEGOE_UI, Font.BOLD, 11);
+	public Font barFont = new Font(EBRIMA, Font.BOLD, 14);
+	public Font placeholderFont = new Font(SEGOE_UI, Font.ITALIC, 12);
 
 	public Cursor cursorSplit = Toolkit.getDefaultToolkit().createCustomCursor(ListViewUtils.loadImage(ListViewHeader.class, "cursor_split.png"), new Point(16, 16), "split");
 	public Cursor cursorResize = Toolkit.getDefaultToolkit().createCustomCursor(ListViewUtils.loadImage(ListViewHeader.class, "cursor_resize.png"), new Point(16, 16), "resize");
@@ -206,8 +210,8 @@ public class Styles implements Serializable
 
 	public void installDark()
 	{
-		itemForeground = new Color(220, 220, 220);
-		itemBackground = new Color(32, 32, 32);
+		itemForeground = new Color(230, 230, 230);
+		itemBackground = new Color(16, 16, 16);
 		itemRolloverForeground = new Color(255, 255, 255);
 		itemRolloverBackground = new Color(5, 5, 5);
 		itemSelectedForeground = new Color(240, 245, 255);
@@ -217,7 +221,7 @@ public class Styles implements Serializable
 		itemSelectedUnfocusedForeground = new Color(255, 255, 255);
 		itemSelectedUnfocusedBackground = new Color(40, 40, 40);
 		itemSortedForeground = new Color(255, 255, 255);
-		itemSortedBackground = new Color(28, 28, 28);
+		itemSortedBackground = new Color(18, 18, 18);
 		itemSortedRolloverForeground = new Color(255, 255, 255);
 		itemSortedRolloverBackground = new Color(50, 50, 50);
 		itemSortedSelectedForeground = new Color(255, 255, 255);
@@ -246,7 +250,7 @@ public class Styles implements Serializable
 		groupSelectedUnfocusedBackground = new Color(10, 30, 60);
 		groupHorizontalLine = new Color(40, 40, 40);
 
-		horizontalLine = new Color(32, 32, 32);
+		horizontalLine = new Color(22, 22, 22);
 		verticalLine = new Color(20, 20, 40);
 		verticalLineSelected = new Color(5, 35, 50);
 		indentLine = new Color(64, 64, 64);
@@ -254,16 +258,16 @@ public class Styles implements Serializable
 		barColor = new Color(21, 66, 139);
 		placeholderColor = new Color(0, 0, 0);
 
-		headerBorder = new Color(99, 99, 99);
+		headerBorder = new Color(59, 59, 59);
 		headerForeground = new Color(255, 255, 255);
 		headerForegroundArmed = new Color(255, 255, 255);
 
-		headerBackground = itemBackground;
+		headerBackground = new Color(20, 20, 20);
 		headerBackgroundSelected = new Color(30, 30, 30);
 		headerBackgroundArmed = new Color(30, 30, 130);
-		headerBackgroundRollover = new Color(50, 50, 50);
+		headerBackgroundRollover = new Color(40, 40, 40);
 		headerBackgroundRolloverArmed = new Color(30, 30, 30);
-		headerBackgroundSorted = new Color(30, 30, 30);
+		headerBackgroundSorted = new Color(24, 24, 24);
 	}
 
 
