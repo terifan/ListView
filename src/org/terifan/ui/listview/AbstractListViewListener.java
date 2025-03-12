@@ -1,6 +1,7 @@
 package org.terifan.ui.listview;
 
 
+@Deprecated
 public abstract class AbstractListViewListener<T> implements ListViewListener<T>
 {
 	@Override
